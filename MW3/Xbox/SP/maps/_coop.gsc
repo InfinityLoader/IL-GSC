@@ -1,0 +1,342 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: maps\_coop.gsc
+ * Game: Call of Duty: Modern Warfare 3
+ * Platform: Console
+ * Function Count: 20
+ * Decompile Time: 322 ms
+ * Timestamp: 10/27/2023 2:33:52 AM
+*******************************************************************/
+
+//Function Number: 1
+main()
+{
+	common_scripts\utility::flag_init("coop_game");
+	if(!maps\_utility::func_E89())
+	{
+		return;
+	}
+
+	common_scripts\utility::flag_set("coop_game");
+	common_scripts\utility::flag_init("coop_show_constant_icon");
+	setdvarifuninitialized("coop_show_constant_icon",1);
+	if(getdvarint("coop_show_constant_icon") == 1)
+	{
+		common_scripts\utility::flag_set("coop_show_constant_icon");
+	}
+
+	precacheshader("hint_health");
+	precacheshader("coop_player_location");
+	precacheshader("coop_player_location_fire");
+	level.coop_icon_blinktime = 7;
+	level.coop_icon_blinkcrement = 0.375;
+	level.coop_revive_nag_hud_refreshtime = 20;
+	foreach(var_01 in level.players)
+	{
+		var_01.var_80D6 = var_01 getlocalplayerprofiledata("colorBlind");
+		var_01 thread initialize_colors(var_01.var_80D6);
+		var_01 thread func_15E2();
+	}
+}
+
+//Function Number: 2
+initialize_colors(param_00)
+{
+	if(param_00)
+	{
+		var_01 = (0.35,1,1);
+		var_02 = (1,0.65,0.2);
+		var_03 = (1,1,1);
+		self.coop_icon_color_normal = var_01;
+		self.coop_icon_color_downed = var_02;
+		self.coop_icon_color_shoot = var_01;
+		self.var_15D6 = var_03;
+		self.coop_icon_color_dying = var_02;
+		self.var_15D8 = var_03;
+		return;
+	}
+
+	var_04 = (0.635,0.929,0.604);
+	var_05 = (1,1,0.2);
+	var_02 = (1,0.65,0.2);
+	var_06 = (1,0.2,0.2);
+	var_03 = (1,1,1);
+	self.coop_icon_color_normal = var_04;
+	self.coop_icon_color_downed = var_05;
+	self.coop_icon_color_shoot = var_04;
+	self.var_15D6 = var_02;
+	self.coop_icon_color_dying = var_06;
+	self.var_15D8 = var_03;
+}
+
+//Function Number: 3
+func_15D9(param_00,param_01,param_02)
+{
+	if(isdefined(self.nofriendlyhudicon))
+	{
+		return;
+	}
+
+	if(!isdefined(self.var_15DB) || self.var_15DB.material != param_01)
+	{
+		create_fresh_friendly_icon(param_01);
+	}
+
+	self.var_15DB.color = param_00;
+	if(isdefined(param_02) && param_02)
+	{
+		self.var_15DB setwaypointedgestyle_rotatingicon();
+	}
+}
+
+//Function Number: 4
+create_fresh_friendly_icon(param_00)
+{
+	if(isdefined(self.var_15DB))
+	{
+		self.var_15DB destroy();
+	}
+
+	self.var_15DB = newclienthudelem(self);
+	self.var_15DB setshader(param_00,1,1);
+	self.var_15DB setwaypoint(1,1,0);
+	self.var_15DB setwaypointiconoffscreenonly();
+	self.var_15DB settargetent(maps\_utility::get_other_player(self));
+	self.var_15DB.material = param_00;
+	self.var_15DB.hidewheninmenu = 1;
+	if(common_scripts\utility::flag("coop_show_constant_icon"))
+	{
+		self.var_15DB.alpha = 1;
+		return;
+	}
+
+	self.var_15DB.alpha = 0;
+}
+
+//Function Number: 5
+friendly_hud_icon_blink_on_fire()
+{
+	self endon("death");
+	for(;;)
+	{
+		self waittill("weapon_fired");
+		var_00 = maps\_utility::get_other_player(self);
+		var_00 thread func_15E0(var_00.coop_icon_color_shoot,"coop_player_location_fire",1);
+	}
+}
+
+//Function Number: 6
+friendly_hud_icon_blink_on_damage()
+{
+	self endon("death");
+	for(;;)
+	{
+		self waittill("damage");
+		var_00 = maps\_utility::get_other_player(self);
+		var_00 thread func_15E0(var_00.var_15D6,"coop_player_location",1);
+	}
+}
+
+//Function Number: 7
+func_15E0(param_00,param_01,param_02)
+{
+	if(isdefined(self.nofriendlyhudicon))
+	{
+		return;
+	}
+
+	self endon("death");
+	self notify("flash_color_thread");
+	self endon("flash_color_thread");
+	var_03 = maps\_utility::get_other_player(self);
+	if(maps\_utility::is_player_down(var_03))
+	{
+		return;
+	}
+
+	func_15D9(param_00,param_01,param_02);
+	wait 0.5;
+	param_01 = friendlyhudicon_currentmaterial();
+	var_04 = friendlyhudicon_rotating();
+	func_15D9(self.coop_icon_color_normal,param_01,var_04);
+}
+
+//Function Number: 8
+func_15E2()
+{
+	level endon("special_op_terminated");
+	friendlyhudicon_normal();
+	thread friendly_hud_icon_blink_on_fire();
+	thread friendly_hud_icon_blink_on_damage();
+	thread monitor_color_blind_toggle();
+	thread func_15E3();
+	if(isdefined(self.nofriendlyhudicon))
+	{
+		return;
+	}
+
+	self.var_15DB.alpha = 0;
+	for(;;)
+	{
+		common_scripts\utility::flag_wait("coop_show_constant_icon");
+		self.var_15DB.alpha = 1;
+		common_scripts\utility::flag_waitopen("coop_show_constant_icon");
+		self.var_15DB.alpha = 0;
+	}
+}
+
+//Function Number: 9
+func_15E3()
+{
+	level waittill("special_op_terminated");
+	foreach(var_01 in level.players)
+	{
+		var_01 player_friendly_hud_destroy();
+	}
+}
+
+//Function Number: 10
+player_friendly_hud_destroy()
+{
+	if(isdefined(self.var_15DB))
+	{
+		self.var_15DB destroy();
+	}
+}
+
+//Function Number: 11
+func_15E5()
+{
+	common_scripts\utility::flag_clear("coop_show_constant_icon");
+}
+
+//Function Number: 12
+friendlyhudicon_showall()
+{
+	common_scripts\utility::flag_set("coop_show_constant_icon");
+}
+
+//Function Number: 13
+friendlyhudicon_disable()
+{
+	self.nofriendlyhudicon = 1;
+	player_friendly_hud_destroy();
+}
+
+//Function Number: 14
+friendlyhudicon_enable()
+{
+	self.nofriendlyhudicon = undefined;
+	if(!isdefined(self.var_15DB))
+	{
+		friendlyhudicon_normal();
+	}
+}
+
+//Function Number: 15
+friendlyhudicon_normal()
+{
+	if(!common_scripts\utility::flag("coop_game"))
+	{
+		return;
+	}
+
+	self.var_15EA = "ICON_STATE_NORMAL";
+	var_00 = friendlyhudicon_currentmaterial();
+	var_01 = friendlyhudicon_rotating();
+	func_15D9(self.coop_icon_color_normal,var_00,var_01);
+}
+
+//Function Number: 16
+friendlyhudicon_downed()
+{
+	if(!common_scripts\utility::flag("coop_game"))
+	{
+		return;
+	}
+
+	self.var_15EA = "ICON_STATE_DOWNED";
+	var_00 = friendlyhudicon_currentmaterial();
+	var_01 = friendlyhudicon_rotating();
+	func_15D9(self.coop_icon_color_downed,var_00,var_01);
+}
+
+//Function Number: 17
+friendlyhudicon_update(param_00)
+{
+	if(!common_scripts\utility::flag("coop_game"))
+	{
+		return;
+	}
+
+	var_01 = friendlyhudicon_currentmaterial();
+	var_02 = friendlyhudicon_rotating();
+	func_15D9(param_00,var_01,var_02);
+}
+
+//Function Number: 18
+friendlyhudicon_currentmaterial()
+{
+	var_00 = "coop_player_location";
+	switch(self.var_15EA)
+	{
+		case "ICON_STATE_NORMAL":
+			var_00 = "coop_player_location";
+			break;
+
+		case "ICON_STATE_DOWNED":
+			var_00 = "hint_health";
+			break;
+
+		default:
+			break;
+	}
+
+	return var_00;
+}
+
+//Function Number: 19
+friendlyhudicon_rotating()
+{
+	var_00 = 0;
+	switch(self.var_15EA)
+	{
+		case "ICON_STATE_NORMAL":
+			var_00 = 1;
+			break;
+
+		case "ICON_STATE_DOWNED":
+			var_00 = 0;
+			break;
+
+		default:
+			break;
+	}
+
+	return var_00;
+}
+
+//Function Number: 20
+monitor_color_blind_toggle()
+{
+	for(;;)
+	{
+		if(self getlocalplayerprofiledata("colorBlind") != self.var_80D6)
+		{
+			self.var_80D6 = self getlocalplayerprofiledata("colorBlind");
+			initialize_colors(self.var_80D6);
+			switch(self.var_15EA)
+			{
+				case "ICON_STATE_NORMAL":
+					friendlyhudicon_normal();
+					break;
+	
+				case "ICON_STATE_DOWNED":
+					friendlyhudicon_downed();
+					break;
+			}
+		}
+
+		wait 0.05;
+	}
+}

@@ -1,0 +1,451 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: maps\mp\_stinger.gsc
+ * Game: Call of Duty: Modern Warfare 3
+ * Platform: Console
+ * Function Count: 11
+ * Decompile Time: 214 ms
+ * Timestamp: 10/27/2023 2:27:55 AM
+*******************************************************************/
+
+//Function Number: 1
+func_27B9()
+{
+	self.stingerstage = undefined;
+	self.stingertarget = undefined;
+	self.stingerlockstarttime = undefined;
+	self.stingerlostsightlinetime = undefined;
+	thread resetstingerlockingondeath();
+	level.stingertargets = [];
+}
+
+//Function Number: 2
+func_27BF()
+{
+	if(!isdefined(self.stingeruseentered))
+	{
+		return;
+	}
+
+	self.stingeruseentered = undefined;
+	self notify("stop_javelin_locking_feedback");
+	self notify("stop_javelin_locked_feedback");
+	self weaponlockfree();
+	func_27B9();
+}
+
+//Function Number: 3
+resetstingerlockingondeath()
+{
+	self endon("disconnect");
+	self notify("ResetStingerLockingOnDeath");
+	self endon("ResetStingerLockingOnDeath");
+	for(;;)
+	{
+		self waittill("death");
+		func_27BF();
+	}
+}
+
+//Function Number: 4
+func_27C2(param_00)
+{
+	if(!isdefined(param_00))
+	{
+		return 0;
+	}
+
+	if(!self worldpointinreticle_circle(param_00.origin,65,85))
+	{
+		return 0;
+	}
+
+	if(self.stingertarget == level.ac130.planemodel && !isdefined(level.ac130player))
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
+//Function Number: 5
+loopstingerlockingfeedback()
+{
+	self endon("stop_javelin_locking_feedback");
+	for(;;)
+	{
+		if(isdefined(level.chopper) && isdefined(level.chopper.gunner) && isdefined(self.stingertarget) && self.stingertarget == level.chopper.gunner)
+		{
+			level.chopper.gunner playlocalsound("missile_locking");
+		}
+
+		if(isdefined(level.ac130player) && isdefined(self.stingertarget) && self.stingertarget == level.ac130.planemodel)
+		{
+			level.ac130player playlocalsound("missile_locking");
+		}
+
+		self playlocalsound("stinger_locking");
+		self playrumbleonentity("ac130_25mm_fire");
+		wait 0.6;
+	}
+}
+
+//Function Number: 6
+func_27C6()
+{
+	self endon("stop_javelin_locked_feedback");
+	for(;;)
+	{
+		if(isdefined(level.chopper) && isdefined(level.chopper.gunner) && isdefined(self.stingertarget) && self.stingertarget == level.chopper.gunner)
+		{
+			level.chopper.gunner playlocalsound("missile_locking");
+		}
+
+		if(isdefined(level.ac130player) && isdefined(self.stingertarget) && self.stingertarget == level.ac130.planemodel)
+		{
+			level.ac130player playlocalsound("missile_locking");
+		}
+
+		self playlocalsound("stinger_locked");
+		self playrumbleonentity("ac130_25mm_fire");
+		wait 0.25;
+	}
+}
+
+//Function Number: 7
+locksighttest(param_00)
+{
+	var_01 = self geteye();
+	if(!isdefined(param_00))
+	{
+		return 0;
+	}
+
+	var_02 = sighttracepassed(var_01,param_00.origin,0,param_00);
+	if(var_02)
+	{
+		return 1;
+	}
+
+	var_03 = param_00 getpointinbounds(1,0,0);
+	var_02 = sighttracepassed(var_01,var_03,0,param_00);
+	if(var_02)
+	{
+		return 1;
+	}
+
+	var_04 = param_00 getpointinbounds(-1,0,0);
+	var_02 = sighttracepassed(var_01,var_04,0,param_00);
+	if(var_02)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+//Function Number: 8
+stingerdebugdraw(param_00)
+{
+}
+
+//Function Number: 9
+func_27C9()
+{
+	var_00 = 500;
+	if(locksighttest(self.stingertarget))
+	{
+		self.stingerlostsightlinetime = 0;
+		return 1;
+	}
+
+	if(self.stingerlostsightlinetime == 0)
+	{
+		self.stingerlostsightlinetime = gettime();
+	}
+
+	var_01 = gettime() - self.stingerlostsightlinetime;
+	if(var_01 >= var_00)
+	{
+		func_27BF();
+		return 0;
+	}
+
+	return 1;
+}
+
+//Function Number: 10
+gettargetlist()
+{
+	var_00 = [];
+	if(level.teambased)
+	{
+		if(isdefined(level.chopper) && level.chopper.team != self.team || isdefined(level.chopper.owner) && level.chopper.owner == self)
+		{
+		}
+
+		if(isdefined(level.ac130player) && level.ac130player.team != self.team)
+		{
+		}
+
+		if(isdefined(level.harriers))
+		{
+			foreach(var_02 in level.harriers)
+			{
+				if(isdefined(var_02) && var_02.team != self.team || isdefined(var_02.owner) && var_02.owner == self)
+				{
+					var_41[var_41.size] = var_02;
+				}
+			}
+		}
+
+		if(level.uavmodels[level.otherteam[self.team]].size)
+		{
+			foreach(var_05 in level.uavmodels[level.otherteam[self.team]])
+			{
+				var_41[var_41.size] = var_05;
+			}
+		}
+
+		if(isdefined(level.littlebirds))
+		{
+			foreach(var_08 in level.littlebirds)
+			{
+				if(isdefined(var_08) && var_08.team != self.team || isdefined(var_08.owner) && var_08.owner == self)
+				{
+					var_41[var_41.size] = var_08;
+				}
+			}
+		}
+
+		if(isdefined(level.ugvs))
+		{
+			foreach(var_0B in level.ugvs)
+			{
+				if(isdefined(var_0B) && var_0B.team != self.team || isdefined(var_0B.owner) && var_0B.owner == self)
+				{
+					var_41[var_41.size] = var_0B;
+				}
+			}
+		}
+	}
+	else
+	{
+		if(isdefined(level.chopper))
+		{
+		}
+
+		if(isdefined(level.ac130player))
+		{
+		}
+
+		if(isdefined(level.harriers))
+		{
+			foreach(var_02 in level.harriers)
+			{
+				if(isdefined(var_02))
+				{
+					var_41[var_41.size] = var_02;
+				}
+			}
+		}
+
+		if(level.uavmodels.size)
+		{
+			foreach(var_05 in level.uavmodels)
+			{
+				if(isdefined(var_05.owner) && var_05.owner == self)
+				{
+					continue;
+				}
+
+				var_41[var_41.size] = var_05;
+			}
+		}
+
+		if(isdefined(level.littlebirds))
+		{
+			foreach(var_08 in level.littlebirds)
+			{
+				if(!isdefined(var_08))
+				{
+					continue;
+				}
+
+				var_41[var_41.size] = var_08;
+			}
+		}
+
+		if(isdefined(level.ugvs))
+		{
+			foreach(var_0B in level.ugvs)
+			{
+				if(!isdefined(var_0B))
+				{
+					continue;
+				}
+
+				var_41[var_41.size] = var_0B;
+			}
+		}
+
+		foreach(var_16 in level.players)
+		{
+			if(!isalive(var_16))
+			{
+				continue;
+			}
+
+			if(level.teambased && var_16.team == self.team)
+			{
+				continue;
+			}
+
+			if(var_16 == self)
+			{
+				continue;
+			}
+
+			if(var_16 maps\mp\_utility::isjuggernaut())
+			{
+				var_41[var_41.size] = var_16;
+			}
+		}
+	}
+
+	return var_41;
+}
+
+//Function Number: 11
+stingerusageloop()
+{
+	self endon("death");
+	self endon("disconnect");
+	self endon("faux_spawn");
+	var_00 = 1000;
+	func_27B9();
+	for(;;)
+	{
+		wait 0.05;
+		var_01 = self getcurrentweapon();
+		if(var_01 != "stinger_mp" && var_01 != "at4_mp" && var_01 != "iw5_smaw_mp")
+		{
+			func_27BF();
+			continue;
+		}
+
+		if(self playerads() < 0.95)
+		{
+			func_27BF();
+			continue;
+		}
+
+		self.stingeruseentered = 1;
+		if(!isdefined(self.stingerstage))
+		{
+			self.stingerstage = 0;
+		}
+
+		stingerdebugdraw(self.stingertarget);
+		if(self.stingerstage == 0)
+		{
+			var_02 = gettargetlist();
+			if(var_02.size == 0)
+			{
+				continue;
+			}
+
+			var_03 = [];
+			foreach(var_05 in var_02)
+			{
+				if(!isdefined(var_05))
+				{
+					continue;
+				}
+
+				var_06 = self worldpointinreticle_circle(var_05.origin,65,75);
+				if(var_06)
+				{
+					var_03[var_03.size] = var_05;
+				}
+			}
+
+			if(var_03.size == 0)
+			{
+				continue;
+			}
+
+			var_08 = sortbydistance(var_03,self.origin);
+			if(!locksighttest(var_08[0]))
+			{
+				continue;
+			}
+
+			thread loopstingerlockingfeedback();
+			self.stingertarget = var_08[0];
+			self.stingerlockstarttime = gettime();
+			self.stingerstage = 1;
+			self.stingerlostsightlinetime = 0;
+		}
+
+		if(self.stingerstage == 1)
+		{
+			if(!func_27C2(self.stingertarget))
+			{
+				func_27BF();
+				continue;
+			}
+
+			var_09 = func_27C9();
+			if(!var_09)
+			{
+				continue;
+			}
+
+			var_0A = gettime() - self.stingerlockstarttime;
+			if(maps\mp\_utility::func_27AF("specialty_fasterlockon"))
+			{
+				if(var_0A < var_00 * 0.5)
+				{
+					continue;
+				}
+			}
+			else if(var_0A < var_00)
+			{
+				continue;
+			}
+
+			self notify("stop_javelin_locking_feedback");
+			thread func_27C6();
+			if(self.stingertarget.model == "vehicle_av8b_harrier_jet_opfor_mp" || self.stingertarget.model == "vehicle_av8b_harrier_jet_mp" || self.stingertarget.model == "vehicle_little_bird_armed" || self.stingertarget.model == "vehicle_ugv_talon_mp")
+			{
+				self weaponlockfinalize(self.stingertarget);
+			}
+			else if(isplayer(self.stingertarget))
+			{
+				self weaponlockfinalize(self.stingertarget,(100,0,64));
+			}
+			else
+			{
+				self weaponlockfinalize(self.stingertarget,(100,0,-32));
+			}
+
+			self.stingerstage = 2;
+		}
+
+		if(self.stingerstage == 2)
+		{
+			var_09 = func_27C9();
+			if(!var_09)
+			{
+				continue;
+			}
+
+			if(!func_27C2(self.stingertarget))
+			{
+				func_27BF();
+				continue;
+			}
+		}
+	}
+}
