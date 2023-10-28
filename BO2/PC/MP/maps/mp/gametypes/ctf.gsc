@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 41
- * Decompile Time: 222 ms
- * Timestamp: 10/27/2023 3:00:20 AM
+ * Decompile Time: 23 ms
+ * Timestamp: 10/28/2023 12:10:38 AM
 *******************************************************************/
 
 #include maps/mp/_challenges;

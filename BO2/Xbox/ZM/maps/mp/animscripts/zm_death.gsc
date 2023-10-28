@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 13
- * Decompile Time: 50 ms
- * Timestamp: 10/27/2023 3:05:53 AM
+ * Decompile Time: 13 ms
+ * Timestamp: 10/28/2023 12:14:06 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -132,9 +132,8 @@ flame_death_fx()
 	{
 /#
 		println("^3ANIMSCRIPT WARNING: You are missing level._effect[\"character_fire_death_torso\"], please set it in your levelname_fx.gsc. Use \"env/fire/fx_fire_player_torso\");
-#/
 	}
-
+#/
 	if(IsDefined(level._effect) && IsDefined(level._effect["character_fire_death_sm"]))
 	{
 		wait(1);
@@ -162,8 +161,8 @@ flame_death_fx()
 	{
 /#
 		println("^3ANIMSCRIPT WARNING: You are missing level._effect[\"character_fire_death_sm\"], please set it in your levelname_fx.gsc. Use \"env/fire/fx_fire_zombie_md\");
-#/
 	}
+#/
 }
 
 //Function Number: 5

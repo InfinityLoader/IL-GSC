@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 4
- * Decompile Time: 68 ms
- * Timestamp: 10/27/2023 3:01:34 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:11:02 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -31,45 +31,76 @@ script_gen_dump()
 {
 /#
 	script_gen_dump_checksaved();
-	flag_set("scriptgen_done");
-	return;
-	firstrun = 0;
-	println(" ");
-	println(" ");
-	println(" ");
-	println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
-	println("^3Dumping scriptgen dump for these reasons");
-	println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
-	i = 0;
-	for(;;)
+	if(!(level.script_gen_dump_reasons.size))
 	{
-		substr = getsubstr(level.script_gen_dump_reasons[i],15);
-		println(i + ". ) " + substr);
-		println(i + ". ) " + level.script_gen_dump_reasons[i]);
-		firstrun = 1;
-		i++;
+		flag_set("scriptgen_done");
+		return;
 	}
-	println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
-	println(" ");
-	println("for First Run make sure you delete all of the vehicle precache script calls, createart calls, createfx calls( most commonly placed in maps\\" + level.script + "_fx.gsc ) ");
-	println(" ");
-	println("replace:");
-	println("maps\\_load::main( 1 );");
-	println(" ");
-	println("with( don\'t forget to add this file to P4 ):");
-	println("maps\\scriptgen\\" + level.script + "_scriptgen::main();");
-	println(" ");
-	println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
-	println(" ");
-	println("^2 / \\ / \\ / \\");
-	println("^2scroll up");
-	println("^2 / \\ / \\ / \\");
-	println(" ");
-	return;
+
+	firstrun = 0;
+	if(level.bscriptgened)
+	{
+		println(" ");
+		println(" ");
+		println(" ");
+		println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
+		println("^3Dumping scriptgen dump for these reasons");
+		println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
+		for(i = 0;i < level.script_gen_dump_reasons.size;i++)
+		{
+			if(issubstr(level.script_gen_dump_reasons[i],"nowrite"))
+			{
+				substr = getsubstr(level.script_gen_dump_reasons[i],15);
+				println(i + ". ) " + substr);
+			}
+			else
+			{
+				println(i + ". ) " + level.script_gen_dump_reasons[i]);
+			}
+
+			if(level.script_gen_dump_reasons[i] == "First run")
+			{
+				firstrun = 1;
+			}
+		}
+
+		println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
+		println(" ");
+		if(firstrun)
+		{
+			println("for First Run make sure you delete all of the vehicle precache script calls, createart calls, createfx calls( most commonly placed in maps\\" + level.script + "_fx.gsc ) ");
+			println(" ");
+			println("replace:");
+			println("maps\\_load::main( 1 );");
+			println(" ");
+			println("with( don\'t forget to add this file to P4 ):");
+			println("maps\\scriptgen\\" + level.script + "_scriptgen::main();");
+			println(" ");
+		}
+
+		println("^2 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
+		println(" ");
+		println("^2 / \\ / \\ / \\");
+		println("^2scroll up");
+		println("^2 / \\ / \\ / \\");
+		println(" ");
+	}
+	else
+	{
+		return;
+	}
+
 	filename = "scriptgen/" + level.script + "_scriptgen.gsc";
 	csvfilename = "zone_source/" + level.script + ".csv";
-	file = openfile(filename,"write");
-	file = 0;
+	if(level.bscriptgened)
+	{
+		file = openfile(filename,"write");
+	}
+	else
+	{
+		file = 0;
+	}
+
 /#
 	assert(file != -1,"File not writeable( check it and and restart the map ): " + filename);
 #/
@@ -80,82 +111,114 @@ script_gen_dump()
 	script_gen_dumpprintln(file,"\tlevel.script_gen_dump = [];");
 	script_gen_dumpprintln(file,"");
 	signatures = getarraykeys(level.script_gen_dump);
-	i = 0;
-	for(;;)
+	for(i = 0;i < signatures.size;i++)
 	{
-		script_gen_dumpprintln(file,"\t" + level.script_gen_dump[signatures[i]]);
-		i++;
+		if(!(issubstr(level.script_gen_dump[signatures[i]],"nowrite")))
+		{
+			script_gen_dumpprintln(file,"\t" + level.script_gen_dump[signatures[i]]);
+		}
 	}
-	i = 0;
-	for(;;)
+
+	for(i = 0;i < signatures.size;i++)
 	{
-		script_gen_dumpprintln(file,"\tlevel.script_gen_dump[ " + "\" + signatures[i] + "\" + " ] = " + "\" + signatures[i] + "\" + ";");
-		script_gen_dumpprintln(file,"\tlevel.script_gen_dump[ " + "\" + signatures[i] + "\" + " ] = " + "\"nowrite\" + ";");
-		i++;
+		if(!(issubstr(level.script_gen_dump[signatures[i]],"nowrite")))
+		{
+			script_gen_dumpprintln(file,"\tlevel.script_gen_dump[ " + "\" + signatures[i] + "\" + " ] = " + "\" + signatures[i] + "\" + ";");
+		}
+		else
+		{
+			script_gen_dumpprintln(file,"\tlevel.script_gen_dump[ " + "\" + signatures[i] + "\" + " ] = " + "\"nowrite\" + ";");
+		}
 	}
+
 	script_gen_dumpprintln(file,"");
 	keys1 = undefined;
 	keys2 = undefined;
-	keys1 = getarraykeys(level.sg_precacheanims);
-	i = 0;
-	for(;;)
+	if(IsDefined(level.sg_precacheanims))
 	{
-		script_gen_dumpprintln(file,"\tanim_precach_" + keys1[i] + "();");
-		i++;
+		keys1 = getarraykeys(level.sg_precacheanims);
 	}
+
+	if(IsDefined(keys1))
+	{
+		for(i = 0;i < keys1.size;i++)
+		{
+			script_gen_dumpprintln(file,"\tanim_precach_" + keys1[i] + "();");
+		}
+	}
+
 	script_gen_dumpprintln(file,"\tmaps\\_load::main( 1, " + level.bcsvgened + ", 1 );");
 	script_gen_dumpprintln(file,"}");
 	script_gen_dumpprintln(file,"");
-	keys1 = getarraykeys(level.sg_precacheanims);
-	i = 0;
-	for(;;)
+	if(IsDefined(level.sg_precacheanims))
 	{
-		script_gen_dumpprintln(file,"#using_animtree( \" + keys1[i] + "\" );");
-		script_gen_dumpprintln(file,"anim_precach_" + keys1[i] + "()");
-		script_gen_dumpprintln(file,"{");
-		script_gen_dumpprintln(file,"\tlevel.sg_animtree[ \" + keys1[i] + "\" ] = #animtree;");
-		keys2 = getarraykeys(level.sg_precacheanims[keys1[i]]);
-		j = 0;
-		for(;;)
-		{
-			script_gen_dumpprintln(file,"\tlevel.sg_anim[ \" + keys2[j] + "\" ] = %" + keys2[j] + ";");
-			j++;
-		}
-		script_gen_dumpprintln(file,"}");
-		script_gen_dumpprintln(file,"");
-		i++;
+		keys1 = getarraykeys(level.sg_precacheanims);
 	}
-	saved = closefile(file);
-	saved = 1;
-	csvfile = openfile(csvfilename,"write");
-	csvfile = 0;
+
+	if(IsDefined(keys1))
+	{
+		for(i = 0;i < keys1.size;i++)
+		{
+			script_gen_dumpprintln(file,"#using_animtree( \" + keys1[i] + "\" );");
+			script_gen_dumpprintln(file,"anim_precach_" + keys1[i] + "()");
+			script_gen_dumpprintln(file,"{");
+			script_gen_dumpprintln(file,"\tlevel.sg_animtree[ \" + keys1[i] + "\" ] = #animtree;");
+			keys2 = getarraykeys(level.sg_precacheanims[keys1[i]]);
+			if(IsDefined(keys2))
+			{
+				for(j = 0;j < keys2.size;j++)
+				{
+					script_gen_dumpprintln(file,"\tlevel.sg_anim[ \" + keys2[j] + "\" ] = %" + keys2[j] + ";");
+				}
+			}
+
+			script_gen_dumpprintln(file,"}");
+			script_gen_dumpprintln(file,"");
+		}
+	}
+
+	if(level.bscriptgened)
+	{
+		saved = closefile(file);
+	}
+	else
+	{
+		saved = 1;
+	}
+
+	if(level.bcsvgened)
+	{
+		csvfile = openfile(csvfilename,"write");
+	}
+	else
+	{
+		csvfile = 0;
+	}
+
 /#
 	assert(csvfile != -1,"File not writeable( check it and and restart the map ): " + csvfilename);
 #/
 	signatures = getarraykeys(level.script_gen_dump);
-	i = 0;
-	for(;;)
+	for(i = 0;i < signatures.size;i++)
 	{
 		script_gen_csvdumpprintln(csvfile,signatures[i]);
-		i++;
 	}
-	csvfilesaved = closefile(csvfile);
-	csvfilesaved = 1;
+
+	if(level.bcsvgened)
+	{
+		csvfilesaved = closefile(csvfile);
+	}
+	else
+	{
+		csvfilesaved = 1;
+	}
+
 /#
 	assert(csvfilesaved == 1,"csv not saved( see above message? ): " + csvfilename);
 #/
 /#
 	assert(saved == 1,"map not saved( see above message? ): " + filename);
 #/
-(i < keys1.size ? (IsDefined(keys2) ? j < keys2.size : level.bscriptgened) : level.bcsvgened) ? i < signatures.size : level.bcsvgened
-IsDefined(keys1)
-IsDefined(level.sg_precacheanims)
-i < keys1.size
-IsDefined(keys1)
-IsDefined(level.sg_precacheanims)
-(issubstr(level.script_gen_dump[signatures[i]],"nowrite")) ? i < signatures.size : issubstr(level.script_gen_dump[signatures[i]],"nowrite")
-i < signatures.size
-(level.script_gen_dump_reasons.size) ? ((level.bscriptgened ? i < level.script_gen_dump_reasons.size : issubstr(level.script_gen_dump_reasons[i],"nowrite")) ? level.script_gen_dump_reasons[i] == "First run" : firstrun) : level.bscriptgened
 #/
 /#
 	assert(!level.bscriptgened,"SCRIPTGEN generated: follow instructions listed above this error in the console");
@@ -164,9 +227,8 @@ i < signatures.size
 	{
 /#
 		assertmsg("SCRIPTGEN updated: Rebuild fast file and run map again");
-#/
 	}
-
+#/
 	flag_set("scriptgen_done");
 }
 
@@ -244,7 +306,7 @@ script_gen_csvdumpprintln(file,signature)
 	{
 		prefix = "string";
 /#
-															assertmsg("string not yet supported by scriptgen");
+		assertmsg("string not yet supported by scriptgen");
 #/
 	}
 	else if(issubstr(signature,"turret"))
@@ -275,9 +337,14 @@ script_gen_csvdumpprintln(file,signature)
 	}
 
 /#
-	println(string);
-	fprintln(file,string);
-Stack-Empty ? Stack-Empty : file == -1 || !level.bcsvgened
+	if(file == -1 || !level.bcsvgened)
+	{
+		println(string);
+	}
+	else
+	{
+		fprintln(file,string);
+	}
 #/
 }
 
@@ -285,8 +352,13 @@ Stack-Empty ? Stack-Empty : file == -1 || !level.bcsvgened
 script_gen_dumpprintln(file,string)
 {
 /#
-	println(string);
-	fprintln(file,string);
-Stack-Empty ? Stack-Empty : file == -1 || !level.bscriptgened
+	if(file == -1 || !level.bscriptgened)
+	{
+		println(string);
+	}
+	else
+	{
+		fprintln(file,string);
+	}
 #/
 }

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 32
- * Decompile Time: 205 ms
- * Timestamp: 10/27/2023 3:02:23 AM
+ * Decompile Time: 18 ms
+ * Timestamp: 10/28/2023 12:11:32 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/shared;
@@ -369,7 +369,8 @@ handlenotetrack(note,flagname,customfunction,var1)
 		default:
 			return [[ customfunction ]](note);
 			return [[ customfunction ]](note,var1);
-	Stack-Empty ? IsDefined(customfunction) : IsDefined(var1)
+	IsDefined(var1)
+	IsDefined(customfunction)
 			break;
 	}
 }

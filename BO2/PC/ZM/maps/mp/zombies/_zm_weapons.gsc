@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 108
- * Decompile Time: 449 ms
- * Timestamp: 10/27/2023 3:03:35 AM
+ * Decompile Time: 51 ms
+ * Timestamp: 10/28/2023 12:11:59 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -645,8 +645,10 @@ add_zombie_weapon(weapon_name,upgrade_name,hint,cost,weaponvo,weaponvoresp,ammo_
 	}
 
 /#
-	[[ level.devgui_add_weapon ]](weapon_name,upgrade_name,hint,cost,weaponvo,weaponvoresp,ammo_cost);
-IsDefined(level.devgui_add_weapon)
+	if(IsDefined(level.devgui_add_weapon))
+	{
+		[[ level.devgui_add_weapon ]](weapon_name,upgrade_name,hint,cost,weaponvo,weaponvoresp,ammo_cost);
+	}
 #/
 }
 
@@ -1788,9 +1790,8 @@ get_weapon_display_name(weapon_name)
 		weapon_display = &"MPUI_NONE";
 /#
 		weapon_display = "missing weapon name " + weapon_name;
-#/
 	}
-
+#/
 	return weapon_display;
 }
 
@@ -2674,8 +2675,10 @@ get_pack_a_punch_weapon_options(weapon)
 	}
 
 /#
-	reticle_index = GetDvarInt(#"471F9AB9");
-GetDvarInt(#"471F9AB9") >= 0
+	if(GetDvarInt(#"471F9AB9") >= 0)
+	{
+		reticle_index = GetDvarInt(#"471F9AB9");
+	}
 #/
 	scary_eyes_reticle_index = 8;
 	purple_reticle_color_index = 3;
@@ -2943,9 +2946,11 @@ get_player_index(player)
 	assert(IsDefined(player.characterindex));
 #/
 /#
-	new_vo_index = GetDvarInt(#"2222BA21");
-	return new_vo_index;
-player.entity_num == 0 && GetDvar(#"2222BA21") != ""
+	if(player.entity_num == 0 && GetDvar(#"2222BA21") != "")
+	{
+		new_vo_index = GetDvarInt(#"2222BA21");
+		return new_vo_index;
+	}
 #/
 	return player.characterindex;
 }

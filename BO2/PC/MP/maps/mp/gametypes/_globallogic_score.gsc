@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 58
- * Decompile Time: 130 ms
- * Timestamp: 10/27/2023 3:00:05 AM
+ * Decompile Time: 19 ms
+ * Timestamp: 10/28/2023 12:10:32 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -636,18 +636,24 @@ setplayermomentumdebug()
 {
 /#
 	setdvar("sv_momentumPercent",0);
-	for(;;)
+	while(1)
 	{
 		wait(1);
 		momentumpercent = getdvarfloatdefault("sv_momentumPercent",0);
-		player = gethostplayer();
-		return;
-		_setplayermomentum(player,int(2000 * momentumpercent / 100));
+		if(momentumpercent != 0)
+		{
+			player = gethostplayer();
+			if(!(IsDefined(player)))
+			{
+				return;
+			}
+
+			if(IsDefined(player.killstreak))
+			{
+				_setplayermomentum(player,int(2000 * momentumpercent / 100));
+			}
+		}
 	}
-IsDefined(player.killstreak)
-IsDefined(player)
-momentumpercent != 0
-1
 #/
 }
 
@@ -1499,13 +1505,13 @@ processkillstreakassists(attacker,inflictor,weaponname)
 		else
 		{
 /#
-						assert(IsDefined(player.activecounteruavs));
+			assert(IsDefined(player.activecounteruavs));
 #/
 /#
-						assert(IsDefined(player.activeuavs));
+			assert(IsDefined(player.activeuavs));
 #/
 /#
-						assert(IsDefined(player.activesatellites));
+			assert(IsDefined(player.activesatellites));
 #/
 			if(player.activecounteruavs > 0 && !maps/mp/killstreaks/_killstreaks::iskillstreakweapon(weaponname))
 			{
@@ -1575,13 +1581,18 @@ xpratethread()
 	self endon("death");
 	self endon("disconnect");
 	level endon("game_ended");
-	wait(0.05);
+	while(level.inprematchperiod)
+	{
+		wait(0.05);
+	}
+
 	for(;;)
 	{
 		wait(5);
-		self maps/mp/gametypes/_rank::giverankxp("kill",int(min(GetDvarInt(#"F8D00F60"),50)));
+		if(IsDefined(level.teams[level.players[0].pers["team"]]))
+		{
+			self maps/mp/gametypes/_rank::giverankxp("kill",int(min(GetDvarInt(#"F8D00F60"),50)));
+		}
 	}
-IsDefined(level.teams[level.players[0].pers["team"]])
-level.inprematchperiod
 #/
 }

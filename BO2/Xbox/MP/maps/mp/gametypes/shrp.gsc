@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 20
- * Decompile Time: 133 ms
- * Timestamp: 10/27/2023 3:04:41 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:13:39 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -280,8 +280,10 @@ getrandomgunfromprogression()
 
 		level.usedbaseweapons[level.usedbaseweapons.size] = baseweaponname;
 /#
-		weaponname = debug_weapon;
-debug_weapon != ""
+		if(debug_weapon != "")
+		{
+			weaponname = debug_weapon;
+		}
 #/
 		return weaponname;
 	}

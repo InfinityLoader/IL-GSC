@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 97
- * Decompile Time: 292 ms
- * Timestamp: 10/27/2023 3:02:47 AM
+ * Decompile Time: 31 ms
+ * Timestamp: 10/28/2023 12:11:40 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -986,8 +986,10 @@ onspawnproximityweaponobject(watcher,owner)
 	self thread commononspawnuseweaponobject(watcher,owner);
 	self thread proximityweaponobjectdetonation(watcher);
 /#
-	self thread proximityweaponobjectdebug(watcher);
-GetDvarInt(#"38868733")
+	if(GetDvarInt(#"38868733"))
+	{
+		self thread proximityweaponobjectdebug(watcher);
+	}
 #/
 }
 
@@ -1050,7 +1052,9 @@ watchweaponobjectspawn()
 				}
 	
 				break;
-	(IsDefined(self.weaponobjectwatcherarray[i].objectarray[j])) ? weapname == "proximity_grenade_mp" : IsDefined(self.weaponobjectwatcherarray[i].detonate) && self.weaponobjectwatcherarray[i].objectarray.size > numallowed - 1
+	IsDefined(self.weaponobjectwatcherarray[i].detonate) && self.weaponobjectwatcherarray[i].objectarray.size > numallowed - 1
+	weapname == "proximity_grenade_mp"
+	IsDefined(self.weaponobjectwatcherarray[i].objectarray[j])
 	j < objectarray_size
 	self.weaponobjectwatcherarray[i].weapon != weapname
 	i < self.weaponobjectwatcherarray.size
@@ -1133,24 +1137,24 @@ showcone(angle,range,color)
 	up = vectorcross(forward,right);
 	fullforward = forward * range * cos(angle);
 	sideamnt = range * sin(angle);
-	for(;;)
+	while(1)
 	{
 		prevpoint = (0,0,0);
-		i = 0;
-		for(;;)
+		for(i = 0;i <= 20;i++)
 		{
 			coneangle = i / 20 * 360;
 			point = start + fullforward + sideamnt * right * cos(coneangle) + up * sin(coneangle);
-			line(start,point,color);
-			line(prevpoint,point,color);
+			if(i > 0)
+			{
+				line(start,point,color);
+				line(prevpoint,point,color);
+			}
+
 			prevpoint = point;
-			i++;
 		}
+
 		wait(0.05);
 	}
-i > 0
-i <= 20
-1
 #/
 }
 
@@ -1895,14 +1899,11 @@ deleteweaponobjectson()
 saydamaged(orig,amount)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < 60;i++)
 	{
 		print3d(orig,"damaged! " + amount);
 		wait(0.05);
-		i++;
 	}
-i < 60
 #/
 }
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 44
- * Decompile Time: 167 ms
- * Timestamp: 10/27/2023 3:03:23 AM
+ * Decompile Time: 12 ms
+ * Timestamp: 10/28/2023 12:11:55 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -51,10 +51,15 @@ is_sidequest_allowed(a_gametypes)
 sidequest_debug()
 {
 /#
-	return;
-	wait(1);
-1
-GetDvar(#"A7AC338D") != "1"
+	if(GetDvar(#"A7AC338D") != "1")
+	{
+		return;
+	}
+
+	while(1)
+	{
+		wait(1);
+	}
 #/
 }
 
@@ -199,8 +204,11 @@ declare_sidequest(name,init_func,logic_func,complete_func,generic_stage_start_fu
 	}
 
 /#
-	println("*** ERROR: Attempt to re-declare sidequest with name " + name);
-IsDefined(level._zombie_sidequests[name])
+	if(IsDefined(level._zombie_sidequests[name]))
+	{
+		println("*** ERROR: Attempt to re-declare sidequest with name " + name);
+		return;
+	}
 #/
 	sq = spawnstruct();
 	sq.name = name;
@@ -225,14 +233,23 @@ IsDefined(level._zombie_sidequests[name])
 declare_sidequest_stage(sidequest_name,stage_name,init_func,logic_func,exit_func)
 {
 /#
-	println("*** ERROR:  Attempt to declare a side quest stage before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add stage " + stage_name + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR: Sidequest " + sidequest_name + " already has a stage called " + stage_name);
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a side quest stage before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add stage " + stage_name + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name]))
+	{
+		println("*** ERROR: Sidequest " + sidequest_name + " already has a stage called " + stage_name);
+		return;
+	}
 #/
 	stage = spawnstruct();
 	stage.name = stage_name;
@@ -251,14 +268,23 @@ IsDefined(level._zombie_sidequests)
 set_stage_time_limit(sidequest_name,stage_name,time_limit,timer_func)
 {
 /#
-	println("*** ERROR:  Attempt to set a side quest stage time limit before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add timelimit to stage " + stage_name + " in side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR: Attempt to add timelimit to stage " + stage_name + " in Sidequest " + sidequest_name + " but stage does not exist.");
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to set a side quest stage time limit before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add timelimit to stage " + stage_name + " in side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])))
+	{
+		println("*** ERROR: Attempt to add timelimit to stage " + stage_name + " in Sidequest " + sidequest_name + " but stage does not exist.");
+		return;
+	}
 #/
 	level._zombie_sidequests[sidequest_name].stages[stage_name].time_limit = time_limit;
 	level._zombie_sidequests[sidequest_name].stages[stage_name].time_limit_func = timer_func;
@@ -269,17 +295,29 @@ declare_stage_asset_from_struct(sidequest_name,stage_name,target_name,thread_fun
 {
 	structs = getstructarray(target_name,"targetname");
 /#
-	println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
-	return;
-	println("*** ERROR: No Structs with " + target_name + " not found.");
-structs.size
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
+		return;
+	}
+
+	if(!(structs.size))
+	{
+		println("*** ERROR: No Structs with " + target_name + " not found.");
+		return;
+	}
 #/
 	for(i = 0;i < structs.size;i++)
 	{
@@ -296,14 +334,23 @@ IsDefined(level._zombie_sidequests)
 declare_stage_title(sidequest_name,stage_name,title)
 {
 /#
-	println("*** ERROR:  Attempt to declare a stage title " + title + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to declare a stage title " + title + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR:  Attempt to declare stage title " + title + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a stage title " + title + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to declare a stage title " + title + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])))
+	{
+		println("*** ERROR:  Attempt to declare stage title " + title + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
+		return;
+	}
 #/
 	level._zombie_sidequests[sidequest_name].stages[stage_name].title = title;
 }
@@ -313,17 +360,29 @@ declare_stage_asset(sidequest_name,stage_name,target_name,thread_func,trigger_th
 {
 	ents = getentarray(target_name,"targetname");
 /#
-	println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
-	return;
-	println("*** ERROR: No Ents with " + target_name + " not found.");
-ents.size
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " : " + stage_name + " but no such stage exists.");
+		return;
+	}
+
+	if(!(ents.size))
+	{
+		println("*** ERROR: No Ents with " + target_name + " not found.");
+		return;
+	}
 #/
 	for(i = 0;i < ents.size;i++)
 	{
@@ -341,14 +400,23 @@ declare_sidequest_asset(sidequest_name,target_name,thread_func,trigger_thread_fu
 {
 	ents = getentarray(target_name,"targetname");
 /#
-	println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR: No Ents with " + target_name + " not found.");
-ents.size
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(ents.size))
+	{
+		println("*** ERROR: No Ents with " + target_name + " not found.");
+		return;
+	}
 #/
 	for(i = 0;i < ents.size;i++)
 	{
@@ -368,14 +436,23 @@ declare_sidequest_asset_from_struct(sidequest_name,target_name,thread_func,trigg
 {
 	structs = getstructarray(target_name,"targetname");
 /#
-	println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR: No Structs with " + target_name + " not found.");
-structs.size
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to declare a side quest asset " + target_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to add asset " + target_name + " to side quest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(structs.size))
+	{
+		println("*** ERROR: No Structs with " + target_name + " not found.");
+		return;
+	}
 #/
 	for(i = 0;i < structs.size;i++)
 	{
@@ -536,7 +613,8 @@ build_assets()
 					use_trigger thread use_trigger_thread();
 					self.active_assets[self.active_assets.size - 1].trigger = use_trigger;
 					break;
-	Stack-Empty ? IsDefined(asset.radius) : IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.radius)
 					break;
 
 				case "trigger_radius_damage":
@@ -547,7 +625,8 @@ build_assets()
 					damage_trigger thread damage_trigger_thread();
 					self.active_assets[self.active_assets.size - 1].trigger = damage_trigger;
 					break;
-	Stack-Empty ? IsDefined(asset.radius) : IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.radius)
 					break;
 
 				case "trigger_radius":
@@ -558,7 +637,8 @@ build_assets()
 					radius_trigger thread radius_trigger_thread();
 					self.active_assets[self.active_assets.size - 1].trigger = radius_trigger;
 					break;
-	Stack-Empty ? IsDefined(asset.radius) : IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.trigger_thread_func)
+	IsDefined(asset.radius)
 					break;
 			}
 		}
@@ -623,11 +703,17 @@ stage_logic_func_wrapper(sidequest,stage)
 sidequest_start(sidequest_name)
 {
 /#
-	println("*** ERROR:  Attempt start a side quest asset " + sidequest_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to start " + sidequest_name + " but no such side quest exists.");
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt start a side quest asset " + sidequest_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to start " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
 #/
 	sidequest = level._zombie_sidequests[sidequest_name];
 	sidequest build_assets();
@@ -749,9 +835,12 @@ time_limited_stage(sidequest)
 sidequest_println(str)
 {
 /#
-	return;
+	if(GetDvar(#"A7AC338D") != "1")
+	{
+		return;
+	}
+
 	println(str);
-GetDvar(#"A7AC338D") != "1"
 #/
 }
 
@@ -791,11 +880,17 @@ precache_sidequest_assets()
 sidequest_complete(sidequest_name)
 {
 /#
-	println("*** ERROR:  Attempt to call sidequest_complete for sidequest " + sidequest_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to call sidequest_complete for sidequest " + sidequest_name + " but no such side quest exists.");
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to call sidequest_complete for sidequest " + sidequest_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to call sidequest_complete for sidequest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
 #/
 	return level._zombie_sidequests[sidequest_name].sidequest_complete;
 }
@@ -804,16 +899,25 @@ IsDefined(level._zombie_sidequests)
 stage_completed(sidequest_name,stage_name)
 {
 /#
-	println("*** ERROR:  Attempt to call stage_complete for sidequest " + sidequest_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to call stage_complete for sidequest " + sidequest_name + " but no such side quest exists.");
-	return;
-	println("*** ERROR:  Attempt to call stage_complete in sq " + sidequest_name + " : " + stage_name + " but no such stage exists.");
-	return;
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt to call stage_complete for sidequest " + sidequest_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to call stage_complete for sidequest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])))
+	{
+		println("*** ERROR:  Attempt to call stage_complete in sq " + sidequest_name + " : " + stage_name + " but no such stage exists.");
+		return;
+	}
+
 	println("*** stage completed called.");
-IsDefined(level._zombie_sidequests[sidequest_name].stages[stage_name])
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
 #/
 	sidequest = level._zombie_sidequests[sidequest_name];
 	stage = sidequest.stages[stage_name];
@@ -980,11 +1084,17 @@ sidequest_stage_active(sidequest_name,stage_name)
 sidequest_start_next_stage(sidequest_name)
 {
 /#
-	println("*** ERROR:  Attempt start next stage in side quest asset " + sidequest_name + " before sidequests declared.");
-	return;
-	println("*** ERROR:  Attempt to start next sidequest in sidequest " + sidequest_name + " but no such side quest exists.");
-IsDefined(level._zombie_sidequests[sidequest_name])
-IsDefined(level._zombie_sidequests)
+	if(!(IsDefined(level._zombie_sidequests)))
+	{
+		println("*** ERROR:  Attempt start next stage in side quest asset " + sidequest_name + " before sidequests declared.");
+		return;
+	}
+
+	if(!(IsDefined(level._zombie_sidequests[sidequest_name])))
+	{
+		println("*** ERROR:  Attempt to start next sidequest in sidequest " + sidequest_name + " but no such side quest exists.");
+		return;
+	}
 #/
 	sidequest = level._zombie_sidequests[sidequest_name];
 	if(sidequest.sidequest_complete == 1)
@@ -1047,7 +1157,6 @@ fake_use(notify_string,qualifier_func)
 
 /#
 		print3d(self.origin,"+",VectorScale((0,1,0)),255);
-1
 #/
 		players = get_players();
 		for(i = 0;i < players.size;i++)
@@ -1064,7 +1173,7 @@ fake_use(notify_string,qualifier_func)
 				{
 					if(players[i] usebuttonpressed())
 					{
-						self notify(notify_string,players[i]);
+						self notify(notify_string,players[i],1);
 						return;
 					}
 				}

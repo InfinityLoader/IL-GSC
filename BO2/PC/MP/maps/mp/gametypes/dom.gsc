@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 47
- * Decompile Time: 194 ms
- * Timestamp: 10/27/2023 3:00:22 AM
+ * Decompile Time: 33 ms
+ * Timestamp: 10/28/2023 12:10:39 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -412,43 +412,47 @@ getunownedflagneareststart(team,excludeflag)
 domdebug()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		wait(2);
-		for(;;)
+		if(GetDvar(#"9F76D073") != "1")
 		{
-			break;
-			i = 0;
-			for(;;)
+			wait(2);
+			continue;
+		}
+
+		while(1)
+		{
+			if(GetDvar(#"9F76D073") != "1")
 			{
-				j = 0;
-				for(;;)
+				break;
+			}
+
+			for(i = 0;i < level.flags.size;i++)
+			{
+				for(j = 0;j < level.flags[i].adjflags.size;j++)
 				{
 					line(level.flags[i].origin,level.flags[i].adjflags[j].origin,(1,1,1));
-					j++;
 				}
-				j = 0;
-				for(;;)
+
+				for(j = 0;j < level.flags[i].nearbyspawns.size;j++)
 				{
 					line(level.flags[i].origin,level.flags[i].nearbyspawns[j].origin,(0.2,0.2,0.6));
-					j++;
 				}
-				print3d(level.flags[i].origin,"allies best spawn flag");
-				print3d(level.flags[i].origin,"axis best spawn flag");
-				i++;
+
+				if(level.flags[i] == level.bestspawnflag["allies"])
+				{
+					print3d(level.flags[i].origin,"allies best spawn flag");
+				}
+
+				if(level.flags[i] == level.bestspawnflag["axis"])
+				{
+					print3d(level.flags[i].origin,"axis best spawn flag");
+				}
 			}
+
 			wait(0.05);
 		}
 	}
-level.flags[i] == level.bestspawnflag["axis"]
-level.flags[i] == level.bestspawnflag["allies"]
-j < level.flags[i].nearbyspawns.size
-j < level.flags[i].adjflags.size
-i < level.flags.size
-GetDvar(#"9F76D073") != "1"
-1
-GetDvar(#"9F76D073") != "1"
-1
 #/
 }
 
@@ -738,9 +742,8 @@ give_capture_credit(touchlist,string,lastownerteam,isbflag)
 		{
 /#
 			player_from_touchlist iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU CAPTURE CREDIT AS BOOSTING PREVENTION");
-#/
 		}
-
+#/
 		level thread maps/mp/_popups::displayteammessagetoall(string,player_from_touchlist);
 	}
 }
@@ -824,15 +827,17 @@ onscoreclosemusic()
 	}
 
 /#
-	println("Music System Domination - scoreDif " + scoredif);
-	println("Music System Domination - axisScore " + axisscore);
-	println("Music System Domination - alliedScore " + alliedscore);
-	println("Music System Domination - scoreLimit " + scorelimit);
-	println("Music System Domination - currentScore " + currentscore);
-	println("Music System Domination - scoreThreshold " + scorethreshold);
-	println("Music System Domination - scoreDif " + scoredif);
-	println("Music System Domination - scoreThresholdStart " + scorethresholdstart);
-GetDvarInt(#"BC4784C") > 0
+	if(GetDvarInt(#"BC4784C") > 0)
+	{
+		println("Music System Domination - scoreDif " + scoredif);
+		println("Music System Domination - axisScore " + axisscore);
+		println("Music System Domination - alliedScore " + alliedscore);
+		println("Music System Domination - scoreLimit " + scorelimit);
+		println("Music System Domination - currentScore " + currentscore);
+		println("Music System Domination - scoreThreshold " + scorethreshold);
+		println("Music System Domination - scoreDif " + scoredif);
+		println("Music System Domination - scoreThresholdStart " + scorethresholdstart);
+	}
 #/
 	if(scoredif <= scorethreshold && scorethresholdstart <= currentscore && level.playingactionmusic != 1)
 	{
@@ -939,10 +944,9 @@ onplayerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shitloc,ps
 					{
 /#
 						attacker iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU DEFENSIVE CREDIT AS BOOSTING PREVENTION");
-#/
 					}
 				}
-
+#/
 				if(defendedflag)
 				{
 					if(!(IsDefined(attacker.dom_offends)))
@@ -971,10 +975,10 @@ onplayerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shitloc,ps
 					{
 /#
 						attacker iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU OFFENSIVE CREDIT AS BOOSTING PREVENTION");
-#/
 					}
 				}
 			}
+#/
 		}
 
 		if(self.touchtriggers.size && attacker.pers["team"] != self.pers["team"])
@@ -1311,15 +1315,13 @@ flagsetup()
 	{
 /#
 		println("^1------------ Map Errors ------------");
-		i = 0;
-		for(;;)
+		for(i = 0;i < maperrors.size;i++)
 		{
 			println(maperrors[i]);
-			i++;
 		}
+
 		println("^1------------------------------------");
 		maps/mp/_utility::error("Map errors. See above");
-i < maperrors.size
 #/
 		maps/mp/gametypes/_callbacksetup::abortlevel();
 	}

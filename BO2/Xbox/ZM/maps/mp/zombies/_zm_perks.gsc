@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 95
- * Decompile Time: 448 ms
- * Timestamp: 10/27/2023 3:06:14 AM
+ * Decompile Time: 89 ms
+ * Timestamp: 10/28/2023 12:14:16 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -854,8 +854,10 @@ wait_for_player_to_take(player,weapon,packa_timer,upgrade_as_attachment)
 			player maps/mp/zombies/_zm_stats::increment_player_stat("pap_weapon_grabbed");
 			current_weapon = player getcurrentweapon();
 /#
-			iprintlnbold("WEAPON IS NONE, PACKAPUNCH RETRIEVAL DENIED");
-"none" == current_weapon
+			if("none" == current_weapon)
+			{
+				iprintlnbold("WEAPON IS NONE, PACKAPUNCH RETRIEVAL DENIED");
+			}
 #/
 			if(is_player_valid(player) && !player.is_drinking > 0 && !is_placeable_mine(current_weapon) && !is_equipment(current_weapon) && level.revive_tool != current_weapon && "none" != current_weapon && !player hacker_active())
 			{
@@ -1802,11 +1804,11 @@ electric_perks_dialog()
 							self notify("warning_dialog");
 /#
 							iprintlnbold("warning_given");
-#/
 						}
 					}
 				}
 			}
+#/
 		}
 	}
 }
@@ -2095,8 +2097,10 @@ vending_trigger_think()
 		{
 			cheat = 0;
 /#
-			cheat = 1;
-	GetDvarInt(#"FA81816F") >= 5
+			if(GetDvarInt(#"FA81816F") >= 5)
+			{
+				cheat = 1;
+			}
 #/
 			if(cheat != 1)
 			{
@@ -2418,7 +2422,10 @@ check_player_has_perk(perk)
 {
 	self endon("death");
 /#
-GetDvarInt(#"FA81816F") >= 5
+	if(GetDvarInt(#"FA81816F") >= 5)
+	{
+		return;
+	}
 #/
 	dist = 16384;
 	while(1)
@@ -2458,8 +2465,13 @@ vending_set_hintstring(perk)
 perk_think(perk)
 {
 /#
-IsDefined(self.perk_hud[perk])
-GetDvarInt(#"FA81816F") >= 5
+	if(GetDvarInt(#"FA81816F") >= 5)
+	{
+		if(IsDefined(self.perk_hud[perk]))
+		{
+			return;
+		}
+	}
 #/
 	perk_str = perk + "_stop";
 	result = self waittill_any_return("fake_death","death","player_downed",perk_str);
@@ -3055,8 +3067,8 @@ perk_pause(perk)
 
 /#
 			println(" ZM PERKS " + player.name + " paused perk " + perk + "\n");
-#/
 		}
+#/
 	}
 }
 

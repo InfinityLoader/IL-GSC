@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 72
- * Decompile Time: 367 ms
- * Timestamp: 10/27/2023 3:02:49 AM
+ * Decompile Time: 44 ms
+ * Timestamp: 10/28/2023 12:11:41 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1535,11 +1535,12 @@ onspawnplayer(predictedspawn)
 		{
 			spawnpoint = maps/mp/zombies/_zm::check_for_valid_spawn_near_team(self,1);
 /#
-			println("ZM >> WARNING UNABLE TO FIND RESPAWN POINT NEAR TEAM - USING INITIAL SPAWN POINTS");
-IsDefined(spawnpoint)
-#/
+			if(!(IsDefined(spawnpoint)))
+			{
+				println("ZM >> WARNING UNABLE TO FIND RESPAWN POINT NEAR TEAM - USING INITIAL SPAWN POINTS");
+			}
 		}
-
+#/
 		if(!(IsDefined(spawnpoint)))
 		{
 			match_string = "";
@@ -1600,8 +1601,10 @@ IsDefined(spawnpoint)
 	self.score = self maps/mp/gametypes_zm/_globallogic_score::getpersstat("score");
 	self.pers["participation"] = 0;
 /#
-	self.score = 100000;
-GetDvarInt(#"FA81816F") >= 1
+	if(GetDvarInt(#"FA81816F") >= 1)
+	{
+		self.score = 100000;
+	}
 #/
 	self.score_total = self.score;
 	self.old_score = self.score;
@@ -2122,7 +2125,10 @@ wait_for_players()
 onplayerconnect_check_for_hotjoin()
 {
 /#
-GetDvarInt(#"EA6D219A") > 0
+	if(GetDvarInt(#"EA6D219A") > 0)
+	{
+		return;
+	}
 #/
 	map_logic_exists = level flag_exists("start_zombie_round_logic");
 	map_logic_started = flag("start_zombie_round_logic");

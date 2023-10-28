@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 53
- * Decompile Time: 383 ms
- * Timestamp: 10/27/2023 3:00:43 AM
+ * Decompile Time: 20 ms
+ * Timestamp: 10/28/2023 12:10:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -685,10 +685,15 @@ destroyplayerhelicopter()
 debug_print_heli(msg)
 {
 /#
-	setdvar("scr_debugheli","0");
-	println(msg);
-GetDvarInt(#"2CCCDCB5") == 1
-GetDvar(#"2CCCDCB5") == ""
+	if(GetDvar(#"2CCCDCB5") == "")
+	{
+		setdvar("scr_debugheli","0");
+	}
+
+	if(GetDvarInt(#"2CCCDCB5") == 1)
+	{
+		println(msg);
+	}
 #/
 }
 
@@ -1331,8 +1336,10 @@ debugtag(tagname)
 {
 /#
 	start_origin = self gettagorigin(tagname);
-	sphere(start_origin,5,(1,0,0),1,1,10,1);
-IsDefined(start_origin)
+	if(IsDefined(start_origin))
+	{
+		sphere(start_origin,5,(1,0,0),1,1,10,1);
+	}
 #/
 }
 
@@ -1648,17 +1655,22 @@ debugcheckforexit(hardpointtype)
 /#
 	self endon("disconnect");
 	self endon("heli_timeup");
-	return;
-	for(;;)
+	if(IsDefined(self.pers["isBot"]) && self.pers["isBot"])
 	{
-		player_heli_leave(hardpointtype);
-		debug_print_heli(">>>>>>>send notify [exit_vehicle***heli_timeup]");
 		return;
+	}
+
+	while(1)
+	{
+		if(self usebuttonpressed())
+		{
+			player_heli_leave(hardpointtype);
+			debug_print_heli(">>>>>>>send notify [exit_vehicle***heli_timeup]");
+			return;
+		}
+
 		wait(0.1);
 	}
-self usebuttonpressed()
-1
-IsDefined(self.pers["isBot"]) && self.pers["isBot"]
 #/
 }
 

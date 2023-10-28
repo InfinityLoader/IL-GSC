@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 10
- * Decompile Time: 30 ms
- * Timestamp: 10/27/2023 3:01:42 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:11:07 AM
 *******************************************************************/
 
 #include maps/mp/_compass;
@@ -163,15 +163,20 @@ devgui_dockside()
 		{
 			case "":
 				break;
+	
 			case "crane_print_dvars":
 				crane_print_dvars();
 				break;
+	
 			default:
 				break;
 		}
-		setdvar("devgui_notify","");
+
+		if(GetDvar(#"9488D1C1") != "")
+		{
+			setdvar("devgui_notify","");
+		}
 	}
-GetDvar(#"9488D1C1") != ""
 #/
 }
 
@@ -187,16 +192,10 @@ crane_print_dvars()
 	dvars[dvars.size] = "scr_crane_arm_z_move_time";
 	dvars[dvars.size] = "scr_crane_claw_drop_speed";
 	dvars[dvars.size] = "scr_crane_claw_drop_time_min";
-	_a211 = dvars;
-	_k211 = FirstArrayKey(_a211);
-	for(;;)
+	foreach(dvar in dvars)
 	{
-		dvar = _a211[_k211];
 		print(dvar + ": ");
 		println(GetDvar(dvar));
-		_k211 = NextArrayKey(_a211);
 	}
-_k211
-IsDefined(_k211)
 #/
 }

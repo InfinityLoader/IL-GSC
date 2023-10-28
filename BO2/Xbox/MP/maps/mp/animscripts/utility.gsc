@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 10
- * Decompile Time: 12 ms
- * Timestamp: 10/27/2023 3:04:08 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:13:30 AM
 *******************************************************************/
 
 //Function Number: 1
@@ -32,9 +32,17 @@ anim_get_dvar(dvar,def)
 set_orient_mode(mode,val1)
 {
 /#
-	println("DOG:  Setting orient mode: " + mode + " " + val1 + " " + GetTime());
-	println("DOG:  Setting orient mode: " + mode + " " + GetTime());
-Stack-Empty ? level.dog_debug_orient == self getentnum() : IsDefined(val1)
+	if(level.dog_debug_orient == self getentnum())
+	{
+		if(IsDefined(val1))
+		{
+			println("DOG:  Setting orient mode: " + mode + " " + val1 + " " + GetTime());
+		}
+		else
+		{
+			println("DOG:  Setting orient mode: " + mode + " " + GetTime());
+		}
+	}
 #/
 	if(IsDefined(val1))
 	{
@@ -50,10 +58,15 @@ Stack-Empty ? level.dog_debug_orient == self getentnum() : IsDefined(val1)
 debug_anim_print(text)
 {
 /#
-	println(text + " " + GetTime());
-	println(text + " " + GetTime());
-level.dog_debug_anims_ent == self getentnum()
-level.dog_debug_anims
+	if(level.dog_debug_anims)
+	{
+		println(text + " " + GetTime());
+	}
+
+	if(level.dog_debug_anims_ent == self getentnum())
+	{
+		println(text + " " + GetTime());
+	}
 #/
 }
 
@@ -61,17 +74,19 @@ level.dog_debug_anims
 debug_turn_print(text,line)
 {
 /#
-	duration = 200;
-	currentyawcolor = (1,1,1);
-	lookaheadyawcolor = (1,0,0);
-	desiredyawcolor = (1,1,0);
-	currentyaw = AngleClamp180(self.angles[1]);
-	desiredyaw = AngleClamp180(self.desiredangle);
-	lookaheaddir = self.lookaheaddir;
-	lookaheadangles = VectorToAngles(lookaheaddir);
-	lookaheadyaw = AngleClamp180(lookaheadangles[1]);
-	println(text + " " + GetTime() + " cur: " + currentyaw + " look: " + lookaheadyaw + " desired: " + desiredyaw);
-level.dog_debug_turns == self getentnum()
+	if(level.dog_debug_turns == self getentnum())
+	{
+		duration = 200;
+		currentyawcolor = (1,1,1);
+		lookaheadyawcolor = (1,0,0);
+		desiredyawcolor = (1,1,0);
+		currentyaw = AngleClamp180(self.angles[1]);
+		desiredyaw = AngleClamp180(self.desiredangle);
+		lookaheaddir = self.lookaheaddir;
+		lookaheadangles = VectorToAngles(lookaheaddir);
+		lookaheadyaw = AngleClamp180(lookaheadangles[1]);
+		println(text + " " + GetTime() + " cur: " + currentyaw + " look: " + lookaheadyaw + " desired: " + desiredyaw);
+	}
 #/
 }
 
@@ -100,8 +115,12 @@ current_yaw_line_debug(duration)
 	currentyawcolor[1] = (1,0,1);
 	current_color_index = 0;
 	start_time = GetTime();
-	level.lastdebugheight = 15;
-	for(;;)
+	if(!(IsDefined(level.lastdebugheight)))
+	{
+		level.lastdebugheight = 15;
+	}
+
+	while(GetTime() - start_time < 1000)
 	{
 		pos1 = (self.origin[0],self.origin[1],self.origin[2] + level.lastdebugheight);
 		pos2 = current_color_index + 1 * 10 + VectorScale(AnglesToForward(self.angles));
@@ -109,10 +128,15 @@ current_yaw_line_debug(duration)
 		current_color_index = current_color_index + 1 % currentyawcolor.size;
 		wait(0.05);
 	}
-	level.lastdebugheight = 30;
-	level.lastdebugheight = 15;
-(GetTime() - start_time < 1000) ? pos1 : level.lastdebugheight == 15
-IsDefined(level.lastdebugheight)
+
+	if(level.lastdebugheight == 15)
+	{
+		level.lastdebugheight = 30;
+	}
+	else
+	{
+		level.lastdebugheight = 15;
+	}
 #/
 }
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 26
- * Decompile Time: 62 ms
- * Timestamp: 10/27/2023 3:00:11 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:10:35 AM
 *******************************************************************/
 
 #include maps/mp/_challenges;
@@ -127,7 +127,8 @@ uploadglobalstatcounters()
 			}
 	
 			break;
-	Stack-Empty ? index < level.bombzones.size : !IsDefined(level.bombzones[index].bombexploded) || !level.bombzones[index].bombexploded
+	!IsDefined(level.bombzones[index].bombexploded) || !level.bombzones[index].bombexploded
+	index < level.bombzones.size
 			break;
 
 		case "sab":
@@ -332,7 +333,10 @@ statsetwithgametype(dataname,value,incvalue)
 adjustrecentstats()
 {
 /#
-GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	initializematchstats();
 }
@@ -464,7 +468,10 @@ setafteractionreportstat(statname,value,index)
 	}
 
 /#
-GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	if(level.rankedmatch || level.wagermatch || level.leaguematch)
 	{

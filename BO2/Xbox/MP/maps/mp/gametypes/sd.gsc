@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 34
- * Decompile Time: 163 ms
- * Timestamp: 10/27/2023 3:04:41 AM
+ * Decompile Time: 23 ms
+ * Timestamp: 10/28/2023 12:13:39 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -870,8 +870,10 @@ bombplantedmusicdelay()
 	level endon("bomb_defused");
 	time = level.bombtimer - 30;
 /#
-	println("Music System - waiting to set TIME_OUT: " + time);
-GetDvarInt(#"BC4784C") > 0
+	if(GetDvarInt(#"BC4784C") > 0)
+	{
+		println("Music System - waiting to set TIME_OUT: " + time);
+	}
 #/
 	if(time > 1)
 	{

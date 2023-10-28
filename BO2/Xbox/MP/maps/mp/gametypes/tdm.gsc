@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 9
- * Decompile Time: 44 ms
- * Timestamp: 10/27/2023 3:04:42 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:13:40 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -98,16 +98,10 @@ onstartgametype()
 	maps/mp/gametypes/_spawning::updateallspawnpoints();
 /#
 	level.spawn_start = [];
-	_a161 = level.teams;
-	_k161 = FirstArrayKey(_a161);
-	for(;;)
+	foreach(team in level.teams)
 	{
-		team = _a161[_k161];
 		level.spawn_start[team] = maps/mp/gametypes/_spawnlogic::getspawnpointarray(maps/mp/gametypes/_spawning::gettdmstartspawnname(team));
-		_k161 = NextArrayKey(_a161);
 	}
-_k161
-IsDefined(_k161)
 #/
 	level.mapcenter = maps/mp/gametypes/_spawnlogic::findboxcenter(level.spawnmins,level.spawnmaxs);
 	setmapcenter(level.mapcenter);

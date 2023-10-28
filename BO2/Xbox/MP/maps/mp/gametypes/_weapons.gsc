@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 80
- * Decompile Time: 639 ms
- * Timestamp: 10/27/2023 3:04:29 AM
+ * Decompile Time: 24 ms
+ * Timestamp: 10/28/2023 12:13:36 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -414,8 +414,10 @@ dropweaponfordeath(attacker,sweapon,smeansofdeath)
 	if(!(IsDefined(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: not defined");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: not defined");
+		}
 #/
 		return;
 	}
@@ -423,8 +425,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(weapon == "none")
 	{
 /#
-		println("didn\'t drop weapon: weapon == none");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: weapon == none");
+		}
 #/
 		return;
 	}
@@ -432,8 +436,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(self hasweapon(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: don\'t have it anymore (" + weapon + ")");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: don\'t have it anymore (" + weapon + ")");
+		}
 #/
 		return;
 	}
@@ -441,8 +447,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(self anyammoforweaponmodes(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: no ammo for weapon modes");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: no ammo for weapon modes");
+		}
 #/
 		return;
 	}
@@ -463,8 +471,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(clip_and_stock_ammo))
 	{
 /#
-		println("didn\'t drop weapon: no ammo");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: no ammo");
+		}
 #/
 		return;
 	}
@@ -485,8 +495,10 @@ GetDvar(#"8F7FC88") == "1"
 	}
 
 /#
-	println("dropped weapon: " + weapon);
-GetDvar(#"8F7FC88") == "1"
+	if(GetDvar(#"8F7FC88") == "1")
+	{
+		println("dropped weapon: " + weapon);
+	}
 #/
 	droplimitedweapon(weapon,self,item);
 	self.droppeddeathweapon = 1;
@@ -505,8 +517,10 @@ dropweapontoground(weapon)
 	if(!(IsDefined(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: not defined");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: not defined");
+		}
 #/
 		return;
 	}
@@ -514,8 +528,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(weapon == "none")
 	{
 /#
-		println("didn\'t drop weapon: weapon == none");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: weapon == none");
+		}
 #/
 		return;
 	}
@@ -523,8 +539,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(self hasweapon(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: don\'t have it anymore (" + weapon + ")");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: don\'t have it anymore (" + weapon + ")");
+		}
 #/
 		return;
 	}
@@ -532,8 +550,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(self anyammoforweaponmodes(weapon)))
 	{
 /#
-		println("didn\'t drop weapon: no ammo for weapon modes");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: no ammo for weapon modes");
+		}
 #/
 		switch(weapon)
 		{
@@ -563,8 +583,10 @@ GetDvar(#"8F7FC88") == "1"
 	if(!(clip_and_stock_ammo))
 	{
 /#
-		println("didn\'t drop weapon: no ammo");
-GetDvar(#"8F7FC88") == "1"
+		if(GetDvar(#"8F7FC88") == "1")
+		{
+			println("didn\'t drop weapon: no ammo");
+		}
 #/
 		return;
 	}
@@ -577,8 +599,10 @@ GetDvar(#"8F7FC88") == "1"
 
 	item = self dropitem(weapon);
 /#
-	println("dropped weapon: " + weapon);
-GetDvar(#"8F7FC88") == "1"
+	if(GetDvar(#"8F7FC88") == "1")
+	{
+		println("dropped weapon: " + weapon);
+	}
 #/
 	droplimitedweapon(weapon,self,item);
 	item itemweaponsetammo(clipammo,stockammo);
@@ -618,8 +642,10 @@ watchpickup()
 	weapname = self getitemweaponname();
 	self waittill("trigger",player,droppeditem);
 /#
-	println("picked up weapon: " + weapname + ", " + IsDefined(self.ownersattacker));
-GetDvar(#"8F7FC88") == "1"
+	if(GetDvar(#"8F7FC88") == "1")
+	{
+		println("picked up weapon: " + weapname + ", " + IsDefined(self.ownersattacker));
+	}
 #/
 /#
 	assert(IsDefined(player.tookweaponfrom));
@@ -872,9 +898,9 @@ watchmissileusage()
 		self waittill("missile_fire",missile,weapon_name);
 		self.hasdonecombat = 1;
 /#
-	/#
+/#
 		assert(IsDefined(missile));
-	#/
+#/
 #/
 		level.missileentities[level.missileentities.size] = missile;
 		missile thread watchmissiledeath();
@@ -1074,10 +1100,13 @@ beginothergrenadetracking()
 	
 			case "€GSC\r\n":
 				grenade.ownerweaponatlaunch = self.currentweapon;
-				grenade.owneradsatlaunch = (self playerads() == 1) ? 1 : 0;
+				grenade.owneradsatlaunch = 0;
 				grenade thread maps/mp/_explosive_bolt::watch_bolt_detonation(self);
 				grenade thread checkstucktoplayer(1,0,weaponname);
 				grenade thread checkstucktoshield();
+				break;
+		1
+		self playerads() == 1
 				break;
 	
 			case "€GSC\r\n":
@@ -1469,14 +1498,11 @@ damageent(einflictor,eattacker,idamage,smeansofdeath,sweapon,damagepos,damagedir
 debugline(a,b,color)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < 600;i++)
 	{
 		line(a,b,color);
 		wait(0.05);
-		i++;
 	}
-i < 600
 #/
 }
 
@@ -1785,7 +1811,7 @@ stow_on_back(current)
 		{
 			temp_index_weapon = self.weapon_array_primary[idx];
 /#
-					assert(IsDefined(temp_index_weapon),"Primary weapon list corrupted.");
+			assert(IsDefined(temp_index_weapon),"Primary weapon list corrupted.");
 #/
 			if(temp_index_weapon == current)
 			{
@@ -1797,7 +1823,7 @@ stow_on_back(current)
 			{
 				index_weapon = temp_index_weapon;
 /#
-							assert(IsDefined(self.curclass),"Player missing current class");
+				assert(IsDefined(self.curclass),"Player missing current class");
 #/
 				if(issubstr(index_weapon,self.pers["primaryWeapon"]) && issubstr(self.curclass,"CUSTOM"))
 				{
@@ -2035,7 +2061,10 @@ scavenger_think()
 					break;
 	ammo > maxammo
 	stock < maxammo
-	Stack-Empty ? IsDefined(player.grenadetypesecondarycount) && player.grenadetypesecondarycount < 1 : ((IsDefined(level.customloadoutscavenge)) ? weapon == loadout_primary : weapon == loadout_secondary)
+	weapon == loadout_secondary
+	weapon == loadout_primary
+	IsDefined(level.customloadoutscavenge)
+	IsDefined(player.grenadetypesecondarycount) && player.grenadetypesecondarycount < 1
 					break;
 			}
 		}

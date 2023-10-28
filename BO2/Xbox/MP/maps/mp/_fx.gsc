@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 31
- * Decompile Time: 63 ms
- * Timestamp: 10/27/2023 3:05:00 AM
+ * Decompile Time: 9 ms
+ * Timestamp: 10/28/2023 12:13:46 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -16,15 +16,17 @@
 print_org(fxcommand,fxid,fxpos,waittime)
 {
 /#
-	println("{");
-	println("\"origin\" \" + fxpos[0] + " " + fxpos[1] + " " + fxpos[2] + "\");
-	println("\"classname\" \"script_model\");
-	println("\"model\" \"fx\");
-	println("\"script_fxcommand\" \" + fxcommand + "\");
-	println("\"script_fxid\" \" + fxid + "\");
-	println("\"script_delay\" \" + waittime + "\");
-	println("}");
-GetDvar(#"F49A52C") == "1"
+	if(GetDvar(#"F49A52C") == "1")
+	{
+		println("{");
+		println("\"origin\" \" + fxpos[0] + " " + fxpos[1] + " " + fxpos[2] + "\");
+		println("\"classname\" \"script_model\");
+		println("\"model\" \"fx\");
+		println("\"script_fxcommand\" \" + fxcommand + "\");
+		println("\"script_fxid\" \" + fxid + "\");
+		println("\"script_delay\" \" + waittime + "\");
+		println("}");
+	}
 #/
 }
 
@@ -415,18 +417,36 @@ setup_fx()
 script_print_fx()
 {
 /#
-	println("Effect at origin ",self.origin," doesn\'t have script_fxid/script_fxcommand/script_delay");
-	self delete();
-	return;
-	org = getent(self.target,"targetname").origin;
-	org = "undefined";
-	println("mapsmp_fx::OneShotfx(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
-	println("mapsmp_fx::LoopFx(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
-	println("mapsmp_fx::LoopSound(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
-self.script_fxcommand == "loopsound"
-self.script_fxcommand == "loopfx"
-self.script_fxcommand == "OneShotfx"
-Stack-Empty ? !IsDefined(self.script_fxid) || !IsDefined(self.script_fxcommand) || !IsDefined(self.script_delay) : IsDefined(self.target)
+	if(!IsDefined(self.script_fxid) || !IsDefined(self.script_fxcommand) || !IsDefined(self.script_delay))
+	{
+		println("Effect at origin ",self.origin," doesn\'t have script_fxid/script_fxcommand/script_delay");
+		self delete();
+		return;
+	}
+
+	if(IsDefined(self.target))
+	{
+		org = getent(self.target,"targetname").origin;
+	}
+	else
+	{
+		org = "undefined";
+	}
+
+	if(self.script_fxcommand == "OneShotfx")
+	{
+		println("mapsmp_fx::OneShotfx(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
+	}
+
+	if(self.script_fxcommand == "loopfx")
+	{
+		println("mapsmp_fx::LoopFx(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
+	}
+
+	if(self.script_fxcommand == "loopsound")
+	{
+		println("mapsmp_fx::LoopSound(\" + self.script_fxid + "\", " + self.origin + ", " + self.script_delay + ", " + org + ");");
+	}
 #/
 }
 

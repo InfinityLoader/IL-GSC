@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 58
- * Decompile Time: 165 ms
- * Timestamp: 10/27/2023 3:03:13 AM
+ * Decompile Time: 32 ms
+ * Timestamp: 10/28/2023 12:11:50 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1072,8 +1072,10 @@ treasure_chest_chooseweightedrandomweapon(player)
 
 /#
 	forced_weapon = GetDvar(#"45ED7744");
-	arrayinsert(keys,forced_weapon,0);
-forced_weapon != "" && IsDefined(level.zombie_weapons[forced_weapon])
+	if(forced_weapon != "" && IsDefined(level.zombie_weapons[forced_weapon]))
+	{
+		arrayinsert(keys,forced_weapon,0);
+	}
 #/
 	pap_triggers = getentarray("specialty_weapupgrade","script_noteworthy");
 	for(i = 0;i < keys.size;i++)

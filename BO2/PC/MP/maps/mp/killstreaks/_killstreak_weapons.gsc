@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 17
- * Decompile Time: 116 ms
- * Timestamp: 10/27/2023 3:00:44 AM
+ * Decompile Time: 12 ms
+ * Timestamp: 10/28/2023 12:10:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -177,7 +177,14 @@ usecarriedkillstreakweapon(hardpointtype)
 		level.globalkillstreakscalled++;
 		self addweaponstat(hardpointtype,"used",1);
 		level thread maps/mp/_popups::displayteammessagetoall(level.killstreaks[hardpointtype].inboundtext,self);
-		self.pers["held_killstreak_clip_count"][hardpointtype] = (weaponclipsize(hardpointtype) > currentammo) ? currentammo : weaponclipsize(hardpointtype);
+		if(weaponclipsize(hardpointtype) > currentammo)
+		{
+		}
+		else
+		{
+		}
+
+		self.pers["held_killstreak_clip_count"][hardpointtype] = weaponclipsize(hardpointtype);
 		if(isfrominventory == 0)
 		{
 			if(self.pers["killstreak_quantity"][hardpointtype] > 0)
@@ -240,7 +247,7 @@ usecarriedkillstreakweapon(hardpointtype)
 	}
 
 	notifystring = "killstreakWeapon_" + hardpointtype;
-	self notify(notifystring);
+	self notify(notifystring,currentammo);
 	self thread watchkillstreakweaponswitch(hardpointtype,killstreak_id,isfrominventory);
 	self thread watchkillstreakweapondeath(hardpointtype,killstreak_id,isfrominventory);
 	self thread watchkillstreakroundchange(isfrominventory,killstreak_id);
@@ -418,7 +425,14 @@ watchkillstreakweapondeath(hardpointtype,killstreak_id,isfrominventory)
 		else
 		{
 			self.pers["held_killstreak_ammo_count"][hardpointtype] = newammo;
-			self.pers["held_killstreak_clip_count"][hardpointtype] = (maxclipsize <= newammo) ? maxclipsize : newammo;
+			if(maxclipsize <= newammo)
+			{
+			}
+			else
+			{
+			}
+
+			self.pers["held_killstreak_clip_count"][hardpointtype] = newammo;
 		}
 	}
 
@@ -471,7 +485,14 @@ watchplayerdeath(killstreakweapon)
 	self endon(endonweaponstring);
 	self waittill("death");
 	currentammo = self getammocount(killstreakweapon);
-	self.pers["held_killstreak_clip_count"][killstreakweapon] = (weaponclipsize(killstreakweapon) <= currentammo) ? weaponclipsize(killstreakweapon) : currentammo;
+	if(weaponclipsize(killstreakweapon) <= currentammo)
+	{
+	}
+	else
+	{
+	}
+
+	self.pers["held_killstreak_clip_count"][killstreakweapon] = currentammo;
 }
 
 //Function Number: 11
@@ -517,13 +538,27 @@ watchkillstreakroundchange(isfrominventory,killstreak_id)
 		if(IsDefined(killstreakindex))
 		{
 			self.pers["killstreak_ammo_count"][killstreakindex] = currentammo;
-			self.pers["held_killstreak_clip_count"][currentweapon] = (maxclipsize <= currentammo) ? maxclipsize : currentammo;
+			if(maxclipsize <= currentammo)
+			{
+			}
+			else
+			{
+			}
+
+			self.pers["held_killstreak_clip_count"][currentweapon] = currentammo;
 		}
 	}
 	else
 	{
 		self.pers["held_killstreak_ammo_count"][currentweapon] = currentammo;
-		self.pers["held_killstreak_clip_count"][currentweapon] = (maxclipsize <= currentammo) ? maxclipsize : currentammo;
+		if(maxclipsize <= currentammo)
+		{
+		}
+		else
+		{
+		}
+
+		self.pers["held_killstreak_clip_count"][currentweapon] = currentammo;
 	}
 }
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 45
- * Decompile Time: 360 ms
- * Timestamp: 10/27/2023 3:02:33 AM
+ * Decompile Time: 46 ms
+ * Timestamp: 10/28/2023 12:11:35 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -478,9 +478,8 @@ spectate_player_watcher()
 					self freezecontrols(0);
 /#
 					println(" Unfreeze controls 2");
-#/
 				}
-
+#/
 				self.watchingactiveclient = 1;
 			}
 			else
@@ -956,8 +955,10 @@ callback_playerdamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapon
 
 	pixbeginevent("PlayerDamage log");
 /#
-	println("client:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
-GetDvarInt(#"B1AE74B1")
+	if(GetDvarInt(#"B1AE74B1"))
+	{
+		println("client:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
+	}
 #/
 	if(self.sessionstate != "dead")
 	{
@@ -1513,6 +1514,15 @@ callback_playerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shi
 						if(IsDefined(level.killstreaks) && shouldgivekillstreak)
 						{
 							attacker.pers["cur_kill_streak"]++;
+							if(attacker.pers["cur_kill_streak"] >= 3)
+							{
+								if(attacker.pers["cur_kill_streak"] <= 30)
+								{
+								}
+								else
+								{
+								}
+							}
 						}
 					}
 
@@ -1530,6 +1540,22 @@ callback_playerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shi
 				}
 
 				killstreak = undefined;
+				if(IsDefined(killstreak))
+				{
+				}
+				else if(smeansofdeath == "MOD_HEAD_SHOT")
+				{
+				}
+				else if(smeansofdeath == "MOD_MELEE")
+				{
+					if(sweapon == "riotshield_mp")
+					{
+					}
+					else
+					{
+					}
+				}
+
 				attacker thread maps/mp/gametypes_zm/_globallogic_score::trackattackerkill(self.name,self.pers["rank"],self.pers["rankxp"],self.pers["prestige"],self getxuid(1));
 				attackername = attacker.name;
 				self thread maps/mp/gametypes_zm/_globallogic_score::trackattackeedeath(attackername,attacker.pers["rank"],attacker.pers["rankxp"],attacker.pers["prestige"],attacker getxuid(1));
@@ -1650,7 +1676,7 @@ callback_playerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shi
 	}
 	else
 	{
-		self notify("playerKilledChallengesProcessed",Stack-Empty ? Stack-Empty : ((Stack-Empty ? attacker.pers["cur_kill_streak"] >= 3 : attacker.pers["cur_kill_streak"] <= 30) ? IsDefined(killstreak) : ((smeansofdeath == "MOD_HEAD_SHOT") ? smeansofdeath == "MOD_MELEE" : sweapon == "riotshield_mp")));
+		self notify("playerKilledChallengesProcessed");
 	}
 
 	if(IsDefined(self.attackers))
@@ -1761,10 +1787,14 @@ callback_playerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shi
 	maps/mp/gametypes_zm/_globallogic_utils::waitfortimeornotifies(defaultplayerdeathwatchtime);
 	self notify("death_delay_finished");
 /#
-	dokillcam = 1;
-	lpattacknum = self getentitynumber();
-lpattacknum < 0
-GetDvarInt(#"C1849218") != 0
+	if(GetDvarInt(#"C1849218") != 0)
+	{
+		dokillcam = 1;
+		if(lpattacknum < 0)
+		{
+			lpattacknum = self getentitynumber();
+		}
+	}
 #/
 	if(game["state"] != "playing")
 	{

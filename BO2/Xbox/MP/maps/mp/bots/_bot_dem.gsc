@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 11
- * Decompile Time: 57 ms
- * Timestamp: 10/27/2023 3:04:12 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:13:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;

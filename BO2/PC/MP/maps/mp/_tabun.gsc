@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 19
- * Decompile Time: 73 ms
- * Timestamp: 10/27/2023 3:01:36 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:11:03 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -103,8 +103,10 @@ damageeffectarea(owner,position,radius,height,killcament)
 	shockeffectarea = spawn("trigger_radius",position,0,radius,height);
 	gaseffectarea = spawn("trigger_radius",position,0,radius,height);
 /#
-	level thread drawcylinder(position,radius,height,undefined,"tabun_draw_cylinder_stop");
-GetDvarInt(#"9CB86F60")
+	if(GetDvarInt(#"9CB86F60"))
+	{
+		level thread drawcylinder(position,radius,height,undefined,"tabun_draw_cylinder_stop");
+	}
 #/
 	owner thread maps/mp/killstreaks/_dogs::flash_dogs(shockeffectarea);
 	owner thread maps/mp/killstreaks/_dogs::flash_dogs(gaseffectarea);
@@ -156,7 +158,10 @@ GetDvarInt(#"9CB86F60")
 	shockeffectarea delete();
 	gaseffectarea delete();
 /#
-	level notify("tabun_draw_cylinder_stop",GetDvarInt(#"9CB86F60"));
+	if(GetDvarInt(#"9CB86F60"))
+	{
+		level notify("tabun_draw_cylinder_stop",players[i]);
+	}
 #/
 }
 
@@ -277,10 +282,11 @@ generatelocations(position,owner)
 	startpos = position + onefoot;
 /#
 	level.tabun_debug = getdvarintdefault("scr_tabun_debug",0);
-	black = VectorScale((1,1,1));
-	debugstar(startpos,2000,black);
-0.2
-level.tabun_debug
+	if(level.tabun_debug)
+	{
+		black = VectorScale((1,1,1));
+		debugstar(startpos,2000,black);
+	}
 #/
 	spawnalllocs(owner,startpos);
 }
@@ -301,9 +307,12 @@ hitpos(start,end,color)
 	trace = bullettrace(start,end,0,undefined);
 /#
 	level.tabun_debug = getdvarintdefault("scr_tabun_debug",0);
-	debugstar(trace["position"],2000,color);
+	if(level.tabun_debug)
+	{
+		debugstar(trace["position"],2000,color);
+	}
+
 	thread debug_line(start,trace["position"],color,80);
-level.tabun_debug
 #/
 	return trace["position"];
 }
@@ -500,9 +509,11 @@ getcentroid(locations)
 
 /#
 	level.tabun_debug = getdvarintdefault("scr_tabun_debug",0);
-	purple = (0.9,0.2,0.9);
-	debugstar(centroid,2000,purple);
-level.tabun_debug
+	if(level.tabun_debug)
+	{
+		purple = (0.9,0.2,0.9);
+		debugstar(centroid,2000,purple);
+	}
 #/
 	return centroid;
 }
@@ -545,9 +556,11 @@ getcenter(locations)
 	center = (avgx,avgy,locations["tracePos"][0][2]);
 /#
 	level.tabun_debug = getdvarintdefault("scr_tabun_debug",0);
-	cyan = (0.2,0.9,0.9);
-	debugstar(center,2000,cyan);
-level.tabun_debug
+	if(level.tabun_debug)
+	{
+		cyan = (0.2,0.9,0.9);
+		debugstar(center,2000,cyan);
+	}
 #/
 	return center;
 }

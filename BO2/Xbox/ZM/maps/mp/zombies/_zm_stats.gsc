@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 45
- * Decompile Time: 197 ms
- * Timestamp: 10/27/2023 3:06:18 AM
+ * Decompile Time: 29 ms
+ * Timestamp: 10/28/2023 12:14:17 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1144,7 +1144,10 @@ initializematchstats()
 adjustrecentstats()
 {
 /#
-GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	initializematchstats();
 }

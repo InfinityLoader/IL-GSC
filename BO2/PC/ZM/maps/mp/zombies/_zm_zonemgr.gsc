@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 29
- * Decompile Time: 115 ms
- * Timestamp: 10/27/2023 3:03:35 AM
+ * Decompile Time: 20 ms
+ * Timestamp: 10/28/2023 12:11:59 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -739,103 +739,106 @@ manage_zones(initial_zone)
 	flag_wait("begin_spawning");
 /#
 	level thread _debug_zones();
+		for(;;)
+		{
 #/
-	while(GetDvarInt(#"10873CCA") == 0 || GetDvarInt(#"762F1309") != 0)
-	{
-		for(z = 0;z < zkeys.size;z++)
+		if(GetDvarInt(#"10873CCA") == 0 || GetDvarInt(#"762F1309") != 0)
 		{
-			level.newzones[zkeys[z]].is_active = 0;
-			level.newzones[zkeys[z]].is_occupied = 0;
-		}
-
-		a_zone_is_active = 0;
-		a_zone_is_spawning_allowed = 0;
-		level.zone_scanning_active = 1;
-		for(z = 0;z < zkeys.size;z++)
-		{
-			zone = level.zones[zkeys[z]];
-			newzone = level.newzones[zkeys[z]];
-			if(!(zone.is_enabled))
+			for(z = 0;z < zkeys.size;z++)
 			{
+				level.newzones[zkeys[z]].is_active = 0;
+				level.newzones[zkeys[z]].is_occupied = 0;
 			}
-			else
+
+			a_zone_is_active = 0;
+			a_zone_is_spawning_allowed = 0;
+			level.zone_scanning_active = 1;
+			for(z = 0;z < zkeys.size;z++)
 			{
-				if(IsDefined(level.zone_occupied_func))
+				zone = level.zones[zkeys[z]];
+				newzone = level.newzones[zkeys[z]];
+				if(!(zone.is_enabled))
 				{
-					newzone.is_occupied = [[ level.zone_occupied_func ]](zkeys[z]);
 				}
 				else
 				{
-					newzone.is_occupied = player_in_zone(zkeys[z]);
-				}
-
-				if(newzone.is_occupied)
-				{
-					newzone.is_active = 1;
-					a_zone_is_active = 1;
-					if(zone.is_spawning_allowed)
+					if(IsDefined(level.zone_occupied_func))
 					{
-						a_zone_is_spawning_allowed = 1;
+						newzone.is_occupied = [[ level.zone_occupied_func ]](zkeys[z]);
+					}
+					else
+					{
+						newzone.is_occupied = player_in_zone(zkeys[z]);
 					}
 
-					if(!IsDefined(oldzone) || oldzone != newzone)
+					if(newzone.is_occupied)
 					{
-						level notify("newzoneActive",zkeys[z]);
-						oldzone = newzone;
-					}
-
-					azkeys = getarraykeys(zone.adjacent_zones);
-					for(az = 0;az < zone.adjacent_zones.size;az++)
-					{
-						if(zone.adjacent_zones[azkeys[az]].is_connected && level.zones[azkeys[az]].is_enabled)
+						newzone.is_active = 1;
+						a_zone_is_active = 1;
+						if(zone.is_spawning_allowed)
 						{
-							level.newzones[azkeys[az]].is_active = 1;
-							if(level.zones[azkeys[az]].is_spawning_allowed)
+							a_zone_is_spawning_allowed = 1;
+						}
+
+						if(!IsDefined(oldzone) || oldzone != newzone)
+						{
+							level notify("newzoneActive",zkeys[z]);
+							oldzone = newzone;
+						}
+
+						azkeys = getarraykeys(zone.adjacent_zones);
+						for(az = 0;az < zone.adjacent_zones.size;az++)
+						{
+							if(zone.adjacent_zones[azkeys[az]].is_connected && level.zones[azkeys[az]].is_enabled)
 							{
-								a_zone_is_spawning_allowed = 1;
+								level.newzones[azkeys[az]].is_active = 1;
+								if(level.zones[azkeys[az]].is_spawning_allowed)
+								{
+									a_zone_is_spawning_allowed = 1;
+								}
 							}
 						}
 					}
-				}
 
-				zone_choke++;
-				if(zone_choke >= 3)
+					zone_choke++;
+					if(zone_choke >= 3)
+					{
+						zone_choke = 0;
+						wait(0.05);
+					}
+				}
+			}
+
+			level.zone_scanning_active = 0;
+			for(z = 0;z < zkeys.size;z++)
+			{
+				level.zones[zkeys[z]].is_active = level.newzones[zkeys[z]].is_active;
+				level.zones[zkeys[z]].is_occupied = level.newzones[zkeys[z]].is_occupied;
+			}
+
+			if(!a_zone_is_active || !a_zone_is_spawning_allowed)
+			{
+				if(isarray(initial_zone))
 				{
-					zone_choke = 0;
-					wait(0.05);
+					level.zones[initial_zone[0]].is_active = 1;
+					level.zones[initial_zone[0]].is_occupied = 1;
+					level.zones[initial_zone[0]].is_spawning_allowed = 1;
+				}
+				else
+				{
+					level.zones[initial_zone].is_active = 1;
+					level.zones[initial_zone].is_occupied = 1;
+					level.zones[initial_zone].is_spawning_allowed = 1;
 				}
 			}
-		}
 
-		level.zone_scanning_active = 0;
-		for(z = 0;z < zkeys.size;z++)
-		{
-			level.zones[zkeys[z]].is_active = level.newzones[zkeys[z]].is_active;
-			level.zones[zkeys[z]].is_occupied = level.newzones[zkeys[z]].is_occupied;
-		}
-
-		if(!a_zone_is_active || !a_zone_is_spawning_allowed)
-		{
-			if(isarray(initial_zone))
-			{
-				level.zones[initial_zone[0]].is_active = 1;
-				level.zones[initial_zone[0]].is_occupied = 1;
-				level.zones[initial_zone[0]].is_spawning_allowed = 1;
-			}
-			else
-			{
-				level.zones[initial_zone].is_active = 1;
-				level.zones[initial_zone].is_occupied = 1;
-				level.zones[initial_zone].is_spawning_allowed = 1;
-			}
-		}
-
-		[[ level.create_spawner_list_func ]](zkeys);
+			[[ level.create_spawner_list_func ]](zkeys);
 /#
-		debug_show_spawn_locations();
+			debug_show_spawn_locations();
 #/
-		level.active_zone_names = maps/mp/zombies/_zm_zonemgr::get_active_zone_names();
-		wait(1);
+			level.active_zone_names = maps/mp/zombies/_zm_zonemgr::get_active_zone_names();
+			wait(1);
+		}
 	}
 }
 
@@ -843,22 +846,21 @@ manage_zones(initial_zone)
 debug_show_spawn_locations()
 {
 /#
-	host_player = gethostplayer();
-	_a980 = level.zombie_spawn_locations;
-	_k980 = FirstArrayKey(_a980);
-	for(;;)
+	if(IsDefined(level.toggle_show_spawn_locations) && level.toggle_show_spawn_locations)
 	{
-		location = _a980[_k980];
-		distance = distance(location.origin,host_player.origin);
-		color = (0,0,1);
-		color = (1,0,0);
-		debugstar(location.origin,GetDvarInt(#"BB9101B2"),color);
-		_k980 = NextArrayKey(_a980);
+		host_player = gethostplayer();
+		foreach(location in level.zombie_spawn_locations)
+		{
+			distance = distance(location.origin,host_player.origin);
+			color = (0,0,1);
+			if(distance > GetDvarInt(#"85E6B1CE") * 12)
+			{
+				color = (1,0,0);
+			}
+
+			debugstar(location.origin,GetDvarInt(#"BB9101B2"),color);
+		}
 	}
-_k980
-distance > GetDvarInt(#"85E6B1CE") * 12
-IsDefined(_k980)
-IsDefined(level.toggle_show_spawn_locations) && level.toggle_show_spawn_locations
 #/
 }
 
@@ -913,78 +915,81 @@ old_manage_zones(initial_zone)
 	flag_wait("begin_spawning");
 /#
 	level thread _debug_zones();
+		for(;;)
+		{
 #/
-	while(GetDvarInt(#"10873CCA") == 0 || GetDvarInt(#"762F1309") != 0)
-	{
-		for(z = 0;z < zkeys.size;z++)
+		if(GetDvarInt(#"10873CCA") == 0 || GetDvarInt(#"762F1309") != 0)
 		{
-			level.zones[zkeys[z]].is_active = 0;
-			level.zones[zkeys[z]].is_occupied = 0;
-		}
-
-		a_zone_is_active = 0;
-		a_zone_is_spawning_allowed = 0;
-		for(z = 0;z < zkeys.size;z++)
-		{
-			zone = level.zones[zkeys[z]];
-			if(!(zone.is_enabled))
+			for(z = 0;z < zkeys.size;z++)
 			{
+				level.zones[zkeys[z]].is_active = 0;
+				level.zones[zkeys[z]].is_occupied = 0;
 			}
-			else
+
+			a_zone_is_active = 0;
+			a_zone_is_spawning_allowed = 0;
+			for(z = 0;z < zkeys.size;z++)
 			{
-				if(IsDefined(level.zone_occupied_func))
+				zone = level.zones[zkeys[z]];
+				if(!(zone.is_enabled))
 				{
-					zone.is_occupied = [[ level.zone_occupied_func ]](zkeys[z]);
 				}
 				else
 				{
-					zone.is_occupied = player_in_zone(zkeys[z]);
-				}
-
-				if(zone.is_occupied)
-				{
-					zone.is_active = 1;
-					a_zone_is_active = 1;
-					if(zone.is_spawning_allowed)
+					if(IsDefined(level.zone_occupied_func))
 					{
-						a_zone_is_spawning_allowed = 1;
+						zone.is_occupied = [[ level.zone_occupied_func ]](zkeys[z]);
+					}
+					else
+					{
+						zone.is_occupied = player_in_zone(zkeys[z]);
 					}
 
-					azkeys = getarraykeys(zone.adjacent_zones);
-					for(az = 0;az < zone.adjacent_zones.size;az++)
+					if(zone.is_occupied)
 					{
-						if(zone.adjacent_zones[azkeys[az]].is_connected && level.zones[azkeys[az]].is_enabled)
+						zone.is_active = 1;
+						a_zone_is_active = 1;
+						if(zone.is_spawning_allowed)
 						{
-							level.zones[azkeys[az]].is_active = 1;
-							if(level.zones[azkeys[az]].is_spawning_allowed)
+							a_zone_is_spawning_allowed = 1;
+						}
+
+						azkeys = getarraykeys(zone.adjacent_zones);
+						for(az = 0;az < zone.adjacent_zones.size;az++)
+						{
+							if(zone.adjacent_zones[azkeys[az]].is_connected && level.zones[azkeys[az]].is_enabled)
 							{
-								a_zone_is_spawning_allowed = 1;
+								level.zones[azkeys[az]].is_active = 1;
+								if(level.zones[azkeys[az]].is_spawning_allowed)
+								{
+									a_zone_is_spawning_allowed = 1;
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		if(!a_zone_is_active || !a_zone_is_spawning_allowed)
-		{
-			if(isarray(initial_zone))
+			if(!a_zone_is_active || !a_zone_is_spawning_allowed)
 			{
-				level.zones[initial_zone[0]].is_active = 1;
-				level.zones[initial_zone[0]].is_occupied = 1;
-				level.zones[initial_zone[0]].is_spawning_allowed = 1;
+				if(isarray(initial_zone))
+				{
+					level.zones[initial_zone[0]].is_active = 1;
+					level.zones[initial_zone[0]].is_occupied = 1;
+					level.zones[initial_zone[0]].is_spawning_allowed = 1;
+				}
+				else
+				{
+					level.zones[initial_zone].is_active = 1;
+					level.zones[initial_zone].is_occupied = 1;
+					level.zones[initial_zone].is_spawning_allowed = 1;
+				}
 			}
-			else
-			{
-				level.zones[initial_zone].is_active = 1;
-				level.zones[initial_zone].is_occupied = 1;
-				level.zones[initial_zone].is_spawning_allowed = 1;
-			}
-		}
 
-		[[ level.create_spawner_list_func ]](zkeys);
-		level.active_zone_names = maps/mp/zombies/_zm_zonemgr::get_active_zone_names();
-		wait(1);
+			[[ level.create_spawner_list_func ]](zkeys);
+			level.active_zone_names = maps/mp/zombies/_zm_zonemgr::get_active_zone_names();
+			wait(1);
+		}
 	}
 }
 

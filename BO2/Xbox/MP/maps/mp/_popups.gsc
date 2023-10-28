@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 10
- * Decompile Time: 46 ms
- * Timestamp: 10/27/2023 3:05:08 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:13:50 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -71,10 +71,14 @@ init()
 popupsfromconsole()
 {
 /#
-	for(;;)
+	while(1)
 	{
 		timeout = getdvarintdefault("scr_popuptime",1);
-		timeout = 1;
+		if(timeout == 0)
+		{
+			timeout = 1;
+		}
+
 		wait(timeout);
 		medal = getdvarintdefault("scr_popupmedal",0);
 		challenge = getdvarintdefault("scr_popupchallenge",0);
@@ -85,80 +89,92 @@ popupsfromconsole()
 		gamemodemsg = getdvarintdefault("scr_gamemodeslideout",0);
 		teammsg = getdvarintdefault("scr_teamslideout",0);
 		challengeindex = getdvarintdefault("scr_challengeIndex",1);
-		i = 0;
-		for(;;)
+		for(i = 0;i < medal;i++)
 		{
 			level.players[0] maps/mp/_medals::codecallback_medal(4);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < challenge;i++)
 		{
 			level.players[0] maps/mp/gametypes/_persistence::codecallback_challengecomplete(2500,1,84,3,0,0,851);
 			level.players[0] maps/mp/gametypes/_persistence::codecallback_challengecomplete(500,1,22,2,0,0,533);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < rank;i++)
 		{
 			level.players[0] maps/mp/gametypes/_rank::codecallback_rankup(4,0,0);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < gun;i++)
 		{
 			level.players[0] maps/mp/gametypes/_persistence::codecallback_gunchallengecomplete(0,20,25,0);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < contractpass;i++)
 		{
 			level.players[0] maps/mp/gametypes/_persistence::addcontracttoqueue(12,1);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < contractfail;i++)
 		{
 			level.players[0] maps/mp/gametypes/_persistence::addcontracttoqueue(12,0);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < teammsg;i++)
 		{
 			player = level.players[0];
-			player = level.players[1];
+			if(IsDefined(level.players[1]))
+			{
+				player = level.players[1];
+			}
+
 			level.players[0] displayteammessagetoall(&"KILLSTREAK_DESTROYED_HELICOPTER",player);
-			i++;
 		}
+
 		reset = getdvarintdefault("scr_popupreset",1);
-		setdvar("scr_popupmedal",0);
-		setdvar("scr_popupchallenge",0);
-		setdvar("scr_popupgun",0);
-		setdvar("scr_popuprank",0);
-		setdvar("scr_popupcontractpass",0);
-		setdvar("scr_popupcontractfail",0);
-		setdvar("scr_gamemodeslideout",0);
-		setdvar("scr_teamslideout",0);
+		if(reset)
+		{
+			if(medal)
+			{
+				setdvar("scr_popupmedal",0);
+			}
+
+			if(challenge)
+			{
+				setdvar("scr_popupchallenge",0);
+			}
+
+			if(gun)
+			{
+				setdvar("scr_popupgun",0);
+			}
+
+			if(rank)
+			{
+				setdvar("scr_popuprank",0);
+			}
+
+			if(contractpass)
+			{
+				setdvar("scr_popupcontractpass",0);
+			}
+
+			if(contractfail)
+			{
+				setdvar("scr_popupcontractfail",0);
+			}
+
+			if(gamemodemsg)
+			{
+				setdvar("scr_gamemodeslideout",0);
+			}
+
+			if(teammsg)
+			{
+				setdvar("scr_teamslideout",0);
+			}
+		}
 	}
-teammsg
-gamemodemsg
-contractfail
-contractpass
-rank
-gun
-challenge
-medal
-reset
-IsDefined(level.players[1])
-i < teammsg
-i < contractfail
-i < contractpass
-i < gun
-i < rank
-i < challenge
-i < medal
-timeout == 0
-1
 #/
 }
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 12
- * Decompile Time: 16 ms
- * Timestamp: 10/27/2023 2:59:48 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:10:24 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -39,8 +39,10 @@ growling()
 handlenotetrack(note,flagname,customfunction,var1)
 {
 /#
-	println("dog notetrack: " + flagname + " " + note + " " + GetTime());
-GetDvarInt(#"6EBEB982")
+	if(GetDvarInt(#"6EBEB982"))
+	{
+		println("dog notetrack: " + flagname + " " + note + " " + GetTime());
+	}
 #/
 	if(isai(self) && self.type == "dog")
 	{
@@ -60,7 +62,8 @@ GetDvarInt(#"6EBEB982")
 		default:
 			return [[ customfunction ]](note);
 			return [[ customfunction ]](note,var1);
-	Stack-Empty ? IsDefined(customfunction) : IsDefined(var1)
+	IsDefined(var1)
+	IsDefined(customfunction)
 			break;
 	}
 }

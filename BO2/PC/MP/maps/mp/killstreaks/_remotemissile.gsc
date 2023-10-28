@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 35
- * Decompile Time: 472 ms
- * Timestamp: 10/27/2023 3:00:57 AM
+ * Decompile Time: 21 ms
+ * Timestamp: 10/28/2023 12:10:46 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -161,14 +161,11 @@ drawline(start,end,timeslice,color)
 {
 /#
 	drawtime = int(timeslice * 20);
-	time = 0;
-	for(;;)
+	for(time = 0;time < drawtime;time++)
 	{
 		line(start,end,color,0,1);
 		wait(0.05);
-		time++;
 	}
-time < drawtime
 #/
 }
 
@@ -401,13 +398,16 @@ _fire_noplayer(lifeid,player)
 	startpos = player.origin + upvector + forward * backdist * -1;
 	targetpos = player.origin + forward * targetdist;
 	rocket = magicbullet("remotemissile_projectile_mp",startpos,targetpos,player);
-	return;
+	if(!(IsDefined(rocket)))
+	{
+		return;
+	}
+
 	rocket thread handledamage();
 	rocket.lifeid = lifeid;
 	rocket.type = "remote";
 	rocket thread rocket_cleanupondeath();
 	wait(2);
-IsDefined(rocket)
 #/
 }
 
@@ -892,7 +892,7 @@ targeting_hud_think(rocket)
 					{
 						index = target.clientid;
 /#
-							assert(IsDefined(index));
+						assert(IsDefined(index));
 #/
 						self.missile_target_icons[index].x = target.origin[0];
 						self.missile_target_icons[index].y = target.origin[1];

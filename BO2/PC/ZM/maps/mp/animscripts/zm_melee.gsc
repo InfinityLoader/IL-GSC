@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 8
- * Decompile Time: 116 ms
- * Timestamp: 10/27/2023 3:02:16 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -15,119 +15,120 @@
 #include maps/mp/animscripts/zm_utility;
 
 //Function Number: 1
-		for(;;)
-		{
-	meleecombat()
-	{
-		self endon("end_melee");
-		self endon("killanimscript");
+meleecombat()
+{
+	self endon("end_melee");
+	self endon("killanimscript");
 /#
-		assert(canmeleeanyrange());
+	assert(canmeleeanyrange());
 #/
-		self orientmode("face enemy");
-		if(is_true(self.sliding_on_goo))
-		{
-			self animmode("slide");
-		}
-		else
-		{
-			self animmode("zonly_physics");
+	self orientmode("face enemy");
+	if(is_true(self.sliding_on_goo))
+	{
+		self animmode("slide");
+	}
+	else
+	{
+		self animmode("zonly_physics");
+	}
+
 	for(;;)
 	{
-			}
+		if(IsDefined(self.marked_for_death))
+		{
+			return;
+		}
 
-			if(IsDefined(self.marked_for_death))
-			{
-				return;
-			}
+		if(IsDefined(self.enemy))
+		{
+			angles = VectorToAngles(self.enemy.origin - self.origin);
+			self orientmode("face angle",angles[1]);
+		}
 
-			if(IsDefined(self.enemy))
-			{
-				angles = VectorToAngles(self.enemy.origin - self.origin);
-				self orientmode("face angle",angles[1]);
-			}
+		if(IsDefined(self.zmb_vocals_attack))
+		{
+			self playsound(self.zmb_vocals_attack);
+		}
 
-			if(IsDefined(self.zmb_vocals_attack))
-			{
-				self playsound(self.zmb_vocals_attack);
-			}
+		if(IsDefined(self.nochangeduringmelee) && self.nochangeduringmelee)
+		{
+			self.safetochangescript = 0;
+		}
 
-			if(IsDefined(self.nochangeduringmelee) && self.nochangeduringmelee)
-			{
-				self.safetochangescript = 0;
-			}
+		if(IsDefined(self.is_inert) && self.is_inert)
+		{
+			return;
+		}
 
-			if(IsDefined(self.is_inert) && self.is_inert)
-			{
-				return;
-			}
+		set_zombie_melee_anim_state(self);
+		if(IsDefined(self.melee_anim_func))
+		{
+			self thread [[ self.melee_anim_func ]]();
+		}
 
-			set_zombie_melee_anim_state(self);
-			if(IsDefined(self.melee_anim_func))
+		while(1)
+		{
+			self waittill("melee_anim",note);
+			if(note == "end")
 			{
-				self thread [[ self.melee_anim_func ]]();
+				break;
 			}
-
-			if(1)
+			else
 			{
-				self waittill("melee_anim",note);
-				if(note == "end")
+				if(note == "fire")
 				{
-					break;
-				}
-				else
-				{
-					if(note == "fire")
+					if(!(IsDefined(self.enemy)))
 					{
-						if(!(IsDefined(self.enemy)))
-						{
-							break;
-						}
-
-						if(IsDefined(self.dont_die_on_me) && self.dont_die_on_me)
-						{
-							break;
-						}
-
-						self.enemy notify("melee_swipe",self);
-						oldhealth = self.enemy.health;
-						self melee();
-						if(!(IsDefined(self.enemy)))
-						{
-							break;
-						}
-
-						if(self.enemy.health >= oldhealth)
-						{
-							if(IsDefined(self.melee_miss_func))
-							{
-								self [[ self.melee_miss_func ]]();
-							}
-							else if(IsDefined(level.melee_miss_func))
-							{
-								self [[ level.melee_miss_func ]]();
-							}
-						}
-
-/#
-						zombie_eye = self geteye();
-						player_eye = self.enemy geteye();
-						trace = bullettrace(zombie_eye,player_eye,1,self);
-						hitpos = trace["position"];
-						dist = distance(zombie_eye,hitpos);
-						iprintln("melee HIT " + dist);
-		self.enemy.health < oldhealth
-		GetDvarInt(#"7F11F572")
-#/
-						continue;
+						break;
 					}
 
-					if(note == "stop")
+					if(IsDefined(self.dont_die_on_me) && self.dont_die_on_me)
 					{
-						if(!(cancontinuetomelee()))
+						break;
+					}
+
+					self.enemy notify("melee_swipe",self);
+					oldhealth = self.enemy.health;
+					self melee();
+					if(!(IsDefined(self.enemy)))
+					{
+						break;
+					}
+
+					if(self.enemy.health >= oldhealth)
+					{
+						if(IsDefined(self.melee_miss_func))
 						{
-							break;
+							self [[ self.melee_miss_func ]]();
 						}
+						else if(IsDefined(level.melee_miss_func))
+						{
+							self [[ level.melee_miss_func ]]();
+						}
+					}
+
+/#
+					if(GetDvarInt(#"7F11F572"))
+					{
+						if(self.enemy.health < oldhealth)
+						{
+							zombie_eye = self geteye();
+							player_eye = self.enemy geteye();
+							trace = bullettrace(zombie_eye,player_eye,1,self);
+							hitpos = trace["position"];
+							dist = distance(zombie_eye,hitpos);
+							iprintln("melee HIT " + dist);
+						}
+					}
+#/
+					continue;
+				}
+
+				if(note == "stop")
+				{
+					if(!(cancontinuetomelee()))
+					{
+						break;
 					}
 				}
 			}

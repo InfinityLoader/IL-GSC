@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 11
- * Decompile Time: 18 ms
- * Timestamp: 10/27/2023 3:02:37 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:11:37 AM
 *******************************************************************/
 
 #include maps/mp/gametypes_zm/_globallogic_player;

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 83
- * Decompile Time: 437 ms
- * Timestamp: 10/27/2023 3:00:00 AM
+ * Decompile Time: 38 ms
+ * Timestamp: 10/28/2023 12:10:30 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -79,8 +79,10 @@ init()
 	level.contractsenabled = !getgametypesetting("disableContracts");
 	level.contractsenabled = 0;
 /#
-	level.rankedmatch = 1;
-GetDvarInt(#"5A4675BD") == 1
+	if(GetDvarInt(#"5A4675BD") == 1)
+	{
+		level.rankedmatch = 1;
+	}
 #/
 	level.script = tolower(GetDvar(#"B4B895C4"));
 	level.gametype = tolower(GetDvar(#"4F118387"));
@@ -718,7 +720,10 @@ doonelefteventupdates()
 updategameevents()
 {
 /#
-GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	if((level.rankedmatch || level.wagermatch || level.leaguematch) && !level.ingraceperiod)
 	{
@@ -871,8 +876,10 @@ hostidledout()
 {
 	hostplayer = gethostplayer();
 /#
-	return 0;
-GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1 || GetDvarInt(#"1F8C9394") == 1)
+	{
+		return 0;
+	}
 #/
 	if(IsDefined(hostplayer) && !hostplayer.hasspawned && !IsDefined(hostplayer.selectedclass))
 	{
@@ -972,7 +979,10 @@ getnexthighestscore(score)
 sendafteractionreport()
 {
 /#
-GetDvarInt(#"7AEF62D7") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1)
+	{
+		return;
+	}
 #/
 	if(!(level.onlinegame))
 	{
@@ -3138,13 +3148,18 @@ callback_startgametype()
 	thread startgame();
 	level thread updategametypedvars();
 /#
-	level.skipgameend = 1;
-	level.roundlimit = 1;
-	wait(1);
-	thread forceend(0);
-	thread forcedebughostmigration();
-GetDvarInt(#"1F8C9394") == 1
-GetDvarInt(#"7AEF62D7") == 1
+	if(GetDvarInt(#"7AEF62D7") == 1)
+	{
+		level.skipgameend = 1;
+		level.roundlimit = 1;
+		wait(1);
+		thread forceend(0);
+	}
+
+	if(GetDvarInt(#"1F8C9394") == 1)
+	{
+		thread forcedebughostmigration();
+	}
 #/
 }
 
@@ -3152,14 +3167,13 @@ GetDvarInt(#"7AEF62D7") == 1
 forcedebughostmigration()
 {
 /#
-	for(;;)
+	while(1)
 	{
 		maps/mp/gametypes/_hostmigration::waittillhostmigrationdone();
 		wait(60);
 		starthostmigration();
 		maps/mp/gametypes/_hostmigration::waittillhostmigrationdone();
 	}
-1
 #/
 }
 

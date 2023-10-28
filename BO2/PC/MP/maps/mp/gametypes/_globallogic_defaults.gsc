@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 14
- * Decompile Time: 58 ms
- * Timestamp: 10/27/2023 3:00:02 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:10:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -67,10 +67,10 @@ default_onforfeit(team)
 	else
 	{
 /#
-				assert(IsDefined(team),"Forfeited team is not defined");
+		assert(IsDefined(team),"Forfeited team is not defined");
 #/
 /#
-				assert(0,"Forfeited team " + team + " is not allies or axis");
+		assert(0,"Forfeited team " + team + " is not allies or axis");
 #/
 		winner = "tie";
 	}
@@ -285,8 +285,8 @@ default_onspawnintermission()
 	{
 /#
 		maps/mp/_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
-#/
 	}
+#/
 }
 
 //Function Number: 12

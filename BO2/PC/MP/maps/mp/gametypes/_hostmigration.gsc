@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 19
- * Decompile Time: 31 ms
- * Timestamp: 10/27/2023 3:00:07 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:10:33 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -17,18 +17,27 @@
 debug_script_structs()
 {
 /#
-	println("*** Num structs " + level.struct.size);
-	println("");
-	i = 0;
-	for(;;)
+	if(IsDefined(level.struct))
 	{
-		struct = level.struct[i];
-		println("---" + i + " : " + struct.targetname);
-		println("---" + i + " : " + "NONE");
-		i++;
+		println("*** Num structs " + level.struct.size);
+		println("");
+		for(i = 0;i < level.struct.size;i++)
+		{
+			struct = level.struct[i];
+			if(IsDefined(struct.targetname))
+			{
+				println("---" + i + " : " + struct.targetname);
+			}
+			else
+			{
+				println("---" + i + " : " + "NONE");
+			}
+		}
 	}
-	println("*** No structs defined.");
-Stack-Empty ? Stack-Empty : ((IsDefined(level.struct)) ? i < level.struct.size : IsDefined(struct.targetname))
+	else
+	{
+		println("*** No structs defined.");
+	}
 #/
 }
 
@@ -292,8 +301,10 @@ waitlongdurationwithhostmigrationpause(duration)
 	}
 
 /#
-	println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
-GetTime() != endtime
+	if(GetTime() != endtime)
+	{
+		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
+	}
 #/
 	waittillhostmigrationdone();
 	return GetTime() - starttime;
@@ -327,8 +338,10 @@ waitlongdurationwithhostmigrationpauseemp(duration)
 	}
 
 /#
-	println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO empendtime = " + empendtime);
-GetTime() != empendtime
+	if(GetTime() != empendtime)
+	{
+		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO empendtime = " + empendtime);
+	}
 #/
 	waittillhostmigrationdone();
 	level.empendtime = undefined;
@@ -360,14 +373,20 @@ waitlongdurationwithgameendtimeupdate(duration)
 	}
 
 /#
-	println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
-GetTime() != endtime
-#/
-	while(IsDefined(level.hostmigrationtimer))
+	if(GetTime() != endtime)
 	{
-		endtime = endtime + 1000;
-		setgameendtime(int(endtime));
-		wait(1);
+		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
+	}
+
+		for(;;)
+		{
+#/
+		if(IsDefined(level.hostmigrationtimer))
+		{
+			endtime = endtime + 1000;
+			setgameendtime(int(endtime));
+			wait(1);
+		}
 	}
 
 	return GetTime() - starttime;

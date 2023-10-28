@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 20
- * Decompile Time: 52 ms
- * Timestamp: 10/27/2023 3:04:56 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:13:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -509,16 +509,26 @@ array_drop(array)
 debug_print_ent_array(array,name)
 {
 /#
-	println("Printing out " + name);
-	println("Printing out some array");
-	i = 0;
-	for(;;)
+	if(IsDefined(name))
 	{
-		println("" + i + ": deleted effect");
-		println("" + i + ": uniqueid: " + array[i].uniqueid + "  fxid: " + array[i].v["fxid"]);
-		i++;
+		println("Printing out " + name);
 	}
-(Stack-Empty ? Stack-Empty : IsDefined(name)) ? i < array.size : IsDefined(array[i])
+	else
+	{
+		println("Printing out some array");
+	}
+
+	for(i = 0;i < array.size;i++)
+	{
+		if(!(IsDefined(array[i])))
+		{
+			println("" + i + ": deleted effect");
+		}
+		else
+		{
+			println("" + i + ": uniqueid: " + array[i].uniqueid + "  fxid: " + array[i].v["fxid"]);
+		}
+	}
 #/
 }
 
@@ -527,20 +537,41 @@ debug_print_latest_state(type)
 {
 /#
 	println("^3Saving " + type + " state");
-	println("There are no undo states.");
-	return;
-	state = level.cfx_undo_states[level.cfx_undo_states.size - 1];
-	size = level.cfx_undo_states.size - 1;
-	println("There are no redo states.");
-	return;
-	state = level.cfx_redo_states[level.cfx_redo_states.size - 1];
-	size = level.cfx_redo_states.size - 1;
-	println("There is no limbo state.");
-	return;
-	state = level.cfx_limbo_state;
-	size = 0;
+	if(type == "undo")
+	{
+		if(!(IsDefined(level.cfx_undo_states[level.cfx_undo_states.size - 1])))
+		{
+			println("There are no undo states.");
+			return;
+		}
+
+		state = level.cfx_undo_states[level.cfx_undo_states.size - 1];
+		size = level.cfx_undo_states.size - 1;
+	}
+	else if(type == "redo")
+	{
+		if(!(IsDefined(level.cfx_redo_states[level.cfx_redo_states.size - 1])))
+		{
+			println("There are no redo states.");
+			return;
+		}
+
+		state = level.cfx_redo_states[level.cfx_redo_states.size - 1];
+		size = level.cfx_redo_states.size - 1;
+	}
+	else
+	{
+		if(!(IsDefined(level.cfx_limbo_state)))
+		{
+			println("There is no limbo state.");
+			return;
+		}
+
+		state = level.cfx_limbo_state;
+		size = 0;
+	}
+
 	println("State " + size + " - " + state.operation + ": " + state.last_action);
 	debug_print_ent_array(state.ent_array,"save state ent_array");
-type == "undo" ? IsDefined(level.cfx_undo_states[level.cfx_undo_states.size - 1]) : (type == "redo" ? IsDefined(level.cfx_redo_states[level.cfx_redo_states.size - 1]) : IsDefined(level.cfx_limbo_state))
 #/
 }

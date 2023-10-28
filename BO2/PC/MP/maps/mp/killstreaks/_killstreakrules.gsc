@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 7
- * Decompile Time: 114 ms
- * Timestamp: 10/27/2023 3:00:44 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:10:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -283,9 +283,9 @@ killstreakstop(hardpointtype,team,id)
 				level.killstreakrules[key].curteam[team]--;
 /#
 				assert(level.killstreakrules[key].curteam[team] >= 0);
-#/
 			}
 		}
+#/
 	}
 
 	if(!IsDefined(id) || id == -1)
@@ -416,8 +416,16 @@ killstreak_debug_text(text)
 {
 /#
 	level.killstreak_rule_debug = getdvarintdefault("scr_killstreak_rule_debug",0);
-	iprintln("KSR: " + text + "\n");
-	iprintlnbold("KSR: " + text);
-(IsDefined(level.killstreak_rule_debug)) ? level.killstreak_rule_debug == 1 : level.killstreak_rule_debug == 2
+	if(IsDefined(level.killstreak_rule_debug))
+	{
+		if(level.killstreak_rule_debug == 1)
+		{
+			iprintln("KSR: " + text + "\n");
+		}
+		else if(level.killstreak_rule_debug == 2)
+		{
+			iprintlnbold("KSR: " + text);
+		}
+	}
 #/
 }

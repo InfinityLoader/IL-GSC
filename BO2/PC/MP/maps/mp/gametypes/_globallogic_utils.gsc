@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 30
- * Decompile Time: 35 ms
- * Timestamp: 10/27/2023 3:00:06 AM
+ * Decompile Time: 3 ms
+ * Timestamp: 10/28/2023 12:10:32 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -168,45 +168,46 @@ assertproperplacement()
 {
 /#
 	numplayers = level.placement["all"].size;
-	i = 0;
-	for(;;)
+	if(level.teambased)
 	{
-		println("^1Placement array:");
-		i = 0;
-		for(;;)
+		for(i = 0;i < numplayers - 1;i++)
 		{
-			player = level.placement["all"][i];
-			println("^1" + i + ". " + player.name + ": " + player.score);
-			i++;
-		}
+			if(level.placement["all"][i].score < level.placement["all"][i + 1].score)
+			{
+				println("^1Placement array:");
+				for(i = 0;i < numplayers;i++)
+				{
+					player = level.placement["all"][i];
+					println("^1" + i + ". " + player.name + ": " + player.score);
+				}
+
 /#
-		assertmsg("Placement array was not properly sorted");
+				assertmsg("Placement array was not properly sorted");
 #/
-		break;
-		i++;
+				break;
+			}
+		}
 	}
-	i = 0;
-	for(;;)
+	else
 	{
-		println("^1Placement array:");
-		i = 0;
-		for(;;)
+		for(i = 0;i < numplayers - 1;i++)
 		{
-			player = level.placement["all"][i];
-			println("^1" + i + ". " + player.name + ": " + player.pointstowin);
-			i++;
-		}
+			if(level.placement["all"][i].pointstowin < level.placement["all"][i + 1].pointstowin)
+			{
+				println("^1Placement array:");
+				for(i = 0;i < numplayers;i++)
+				{
+					player = level.placement["all"][i];
+					println("^1" + i + ". " + player.name + ": " + player.pointstowin);
+				}
+
 /#
-		assertmsg("Placement array was not properly sorted");
+				assertmsg("Placement array was not properly sorted");
 #/
-		break;
-		i++;
+				break;
+			}
+		}
 	}
-i < numplayers - 1 ? level.placement["all"][i].pointstowin < level.placement["all"][i + 1].pointstowin : i < numplayers
-i < numplayers
-level.placement["all"][i].score < level.placement["all"][i + 1].score
-i < numplayers - 1
-level.teambased
 #/
 }
 
@@ -502,14 +503,11 @@ gethitlocheight(shitloc)
 debugline(start,end)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < 50;i++)
 	{
 		line(start,end);
 		wait(0.05);
-		i++;
 	}
-i < 50
 #/
 }
 

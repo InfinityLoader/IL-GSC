@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 48
- * Decompile Time: 241 ms
- * Timestamp: 10/27/2023 3:03:18 AM
+ * Decompile Time: 13 ms
+ * Timestamp: 10/28/2023 12:11:52 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -308,11 +308,11 @@ pers_upgrade_jugg_player_death_stat()
 				{
 					self maps/mp/zombies/_zm_stats::increment_client_stat("pers_jugg",0);
 /#
-#/
 				}
 			}
 		}
 	}
+#/
 }
 
 //Function Number: 13
@@ -358,24 +358,26 @@ pers_upgrade_flopper_damage_check(smeansofdeath,idamage)
 			self maps/mp/zombies/_zm_stats::increment_client_stat("pers_flopper_counter",0);
 /#
 			iprintlnbold("FLOPPER STAT: INCREMENTED");
+		}
 #/
-		}
 	}
-
-	if(!(IsDefined(self.pers_flopper_active) && self.pers_flopper_active))
+	else
 	{
-		if(idamage >= level.pers_flopper_min_fall_damage_deactivate)
+		if(!(IsDefined(self.pers_flopper_active) && self.pers_flopper_active))
 		{
-			self notify("pers_flopper_lost");
+			if(idamage >= level.pers_flopper_min_fall_damage_deactivate)
+			{
+				self notify("pers_flopper_lost");
+			}
+
+			return 0;
 		}
 
-		return 0;
-	}
-
-	if(idamage > 0)
-	{
-		self notify("activate_pers_flopper_effect");
-		return 1;
+		if(idamage > 0)
+		{
+			self notify("activate_pers_flopper_effect");
+			return 1;
+		}
 	}
 
 	return 0;
@@ -498,12 +500,14 @@ pers_upgrade_pistol_points_kill()
 				self maps/mp/zombies/_zm_stats::increment_client_stat("pers_pistol_points_counter",0);
 /#
 				iprintlnbold("PISTOL POINTS STAT: INCREMENTED");
-#/
 			}
 		}
+#/
 	}
-
-	self notify("pers_pistol_points_kill");
+	else
+	{
+		self notify("pers_pistol_points_kill");
+	}
 }
 
 //Function Number: 21
@@ -627,10 +631,9 @@ pers_upgrade_double_points_pickup_start()
 			self maps/mp/zombies/_zm_stats::increment_client_stat("pers_double_points_counter",0);
 /#
 			iprintlnbold("PISTOL POINTS STAT: INCREMENTED");
-#/
 		}
 	}
-
+#/
 	self.double_points_ability_check_active = undefined;
 }
 
@@ -881,9 +884,9 @@ pers_upgrade_sniper_kill_check(zombie,attacker)
 			self maps/mp/zombies/_zm_stats::increment_client_stat("pers_sniper_counter",0);
 /#
 			iprintlnbold("SNIPER STAT: INCREMENTED");
-#/
 		}
 	}
+#/
 }
 
 //Function Number: 30
@@ -1024,8 +1027,8 @@ pers_upgrade_box_weapon_used(e_user,e_grabber)
 
 		e_user maps/mp/zombies/_zm_stats::zero_client_stat("pers_box_weapon_counter",0);
 /#
-#/
 	}
+#/
 }
 
 //Function Number: 35
@@ -1173,8 +1176,10 @@ pers_treasure_chest_choosespecialweapon(player)
 		keys = array_randomize(level.pers_box_weapons);
 /#
 		forced_weapon = GetDvar(#"45ED7744");
-		arrayinsert(keys,forced_weapon,0);
-forced_weapon != "" && IsDefined(level.zombie_weapons[forced_weapon])
+		if(forced_weapon != "" && IsDefined(level.zombie_weapons[forced_weapon]))
+		{
+			arrayinsert(keys,forced_weapon,0);
+		}
 #/
 		pap_triggers = getentarray("specialty_weapupgrade","script_noteworthy");
 		for(i = 0;i < keys.size;i++)

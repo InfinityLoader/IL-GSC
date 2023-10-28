@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 77
- * Decompile Time: 651 ms
- * Timestamp: 10/27/2023 3:01:08 AM
+ * Decompile Time: 50 ms
+ * Timestamp: 10/28/2023 12:10:48 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -2729,8 +2729,10 @@ turret_debug_box(origin,mins,maxs,color)
 {
 /#
 	debug_turret = GetDvar(#"94A738D1");
-	box(origin,mins,maxs,0,color,1,1,300);
-debug_turret == "1"
+	if(debug_turret == "1")
+	{
+		box(origin,mins,maxs,0,color,1,1,300);
+	}
 #/
 }
 
@@ -2739,7 +2741,9 @@ turret_debug_line(start,end,color)
 {
 /#
 	debug_turret = GetDvar(#"94A738D1");
-	line(start,end,color,1,1,300);
-debug_turret == "1"
+	if(debug_turret == "1")
+	{
+		line(start,end,color,1,1,300);
+	}
 #/
 }

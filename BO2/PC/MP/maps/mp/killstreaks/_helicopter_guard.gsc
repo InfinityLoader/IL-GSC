@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 33
- * Decompile Time: 245 ms
- * Timestamp: 10/27/2023 3:00:41 AM
+ * Decompile Time: 13 ms
+ * Timestamp: 10/28/2023 12:10:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -203,8 +203,10 @@ startheliguardsupport(littlebird,lifeid)
 	littlebird setspeed(littlebird.speed,80,30);
 	littlebird waittill("goal");
 /#
-	debug_no_fly_zones();
-GetDvar(#"2CF8CBA6") == "1"
+	if(GetDvar(#"2CF8CBA6") == "1")
+	{
+		debug_no_fly_zones();
+	}
 #/
 	littlebird thread heliguardsupport_followplayer();
 }
@@ -591,8 +593,10 @@ heliguardsupport_getclosestnode(pos)
 littlebird_debug_text(string)
 {
 /#
-	iprintln(string);
-GetDvar(#"2CF8CBA6") == "1"
+	if(GetDvar(#"2CF8CBA6") == "1")
+	{
+		iprintln(string);
+	}
 #/
 }
 
@@ -600,8 +604,10 @@ GetDvar(#"2CF8CBA6") == "1"
 littlebird_debug_line(start,end,color)
 {
 /#
-	line(start,end,color,1,1,300);
-GetDvar(#"2CF8CBA6") == "1"
+	if(GetDvar(#"2CF8CBA6") == "1")
+	{
+		line(start,end,color,1,1,300);
+	}
 #/
 }
 
@@ -609,19 +615,13 @@ GetDvar(#"2CF8CBA6") == "1"
 heli_path_debug()
 {
 /#
-	_a703 = level.heli_paths;
-	_k703 = FirstArrayKey(_a703);
-	for(;;)
+	foreach(path in level.heli_paths)
 	{
-		path = _a703[_k703];
-		_a705 = path;
-		_k705 = FirstArrayKey(_a705);
-		for(;;)
+		foreach(loc in path)
 		{
-			loc = _a705[_k705];
 			prev = loc;
 			target = loc.target;
-			for(;;)
+			while(IsDefined(target))
 			{
 				target = getent(target,"targetname");
 				line(prev.origin,target.origin,(1,0,0),1,0,50000);
@@ -629,38 +629,27 @@ heli_path_debug()
 				prev = target;
 				target = prev.target;
 			}
-			_k705 = NextArrayKey(_a705);
 		}
-		_k703 = NextArrayKey(_a703);
 	}
-	_a722 = level.heli_loop_paths;
-	_k722 = FirstArrayKey(_a722);
-	for(;;)
+
+	foreach(loc in level.heli_loop_paths)
 	{
-		loc = _a722[_k722];
 		prev = loc;
 		target = loc.target;
 		first = loc;
-		for(;;)
+		while(IsDefined(target))
 		{
 			target = getent(target,"targetname");
 			line(prev.origin,target.origin,(0,1,0),1,0,50000);
 			debugstar(prev.origin,50000,(1,0,0));
 			prev = target;
 			target = prev.target;
-			break;
+			if(prev == first)
+			{
+				break;
+			}
 		}
-		_k722 = NextArrayKey(_a722);
 	}
-_k722
-prev == first
-IsDefined(target)
-IsDefined(_k722)
-_k703
-_k705
-IsDefined(target)
-IsDefined(_k705)
-IsDefined(_k703)
 #/
 }
 

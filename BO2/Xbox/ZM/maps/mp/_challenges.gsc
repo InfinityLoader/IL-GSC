@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 87
- * Decompile Time: 172 ms
- * Timestamp: 10/27/2023 3:06:25 AM
+ * Decompile Time: 41 ms
+ * Timestamp: 10/28/2023 12:14:21 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -77,8 +77,10 @@ addflyswatterstat(weapon,aircraft)
 canprocesschallenges()
 {
 /#
-	return 1;
-getdvarintdefault("scr_debug_challenges",0)
+	if(getdvarintdefault("scr_debug_challenges",0))
+	{
+		return 1;
+	}
 #/
 	if(level.rankedmatch || level.wagermatch)
 	{

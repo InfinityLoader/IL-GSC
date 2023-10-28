@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 45
- * Decompile Time: 188 ms
- * Timestamp: 10/27/2023 3:04:17 AM
+ * Decompile Time: 16 ms
+ * Timestamp: 10/28/2023 12:13:33 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -270,9 +270,9 @@ weapon_class_register(weapon,weapon_type)
 	else
 	{
 /#
-						assert(0,"Weapon group info is missing from statsTable for: " + weapon_type);
-#/
+		assert(0,"Weapon group info is missing from statsTable for: " + weapon_type);
 	}
+#/
 }
 
 //Function Number: 10
@@ -1097,16 +1097,20 @@ cac_modified_vehicle_damage(victim,attacker,damage,meansofdeath,weapon,inflictor
 	{
 		final_damage = damage * 100 + level.cac_bulletdamage_data / 100;
 /#
-		println("Perk/> " + attacker.name + "\'s bullet damage did extra damage to vehicle");
-GetDvarInt(#"5ABA6445")
+		if(GetDvarInt(#"5ABA6445"))
+		{
+			println("Perk/> " + attacker.name + "\'s bullet damage did extra damage to vehicle");
+		}
 #/
 	}
 	else if(attacker hasperk("specialty_explosivedamage") && isplayerexplosiveweapon(weapon,meansofdeath))
 	{
 		final_damage = damage * 100 + level.cac_explosivedamage_data / 100;
 /#
+		if(GetDvarInt(#"5ABA6445"))
+		{
 			println("Perk/> " + attacker.name + "\'s explosive damage did extra damage to vehicle");
-GetDvarInt(#"5ABA6445")
+		}
 #/
 	}
 	else
@@ -1115,8 +1119,10 @@ GetDvarInt(#"5ABA6445")
 	}
 
 /#
-	println("Perk/> Damage Factor: " + final_damage / old_damage + " - Pre Damage: " + old_damage + " - Post Damage: " + final_damage);
-GetDvarInt(#"5ABA6445")
+	if(GetDvarInt(#"5ABA6445"))
+	{
+		println("Perk/> Damage Factor: " + final_damage / old_damage + " - Pre Damage: " + old_damage + " - Post Damage: " + final_damage);
+	}
 #/
 	return int(final_damage);
 }
@@ -1150,8 +1156,10 @@ cac_modified_damage(victim,attacker,damage,mod,weapon,inflictor,hitloc)
 
 /#
 	debug = 0;
-	debug = 1;
-GetDvarInt(#"5ABA6445")
+	if(GetDvarInt(#"5ABA6445"))
+	{
+		debug = 1;
+	}
 #/
 	final_damage = damage;
 	if(attacker hasperk("specialty_bulletdamage") && isprimarydamage(mod))
@@ -1159,47 +1167,63 @@ GetDvarInt(#"5ABA6445")
 		if(victim hasperk("specialty_armorvest") && !isheaddamage(hitloc))
 		{
 /#
-			println("Perk/> " + victim.name + "\'s armor countered " + attacker.name + "\'s increased bullet damage");
-debug
+			if(debug)
+			{
+				println("Perk/> " + victim.name + "\'s armor countered " + attacker.name + "\'s increased bullet damage");
+			}
 #/
 		}
 		else
 		{
 			final_damage = damage * 100 + level.cac_bulletdamage_data / 100;
 /#
-			println("Perk/> " + attacker.name + "\'s bullet damage did extra damage to " + victim.name);
-debug
-#/
+			if(debug)
+			{
+				println("Perk/> " + attacker.name + "\'s bullet damage did extra damage to " + victim.name);
+			}
 		}
+#/
 	}
-
-	if(victim hasperk("specialty_armorvest") && isprimarydamage(mod) && !isheaddamage(hitloc))
+	else if(victim hasperk("specialty_armorvest") && isprimarydamage(mod) && !isheaddamage(hitloc))
 	{
 		final_damage = damage * level.cac_armorvest_data * 0.01;
 /#
-		println("Perk/> " + attacker.name + "\'s bullet damage did less damage to " + victim.name);
-debug
+		if(debug)
+		{
+			println("Perk/> " + attacker.name + "\'s bullet damage did less damage to " + victim.name);
+		}
 #/
 	}
 	else if(victim hasperk("specialty_fireproof") && isfiredamage(weapon,mod))
 	{
 		final_damage = damage * 100 - level.cac_fireproof_data / 100;
 /#
+		if(debug)
+		{
 			println("Perk/> " + attacker.name + "\'s flames did less damage to " + victim.name);
-debug
+		}
 #/
 	}
 	else if(attacker hasperk("specialty_explosivedamage") && isplayerexplosiveweapon(weapon,mod))
 	{
 		final_damage = damage * 100 + level.cac_explosivedamage_data / 100;
 /#
-				println("Perk/> " + attacker.name + "\'s explosive damage did extra damage to " + victim.name);
-debug
+		if(debug)
+		{
+			println("Perk/> " + attacker.name + "\'s explosive damage did extra damage to " + victim.name);
+		}
 #/
 	}
 	else if(victim hasperk("specialty_flakjacket") && isexplosivedamage(weapon,mod) && !victim grenadestuck(inflictor))
 	{
-		cac_data = level.hardcoremode ? level.cac_flakjacket_hardcore_data : level.cac_flakjacket_data;
+		if(level.hardcoremode)
+		{
+		}
+		else
+		{
+		}
+
+		cac_data = level.cac_flakjacket_data;
 		if(level.teambased && attacker.team != victim.team)
 		{
 			victim thread maps/mp/_challenges::flakjacketprotected(weapon,attacker);
@@ -1211,21 +1235,24 @@ debug
 
 		final_damage = int(damage * cac_data / 100);
 /#
-					println("Perk/> " + victim.name + "\'s flak jacket decreased " + attacker.name + "\'s grenade damage");
-debug
+		if(debug)
+		{
+			println("Perk/> " + victim.name + "\'s flak jacket decreased " + attacker.name + "\'s grenade damage");
+		}
+	}
 #/
 /#
-					victim.cac_debug_damage_type = tolower(mod);
-					victim.cac_debug_original_damage = damage;
-					victim.cac_debug_final_damage = final_damage;
-					victim.cac_debug_location = tolower(hitloc);
-					victim.cac_debug_weapon = tolower(weapon);
-					victim.cac_debug_range = int(distance(attacker.origin,victim.origin));
-					println("Perk/> Damage Factor: " + final_damage / damage + " - Pre Damage: " + damage + " - Post Damage: " + final_damage);
-debug
-#/
+	victim.cac_debug_damage_type = tolower(mod);
+	victim.cac_debug_original_damage = damage;
+	victim.cac_debug_final_damage = final_damage;
+	victim.cac_debug_location = tolower(hitloc);
+	victim.cac_debug_weapon = tolower(weapon);
+	victim.cac_debug_range = int(distance(attacker.origin,victim.origin));
+	if(debug)
+	{
+		println("Perk/> Damage Factor: " + final_damage / damage + " - Pre Damage: " + damage + " - Post Damage: " + final_damage);
 	}
-
+#/
 	final_damage = int(final_damage);
 	if(final_damage < 1)
 	{

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 168
- * Decompile Time: 1092 ms
- * Timestamp: 10/27/2023 3:06:02 AM
+ * Decompile Time: 188 ms
+ * Timestamp: 10/28/2023 12:14:11 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -293,10 +293,10 @@ fade_out_intro_screen_zm(hold_black_time,fade_out_time,destroyed_afterwards)
 			{
 				players[i] freezecontrols(0);
 /#
-					println(" Unfreeze controls 5");
-#/
+				println(" Unfreeze controls 5");
 			}
 		}
+#/
 	}
 
 	if(destroyed_afterwards == 1)
@@ -1147,7 +1147,7 @@ callback_playerdamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapon
 		else if(smeansofdeath != "MOD_GRENADE_SPLASH" && smeansofdeath != "MOD_GRENADE" && smeansofdeath != "MOD_EXPLOSIVE" && smeansofdeath != "MOD_PROJECTILE" && smeansofdeath != "MOD_PROJECTILE_SPLASH" && smeansofdeath != "MOD_BURNED" && smeansofdeath != "MOD_SUICIDE")
 		{
 /#
-				println("Exiting - damage type verbotten.");
+			println("Exiting - damage type verbotten.");
 #/
 			return;
 		}
@@ -1449,9 +1449,8 @@ onplayerspawned()
 			self freezecontrols(0);
 /#
 			println(" Unfreeze controls 7");
-#/
 		}
-
+#/
 		self.hits = 0;
 		self init_player_offhand_weapons();
 		lethal_grenade = self get_player_lethal_grenade();
@@ -1463,8 +1462,10 @@ onplayerspawned()
 
 		self recordplayerrevivezombies(self);
 /#
-		self enableinvulnerability();
-	GetDvarInt(#"FA81816F") >= 1 && GetDvarInt(#"FA81816F") <= 3
+		if(GetDvarInt(#"FA81816F") >= 1 && GetDvarInt(#"FA81816F") <= 3)
+		{
+			self enableinvulnerability();
+		}
 #/
 		self setactionslot(3,"altMode");
 		self playerknockback(0);
@@ -1631,8 +1632,10 @@ in_enabled_playable_area()
 get_player_out_of_playable_area_monitor_wait_time()
 {
 /#
-	return 0.05;
-IsDefined(level.check_kill_thread_every_frame) && level.check_kill_thread_every_frame
+	if(IsDefined(level.check_kill_thread_every_frame) && level.check_kill_thread_every_frame)
+	{
+		return 0.05;
+	}
 #/
 }
 
@@ -1668,11 +1671,18 @@ player_out_of_playable_area_monitor()
 			if(!IsDefined(level.player_out_of_playable_area_monitor_callback) || self [[ level.player_out_of_playable_area_monitor_callback ]]())
 			{
 /#
-				iprintlnbold("out of playable");
-				wait(get_player_out_of_playable_area_monitor_wait_time());
-				wait(get_player_out_of_playable_area_monitor_wait_time());
-self isinmovemode("ufo","noclip") || (IsDefined(level.disable_kill_thread) && level.disable_kill_thread) || GetDvarInt(#"FA81816F") > 0
-IsDefined(level.kill_thread_test_mode) && level.kill_thread_test_mode
+				if(IsDefined(level.kill_thread_test_mode) && level.kill_thread_test_mode)
+				{
+					iprintlnbold("out of playable");
+					wait(get_player_out_of_playable_area_monitor_wait_time());
+					continue;
+				}
+
+				if(self isinmovemode("ufo","noclip") || (IsDefined(level.disable_kill_thread) && level.disable_kill_thread) || GetDvarInt(#"FA81816F") > 0)
+				{
+					wait(get_player_out_of_playable_area_monitor_wait_time());
+					continue;
+				}
 #/
 				self maps/mp/zombies/_zm_stats::increment_map_cheat_stat("cheat_out_of_playable");
 				self maps/mp/zombies/_zm_stats::increment_client_stat("cheat_out_of_playable",0);
@@ -1775,8 +1785,11 @@ player_too_many_weapons_monitor()
 		}
 
 /#
-		wait(get_player_too_many_weapons_monitor_wait_time());
-GetDvarInt(#"FA81816F") > 0
+		if(GetDvarInt(#"FA81816F") > 0)
+		{
+			wait(get_player_too_many_weapons_monitor_wait_time());
+			continue;
+		}
 #/
 		weapon_limit = get_player_weapon_limit(self);
 		primaryweapons = self getweaponslistprimaries();
@@ -1897,26 +1910,31 @@ watch_rampage_bookmark()
 		{
 			player = players[player_index];
 /#
-IsDefined(player.pers["isBot"]) && player.pers["isBot"]
-#/
-			for(time_index = 0;time_index < level.rampage_bookmark_kill_times_count;time_index++)
+			if(IsDefined(player.pers["isBot"]) && player.pers["isBot"])
 			{
-				if(!(player.rampage_bookmark_kill_times[time_index]))
-				{
-					break;
-				}
-				else if(oldest_allowed > player.rampage_bookmark_kill_times[time_index])
-				{
-					player.rampage_bookmark_kill_times[time_index] = 0;
-					break;
-				}
 			}
-
-			if(time_index >= level.rampage_bookmark_kill_times_count)
+			else
 			{
-				maps/mp/_demo::bookmark("zm_player_rampage",GetTime(),player);
-				player reset_rampage_bookmark_kill_times();
-				player.ignore_rampage_kill_times = now + level.rampage_bookmark_kill_times_delay;
+#/
+				for(time_index = 0;time_index < level.rampage_bookmark_kill_times_count;time_index++)
+				{
+					if(!(player.rampage_bookmark_kill_times[time_index]))
+					{
+						break;
+					}
+					else if(oldest_allowed > player.rampage_bookmark_kill_times[time_index])
+					{
+						player.rampage_bookmark_kill_times[time_index] = 0;
+						break;
+					}
+				}
+
+				if(time_index >= level.rampage_bookmark_kill_times_count)
+				{
+					maps/mp/_demo::bookmark("zm_player_rampage",GetTime(),player);
+					player reset_rampage_bookmark_kill_times();
+					player.ignore_rampage_kill_times = now + level.rampage_bookmark_kill_times_delay;
+				}
 			}
 		}
 	}
@@ -3188,8 +3206,10 @@ default_max_zombie_func(max_num)
 {
 /#
 	count = GetDvarInt(#"CF687B54");
-	return count;
-count > -1
+	if(count > -1)
+	{
+		return count;
+	}
 #/
 	max = max_num;
 	if(level.round_number < 2)
@@ -3231,7 +3251,10 @@ round_spawning()
 	}
 
 /#
-GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4
+	if(GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4)
+	{
+		return;
+	}
 #/
 	if(level.zombie_spawn_locations.size < 1)
 	{
@@ -3522,10 +3545,13 @@ zombie_speed_up()
 	level endon("restart_round");
 /#
 	level endon("kill_round");
+		for(;;)
+		{
 #/
-	while(level.zombie_total > 4)
-	{
-		wait(2);
+		if(level.zombie_total > 4)
+		{
+			wait(2);
+		}
 	}
 
 	for(num_zombies = get_current_zombie_count();num_zombies > 3;num_zombies = get_current_zombie_count())
@@ -3643,8 +3669,10 @@ round_start()
 	}
 
 /#
-	level.round_spawn_func = ::round_spawning_test;
-GetDvarInt(#"7688603C")
+	if(GetDvarInt(#"7688603C"))
+	{
+		level.round_spawn_func = ::round_spawning_test;
+	}
 #/
 	if(!(IsDefined(level.round_wait_func)))
 	{
@@ -3826,9 +3854,8 @@ round_think(restart)
 					player freezecontrols(0);
 /#
 					println(" Unfreeze controls 8");
-#/
 				}
-
+#/
 				player maps/mp/zombies/_zm_stats::set_global_stat("rounds",level.round_number);
 			}
 		}
@@ -4047,14 +4074,16 @@ round_spawn_failsafe_debug()
 	level endon("failsafe_debug_stop");
 	start = GetTime();
 	level.chunk_time = 0;
-	for(;;)
+	while(1)
 	{
 		level.failsafe_time = GetTime() - start;
-		level.chunk_time = GetTime() - self.lastchunk_destroy_time;
+		if(IsDefined(self.lastchunk_destroy_time))
+		{
+			level.chunk_time = GetTime() - self.lastchunk_destroy_time;
+		}
+
 		wait_network_frame();
 	}
-IsDefined(self.lastchunk_destroy_time)
-1
 #/
 }
 
@@ -4135,10 +4164,16 @@ round_wait()
 {
 	level endon("restart_round");
 /#
-	level waittill(GetDvarInt(#"7688603C"),"forever");
+	if(GetDvarInt(#"7688603C"))
+	{
+		level waittill("forever");
+	}
 #/
 /#
-	level waittill(GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4,"forever");
+	if(GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4)
+	{
+		level waittill("forever");
+	}
 #/
 	wait(1);
 	if(flag("dog_round"))
@@ -4993,8 +5028,10 @@ actor_damage_override(inflictor,attacker,damage,flags,meansofdeath,weapon,vpoint
 	}
 
 /#
-	println("Perk/> Damage Factor: " + final_damage / old_damage + " - Pre Damage: " + old_damage + " - Post Damage: " + final_damage);
-GetDvarInt(#"5ABA6445")
+	if(GetDvarInt(#"5ABA6445"))
+	{
+		println("Perk/> Damage Factor: " + final_damage / old_damage + " - Pre Damage: " + old_damage + " - Post Damage: " + final_damage);
+	}
 #/
 	if(attacker.classname == "script_vehicle" && IsDefined(attacker.owner))
 	{

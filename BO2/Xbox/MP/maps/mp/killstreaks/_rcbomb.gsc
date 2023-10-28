@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 34
- * Decompile Time: 131 ms
- * Timestamp: 10/27/2023 3:04:47 AM
+ * Decompile Time: 9 ms
+ * Timestamp: 10/28/2023 12:13:41 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -478,7 +478,10 @@ cartimer(vehicle)
 	}
 
 /#
-GetDvarInt(#"B2F33084") != 0
+	if(GetDvarInt(#"B2F33084") != 0)
+	{
+		return;
+	}
 #/
 	maps/mp/gametypes/_hostmigration::waitlongdurationwithhostmigrationpause(20);
 	vehicle setclientfield("rcbomb_countdown",1);
@@ -808,10 +811,13 @@ rcbomb_force_explode()
 	self endon("death");
 /#
 	assert(self.targetname == "rcbomb");
+		for(;;)
+		{
 #/
-	while(!(IsDefined(self getseatoccupant(0))))
-	{
-		wait(0.1);
+		if(!(IsDefined(self getseatoccupant(0))))
+		{
+			wait(0.1);
+		}
 	}
 
 	self dodamage(10,10 + VectorScale((0,0,1)),self.origin,self.owner,self.owner,"none");
@@ -822,8 +828,10 @@ rcbomb_debug_box(origin,mins,maxs,color)
 {
 /#
 	debug_rcbomb = GetDvar(#"8EAE5CA0");
-	box(origin,mins,maxs,0,color,1,1,300);
-debug_rcbomb == "1"
+	if(debug_rcbomb == "1")
+	{
+		box(origin,mins,maxs,0,color,1,1,300);
+	}
 #/
 }
 
@@ -832,7 +840,9 @@ rcbomb_debug_line(start,end,color)
 {
 /#
 	debug_rcbomb = GetDvar(#"8EAE5CA0");
-	line(start,end,color,1,1,300);
-debug_rcbomb == "1"
+	if(debug_rcbomb == "1")
+	{
+		line(start,end,color,1,1,300);
+	}
 #/
 }

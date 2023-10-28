@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 63
- * Decompile Time: 392 ms
- * Timestamp: 10/27/2023 3:06:05 AM
+ * Decompile Time: 45 ms
+ * Timestamp: 10/28/2023 12:14:12 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -427,7 +427,9 @@ door_activate(time,open,quick,use_blocker_clip_for_pathing)
 			wait(randomfloat(0.15));
 			break;
 	open
-	(IsDefined(self.script_vector)) ? scale : time >= 0.5
+	time >= 0.5
+	scale
+	IsDefined(self.script_vector)
 			break;
 
 		case "€GSC\r\n":
@@ -613,14 +615,12 @@ waittill_door_can_close()
 			self waittill_door_trigger_clear_local_power_off(trigger,all_trigs);
 			self thread kill_trapped_zombies(trigger);
 			self waittill(IsDefined(trigger) || IsDefined(all_trigs),IsDefined(self.local_power_on) && self.local_power_on,"local_power_off");
-	Stack-Empty ? Stack-Empty : Stack-Empty
 			break;
 
 		case "€GSC\r\n":
 			self waittill_door_trigger_clear_global_power_off(trigger,all_trigs);
 			self thread kill_trapped_zombies(trigger);
 			self waittill(IsDefined(trigger) || IsDefined(all_trigs),IsDefined(trigger),IsDefined(self.power_on) && self.power_on,"power_off");
-	Stack-Empty ? Stack-Empty : Stack-Empty
 			break;
 	}
 }
@@ -1209,12 +1209,11 @@ blocker_init()
 								targets[j] hide();
 /#
 								iprintlnbold(" Hide ");
-#/
 							}
 						}
+#/
 					}
-
-					if(targets[j].script_parameters == "repair_board")
+					else if(targets[j].script_parameters == "repair_board")
 					{
 						targets[j].unbroken_section = getent(targets[j].target,"targetname");
 						if(IsDefined(targets[j].unbroken_section))
@@ -1578,121 +1577,18 @@ blocker_trigger_think()
 	self thread trigger_delete_on_repair();
 	thread maps/mp/zombies/_zm_unitrigger::register_static_unitrigger(self.unitrigger_stub,::blocker_unitrigger_think);
 /#
-	thread debug_blocker(trigger_pos,radius,height);
-GetDvarInt(#"FA91EA91") > 0
-#/
-	while(1)
+	if(GetDvarInt(#"FA91EA91") > 0)
 	{
-		self waittill(groundpos(trigger_location.origin),groundpos(trigger_location.origin),"trigger",player);
-		has_perk = player has_blocker_affecting_perk();
-		if(all_chunks_intact(self,self.barrier_chunks))
+		thread debug_blocker(trigger_pos,radius,height);
+	}
+
+		for(;;)
 		{
-			self notify("all_boards_repaired");
-			return;
-		}
-
-		if(no_valid_repairable_boards(self,self.barrier_chunks))
+#/
+		if(1)
 		{
-			self notify("no valid boards");
-			return;
-		}
-
-		if(IsDefined(level._zm_blocker_trigger_think_return_override))
-		{
-			if(self [[ level._zm_blocker_trigger_think_return_override ]](player))
-			{
-				return;
-			}
-		}
-
-		while(1)
-		{
-			players = get_players();
-			if(player_fails_blocker_repair_trigger_preamble(player,players,self.unitrigger_stub.trigger,0))
-			{
-				break;
-			}
-
-			if(IsDefined(self.zbarrier))
-			{
-				chunk = get_random_destroyed_chunk(self,self.barrier_chunks);
-				self thread replace_chunk(self,chunk,has_perk,IsDefined(player.pers_upgrades_awarded["board"]) && player.pers_upgrades_awarded["board"]);
-			}
-			else
-			{
-				chunk = get_random_destroyed_chunk(self,self.barrier_chunks);
-				if((IsDefined(chunk.script_parameter) && chunk.script_parameters == "repair_board") || chunk.script_parameters == "barricade_vents")
-				{
-					if(IsDefined(chunk.unbroken_section))
-					{
-						chunk show();
-						chunk solid();
-						chunk.unbroken_section self_delete();
-					}
-				}
-				else
-				{
-					chunk show();
-				}
-
-				if(!IsDefined(chunk.script_parameters) || chunk.script_parameters == "board" || chunk.script_parameters == "repair_board" || chunk.script_parameters == "barricade_vents")
-				{
-					if(!(IsDefined(level.use_clientside_board_fx) && level.use_clientside_board_fx))
-					{
-						if(!IsDefined(chunk.material) || IsDefined(chunk.material) && chunk.material != "rock")
-						{
-							chunk play_sound_on_ent("rebuild_barrier_piece");
-						}
-
-						playsoundatposition("zmb_cha_ching",(0,0,0));
-					}
-				}
-
-				if(chunk.script_parameters == "bar")
-				{
-					chunk play_sound_on_ent("rebuild_barrier_piece");
-					playsoundatposition("zmb_cha_ching",(0,0,0));
-				}
-
-				if(IsDefined(chunk.script_parameters))
-				{
-					if(chunk.script_parameters == "bar")
-					{
-						if(IsDefined(chunk.script_noteworthy))
-						{
-							if(chunk.script_noteworthy == "5")
-							{
-								chunk hide();
-							}
-							else if(chunk.script_noteworthy == "3")
-							{
-								chunk hide();
-							}
-						}
-					}
-				}
-
-				self thread replace_chunk(self,chunk,has_perk,IsDefined(player.pers_upgrades_awarded["board"]) && player.pers_upgrades_awarded["board"]);
-			}
-
-			if(IsDefined(self.clip))
-			{
-				self.clip enable_trigger();
-				self.clip disconnectpaths();
-			}
-			else
-			{
-				blocker_disconnect_paths(self.neg_start,self.neg_end);
-			}
-
-			bbprint("zombie_uses","playername %s playerscore %d round %d cost %d name %s x %f y %f z %f type %s",player.name,player.score,level.round_number,original_cost,self.target,self.origin,"repair");
-			self do_post_chunk_repair_delay(has_perk);
-			if(!(is_player_valid(player)))
-			{
-				break;
-			}
-
-			player handle_post_board_repair_rewards(cost,self);
+			self waittill(groundpos(trigger_location.origin),groundpos(trigger_location.origin),"trigger",player);
+			has_perk = player has_blocker_affecting_perk();
 			if(all_chunks_intact(self,self.barrier_chunks))
 			{
 				self notify("all_boards_repaired");
@@ -1703,6 +1599,115 @@ GetDvarInt(#"FA91EA91") > 0
 			{
 				self notify("no valid boards");
 				return;
+			}
+
+			if(IsDefined(level._zm_blocker_trigger_think_return_override))
+			{
+				if(self [[ level._zm_blocker_trigger_think_return_override ]](player))
+				{
+					return;
+				}
+			}
+
+			while(1)
+			{
+				players = get_players();
+				if(player_fails_blocker_repair_trigger_preamble(player,players,self.unitrigger_stub.trigger,0))
+				{
+					break;
+				}
+
+				if(IsDefined(self.zbarrier))
+				{
+					chunk = get_random_destroyed_chunk(self,self.barrier_chunks);
+					self thread replace_chunk(self,chunk,has_perk,IsDefined(player.pers_upgrades_awarded["board"]) && player.pers_upgrades_awarded["board"]);
+				}
+				else
+				{
+					chunk = get_random_destroyed_chunk(self,self.barrier_chunks);
+					if((IsDefined(chunk.script_parameter) && chunk.script_parameters == "repair_board") || chunk.script_parameters == "barricade_vents")
+					{
+						if(IsDefined(chunk.unbroken_section))
+						{
+							chunk show();
+							chunk solid();
+							chunk.unbroken_section self_delete();
+						}
+					}
+					else
+					{
+						chunk show();
+					}
+
+					if(!IsDefined(chunk.script_parameters) || chunk.script_parameters == "board" || chunk.script_parameters == "repair_board" || chunk.script_parameters == "barricade_vents")
+					{
+						if(!(IsDefined(level.use_clientside_board_fx) && level.use_clientside_board_fx))
+						{
+							if(!IsDefined(chunk.material) || IsDefined(chunk.material) && chunk.material != "rock")
+							{
+								chunk play_sound_on_ent("rebuild_barrier_piece");
+							}
+
+							playsoundatposition("zmb_cha_ching",(0,0,0));
+						}
+					}
+
+					if(chunk.script_parameters == "bar")
+					{
+						chunk play_sound_on_ent("rebuild_barrier_piece");
+						playsoundatposition("zmb_cha_ching",(0,0,0));
+					}
+
+					if(IsDefined(chunk.script_parameters))
+					{
+						if(chunk.script_parameters == "bar")
+						{
+							if(IsDefined(chunk.script_noteworthy))
+							{
+								if(chunk.script_noteworthy == "5")
+								{
+									chunk hide();
+								}
+								else if(chunk.script_noteworthy == "3")
+								{
+									chunk hide();
+								}
+							}
+						}
+					}
+
+					self thread replace_chunk(self,chunk,has_perk,IsDefined(player.pers_upgrades_awarded["board"]) && player.pers_upgrades_awarded["board"]);
+				}
+
+				if(IsDefined(self.clip))
+				{
+					self.clip enable_trigger();
+					self.clip disconnectpaths();
+				}
+				else
+				{
+					blocker_disconnect_paths(self.neg_start,self.neg_end);
+				}
+
+				bbprint("zombie_uses","playername %s playerscore %d round %d cost %d name %s x %f y %f z %f type %s",player.name,player.score,level.round_number,original_cost,self.target,self.origin,"repair");
+				self do_post_chunk_repair_delay(has_perk);
+				if(!(is_player_valid(player)))
+				{
+					break;
+				}
+
+				player handle_post_board_repair_rewards(cost,self);
+				if(all_chunks_intact(self,self.barrier_chunks))
+				{
+					self notify("all_boards_repaired");
+					return;
+				}
+
+				if(no_valid_repairable_boards(self,self.barrier_chunks))
+				{
+					self notify("no valid boards");
+					return;
+				}
 			}
 		}
 	}

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 50
- * Decompile Time: 202 ms
- * Timestamp: 10/27/2023 3:00:26 AM
+ * Decompile Time: 17 ms
+ * Timestamp: 10/28/2023 12:10:40 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -98,16 +98,10 @@ main()
 	maps/mp/gametypes/_globallogic_audio::registerdialoggroup("gamemode_objective",0);
 /#
 	trigs = getentarray("radiotrigger","targetname");
-	_a101 = trigs;
-	_k101 = FirstArrayKey(_a101);
-	for(;;)
+	foreach(trig in trigs)
 	{
-		trig = _a101[_k101];
 		trig delete();
-		_k101 = NextArrayKey(_a101);
 	}
-_k101
-IsDefined(_k101)
 #/
 }
 
@@ -680,8 +674,8 @@ give_capture_credit(touchlist,string,capturetime,capture_team,lastcaptureteam)
 		{
 /#
 			player iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU CAPTURE CREDIT AS BOOSTING PREVENTION");
-#/
 		}
+#/
 	}
 }
 
@@ -1010,15 +1004,13 @@ setupzones()
 	{
 /#
 		println("^1------------ Map Errors ------------");
-		i = 0;
-		for(;;)
+		for(i = 0;i < maperrors.size;i++)
 		{
 			println(maperrors[i]);
-			i++;
 		}
+
 		println("^1------------------------------------");
 		maps/mp/_utility::error("Map errors. See above");
-i < maperrors.size
 #/
 		maps/mp/gametypes/_callbacksetup::abortlevel();
 		return;

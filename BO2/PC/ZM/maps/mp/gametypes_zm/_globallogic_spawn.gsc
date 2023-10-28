@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 30
- * Decompile Time: 225 ms
- * Timestamp: 10/27/2023 3:02:35 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:11:35 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -456,8 +456,10 @@ spawnplayer()
 	self logstring("S " + self.origin[0] + " " + self.origin[1] + " " + self.origin[2]);
 	setdvar("scr_selecting_location","");
 /#
-	self thread maps/mp/gametypes_zm/_globallogic_score::xpratethread();
-GetDvarInt(#"F8D00F60") > 0
+	if(GetDvarInt(#"F8D00F60") > 0)
+	{
+		self thread maps/mp/gametypes_zm/_globallogic_score::xpratethread();
+	}
 #/
 	self maps/mp/zombies/_zm_perks::perk_set_max_health_if_jugg("health_reboot",1,0);
 	if(game["state"] == "postgame")
@@ -565,7 +567,10 @@ forcespawn(time)
 kickifdontspawn()
 {
 /#
-GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	if(self ishost())
 	{

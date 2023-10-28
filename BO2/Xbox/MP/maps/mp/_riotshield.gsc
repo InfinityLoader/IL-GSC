@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 19
- * Decompile Time: 78 ms
- * Timestamp: 10/27/2023 3:05:09 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:13:50 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -315,10 +315,12 @@ watchriotshielddeploy()
 /#
 			assert(!IsDefined(self.riotshieldentity));
 #/
+			if(level.gametype != "shrp")
+			{
 /#
-			assert(primaries.size > 0);
+				assert(primaries.size > 0);
+			}
 #/
-level.gametype != "shrp"
 #/
 			shield_ent setclientfield("riotshield_state",1);
 			shield_ent.reconmodel setclientfield("riotshield_state",1);

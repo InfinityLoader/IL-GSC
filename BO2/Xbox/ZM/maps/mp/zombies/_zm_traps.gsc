@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 29
- * Decompile Time: 210 ms
- * Timestamp: 10/27/2023 3:06:19 AM
+ * Decompile Time: 16 ms
+ * Timestamp: 10/28/2023 12:14:18 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -255,8 +255,10 @@ trap_use_think(trap)
 			trap._trap_cooling_down = 1;
 			trap trap_set_string(&"ZOMBIE_TRAP_COOLDOWN");
 /#
-			trap._trap_cooldown_time = 5;
-GetDvarInt(#"FA81816F") >= 1
+			if(GetDvarInt(#"FA81816F") >= 1)
+			{
+				trap._trap_cooldown_time = 5;
+			}
 #/
 			wait(trap._trap_cooldown_time);
 			trap._trap_cooling_down = 0;
@@ -670,7 +672,7 @@ zombie_trap_death(trap,param)
 			self playsound("zmb_zombie_arc");
 			self [[ self.fire_damage_func ]](trap);
 			continue;
-			level notify("trap_kill",self,trap,IsDefined(self.fire_damage_func),(param > 90 && level.burning_zombies.size < 6) ? trap._trap_type == "electric" : randomint(100) > 50,IsDefined(self.animname) && self.animname != "zombie_dog");
+			level notify("trap_kill",self,trap,IsDefined(self.fire_damage_func),randomint(100) > 50,trap._trap_type == "electric",param > 90 && level.burning_zombies.size < 6,IsDefined(self.animname) && self.animname != "zombie_dog");
 			self dodamage(self.health + 666,self.origin,trap);
 			break;
 

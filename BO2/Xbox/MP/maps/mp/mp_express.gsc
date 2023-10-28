@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 3
- * Decompile Time: 21 ms
- * Timestamp: 10/27/2023 3:05:25 AM
+ * Decompile Time: 0 ms
+ * Timestamp: 10/28/2023 12:13:56 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -72,14 +72,19 @@ devgui_express()
 		{
 			case "€GSC\r\n":
 				break;
+	
 			case "€GSC\r\n":
 				level notify("train_start");
 				break;
+	
 			default:
 				break;
 		}
-		setdvar("devgui_notify","");
+
+		if(GetDvar(#"9488D1C1") != "")
+		{
+			setdvar("devgui_notify","");
+		}
 	}
-GetDvar(#"9488D1C1") != ""
 #/
 }

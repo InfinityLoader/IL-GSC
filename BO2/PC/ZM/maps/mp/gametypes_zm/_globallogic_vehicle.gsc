@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 8
- * Decompile Time: 54 ms
- * Timestamp: 10/27/2023 3:02:36 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:11:36 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -153,7 +153,10 @@ callback_vehicledamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapo
 		}
 		else
 		{
-			if(IsDefined(self.owner) && IsDefined(eattacker) && self.owner == eattacker)
+			if(!level.teambased && IsDefined(self.targetname) && self.targetname == "rcbomb")
+			{
+			}
+			else if(IsDefined(self.owner) && IsDefined(eattacker) && self.owner == eattacker)
 			{
 				return;
 			}
@@ -204,8 +207,10 @@ callback_vehicledamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapo
 	}
 
 /#
-	println("actor:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
-GetDvarInt(#"B1AE74B1")
+	if(GetDvarInt(#"B1AE74B1"))
+	{
+		println("actor:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
+	}
 #/
 	if(1)
 	{

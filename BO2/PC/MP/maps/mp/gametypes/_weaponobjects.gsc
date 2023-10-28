@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 99
- * Decompile Time: 270 ms
- * Timestamp: 10/27/2023 3:00:17 AM
+ * Decompile Time: 39 ms
+ * Timestamp: 10/28/2023 12:10:37 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1094,8 +1094,10 @@ onspawnproximityweaponobject(watcher,owner)
 	self thread commononspawnuseweaponobject(watcher,owner);
 	self thread proximityweaponobjectdetonation(watcher);
 /#
-	self thread proximityweaponobjectdebug(watcher);
-GetDvarInt(#"38868733")
+	if(GetDvarInt(#"38868733"))
+	{
+		self thread proximityweaponobjectdebug(watcher);
+	}
 #/
 }
 
@@ -1158,7 +1160,9 @@ watchweaponobjectspawn()
 				}
 	
 				break;
-	(IsDefined(self.weaponobjectwatcherarray[i].objectarray[j])) ? weapname == "proximity_grenade_mp" : IsDefined(self.weaponobjectwatcherarray[i].detonate) && self.weaponobjectwatcherarray[i].objectarray.size > numallowed - 1
+	IsDefined(self.weaponobjectwatcherarray[i].detonate) && self.weaponobjectwatcherarray[i].objectarray.size > numallowed - 1
+	weapname == "proximity_grenade_mp"
+	IsDefined(self.weaponobjectwatcherarray[i].objectarray[j])
 	j < objectarray_size
 	self.weaponobjectwatcherarray[i].weapon != weapname
 	i < self.weaponobjectwatcherarray.size
@@ -1260,24 +1264,24 @@ showcone(angle,range,color)
 	up = vectorcross(forward,right);
 	fullforward = forward * range * cos(angle);
 	sideamnt = range * sin(angle);
-	for(;;)
+	while(1)
 	{
 		prevpoint = (0,0,0);
-		i = 0;
-		for(;;)
+		for(i = 0;i <= 20;i++)
 		{
 			coneangle = i / 20 * 360;
 			point = start + fullforward + sideamnt * right * cos(coneangle) + up * sin(coneangle);
-			line(start,point,color);
-			line(prevpoint,point,color);
+			if(i > 0)
+			{
+				line(start,point,color);
+				line(prevpoint,point,color);
+			}
+
 			prevpoint = point;
-			i++;
 		}
+
 		wait(0.05);
 	}
-i > 0
-i <= 20
-1
 #/
 }
 
@@ -2058,14 +2062,11 @@ deleteweaponobjectson()
 saydamaged(orig,amount)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < 60;i++)
 	{
 		print3d(orig,"damaged! " + amount);
 		wait(0.05);
-		i++;
 	}
-i < 60
 #/
 }
 
@@ -2784,28 +2785,41 @@ switch_team(entity,weapon_name,owner)
 	self endon("stop_disarmthink");
 	self endon("death");
 	setdvar("scr_switch_team","");
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		wait(0.5);
+		devgui_int = GetDvarInt(#"BB77CC24");
+		if(devgui_int != 0)
 		{
-			wait(0.5);
-			devgui_int = GetDvarInt(#"BB77CC24");
 			team = "autoassign";
 			player = maps/mp/gametypes/_dev::getormakebot(team);
-			println("Could not add test client");
-			wait(1);
+			if(!(IsDefined(player)))
+			{
+				println("Could not add test client");
+				wait(1);
+				continue;
+			}
+
+			entity.owner hackerremoveweapon(entity);
+			entity.hacked = 1;
+			entity setowner(player);
+			entity setteam(player.pers["team"]);
+			entity.owner = player;
+			entity notify("hacked",player);
+			level notify("hacked",entity,player);
+			if(entity.name == "camera_spike_mp" && IsDefined(entity.camerahead))
+			{
+				entity.camerahead notify("hacked",player);
+			}
+
+			wait(0.05);
+			if(IsDefined(player) && player.sessionstate == "playing")
+			{
+				player notify("grenade_fire",self,self.name);
+			}
+
+			setdvar("scr_switch_team","0");
 		}
-		entity.owner hackerremoveweapon(entity);
-		entity.hacked = 1;
-		entity setowner(player);
-		entity setteam(player.pers["team"]);
-		entity.owner = player;
-		entity notify("hacked",player,IsDefined(player),devgui_int != 0,1);
-		level notify("hacked",entity,player);
-		entity.camerahead notify("hacked",player,entity.name == "camera_spike_mp" && IsDefined(entity.camerahead));
-		wait(0.05);
-		player notify("grenade_fire",self,self.name,IsDefined(player) && player.sessionstate == "playing");
-		setdvar("scr_switch_team","0");
 	}
 #/
 }

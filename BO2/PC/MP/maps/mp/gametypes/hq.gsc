@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 44
- * Decompile Time: 421 ms
- * Timestamp: 10/27/2023 3:00:25 AM
+ * Decompile Time: 15 ms
+ * Timestamp: 10/28/2023 12:10:39 AM
 *******************************************************************/
 
 #include maps/mp/_challenges;
@@ -871,15 +871,13 @@ setupradios()
 	{
 /#
 		println("^1------------ Map Errors ------------");
-		i = 0;
-		for(;;)
+		for(i = 0;i < maperrors.size;i++)
 		{
 			println(maperrors[i]);
-			i++;
 		}
+
 		println("^1------------------------------------");
 		maps/mp/_utility::error("Map errors. See above");
-i < maperrors.size
 #/
 		maps/mp/gametypes/_callbacksetup::abortlevel();
 		return;

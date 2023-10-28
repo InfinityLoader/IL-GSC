@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 176
- * Decompile Time: 181 ms
- * Timestamp: 10/27/2023 3:06:31 AM
+ * Decompile Time: 42 ms
+ * Timestamp: 10/28/2023 12:14:26 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -78,10 +78,12 @@ error(msg)
 /#
 	println("^c*ERROR* ",msg);
 	wait(0.05);
+	if(GetDvar(#"F49A52C") != "1")
+	{
 /#
-	assertmsg("This is a forced error - attach the log file");
+		assertmsg("This is a forced error - attach the log file");
+	}
 #/
-GetDvar(#"F49A52C") != "1"
 #/
 }
 
@@ -1195,15 +1197,36 @@ activate_exploder(num)
 {
 	num = int(num);
 /#
-	i = 0;
-	for(;;)
+	if(level.createfx_enabled)
 	{
-		ent = level.createfxent[i];
-		client_send = 0;
-		ent activate_individual_exploder();
-		i++;
+		for(i = 0;i < level.createfxent.size;i++)
+		{
+			ent = level.createfxent[i];
+			if(!(IsDefined(ent)))
+			{
+			}
+			else if(ent.v["type"] != "exploder")
+			{
+			}
+			else if(!(IsDefined(ent.v["exploder"])))
+			{
+			}
+			else if(ent.v["exploder"] != num)
+			{
+			}
+			else
+			{
+				if(IsDefined(ent.v["exploder_server"]))
+				{
+					client_send = 0;
+				}
+
+				ent activate_individual_exploder();
+			}
+		}
+
+		return;
 	}
-Stack-Empty ? Stack-Empty : ((level.createfx_enabled) ? i < level.createfxent.size : (IsDefined(ent) ? ent.v["type"] != "exploder" : ((IsDefined(ent.v["exploder"])) ? ent.v["exploder"] != num : IsDefined(ent.v["exploder_server"]))))
 #/
 	client_send = 1;
 	if(IsDefined(level.createfxexploders[num]))
@@ -1459,22 +1482,31 @@ plot_points(plotpoints,r,g,b,timer)
 {
 /#
 	lastpoint = plotpoints[0];
-	r = 1;
-	g = 1;
-	b = 1;
-	timer = 0.05;
-	i = 1;
-	for(;;)
+	if(!(IsDefined(r)))
+	{
+		r = 1;
+	}
+
+	if(!(IsDefined(g)))
+	{
+		g = 1;
+	}
+
+	if(!(IsDefined(b)))
+	{
+		b = 1;
+	}
+
+	if(!(IsDefined(timer)))
+	{
+		timer = 0.05;
+	}
+
+	for(i = 1;i < plotpoints.size;i++)
 	{
 		line(lastpoint,plotpoints[i],(r,g,b),1,timer);
 		lastpoint = plotpoints[i];
-		i++;
 	}
-i < plotpoints.size
-IsDefined(timer)
-IsDefined(b)
-IsDefined(g)
-IsDefined(r)
 #/
 }
 
@@ -2249,9 +2281,12 @@ set_dvar_int_if_unset(dvar,value,reset)
 drawcylinder(pos,rad,height,duration,stop_notify)
 {
 /#
-	duration = 0;
+	if(!(IsDefined(duration)))
+	{
+		duration = 0;
+	}
+
 	level thread drawcylinder_think(pos,rad,height,duration,stop_notify);
-IsDefined(duration)
 #/
 }
 
@@ -2259,27 +2294,32 @@ IsDefined(duration)
 drawcylinder_think(pos,rad,height,seconds,stop_notify)
 {
 /#
-	level endon(stop_notify,IsDefined(stop_notify));
+	if(IsDefined(stop_notify))
+	{
+		level endon(stop_notify);
+	}
+
 	stop_time = GetTime() + seconds * 1000;
 	currad = rad;
 	curheight = height;
 	for(;;)
 	{
-		return;
-		r = 0;
-		for(;;)
+		if(seconds > 0 && stop_time <= GetTime())
+		{
+			return;
+		}
+
+		for(r = 0;r < 20;r++)
 		{
 			theta = r / 20 * 360;
 			theta2 = r + 1 / 20 * 360;
 			line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta2) * currad,sin(theta2) * currad,0));
 			line(pos + (cos(theta) * currad,sin(theta) * currad,curheight),pos + (cos(theta2) * currad,sin(theta2) * currad,curheight));
 			line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta) * currad,sin(theta) * currad,curheight));
-			r++;
 		}
+
 		wait(0.05);
 	}
-r < 20
-seconds > 0 && stop_time <= GetTime()
 #/
 }
 

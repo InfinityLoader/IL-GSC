@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 44
- * Decompile Time: 225 ms
- * Timestamp: 10/27/2023 3:02:57 AM
+ * Decompile Time: 26 ms
+ * Timestamp: 10/28/2023 12:11:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -358,7 +358,10 @@ attack_vox_network_choke()
 do_zombies_playvocals(alias_type,zombie_type)
 {
 /#
-GetDvarInt(#"6C610250") > 0
+	if(GetDvarInt(#"6C610250") > 0)
+	{
+		return;
+	}
 #/
 	self endon("death");
 	if(!(IsDefined(zombie_type)))
@@ -520,8 +523,10 @@ create_and_play_dialog(category,type,response,force_variant,override)
 	if(!(IsDefined(self.zmbvoxid)))
 	{
 /#
-		iprintln("DIALOG DEBUGGER: No zmbVoxID setup on this character. Run zmbVoxInitSpeaker on this character in order to play vox");
-GetDvarInt(#"AEB127D") > 0
+		if(GetDvarInt(#"AEB127D") > 0)
+		{
+			iprintln("DIALOG DEBUGGER: No zmbVoxID setup on this character. Run zmbVoxInitSpeaker on this character in order to play vox");
+		}
 #/
 		return;
 	}
@@ -532,8 +537,10 @@ GetDvarInt(#"AEB127D") > 0
 	}
 
 /#
-	self thread dialog_debugger(category,type);
-GetDvarInt(#"AEB127D") > 0
+	if(GetDvarInt(#"AEB127D") > 0)
+	{
+		self thread dialog_debugger(category,type);
+	}
 #/
 	isresponse = 0;
 	alias_suffix = undefined;
@@ -587,10 +594,12 @@ GetDvarInt(#"AEB127D") > 0
 	else
 	{
 /#
-		iprintln("DIALOG DEBUGGER: SOUND_TO_PLAY is undefined");
-GetDvarInt(#"AEB127D") > 0
-#/
+		if(GetDvarInt(#"AEB127D") > 0)
+		{
+			iprintln("DIALOG DEBUGGER: SOUND_TO_PLAY is undefined");
+		}
 	}
+#/
 }
 
 //Function Number: 15
@@ -687,8 +696,8 @@ do_player_or_npc_playvox(prefix,index,sound_to_play,waittime,category,type,overr
 	{
 /#
 		println("DIALOG DEBUGGER: Can\'t play (" + prefix + sound_to_play + ") because someone is nearby speaking already.");
-#/
 	}
+#/
 }
 
 //Function Number: 16
@@ -1222,11 +1231,16 @@ dialog_debugger(category,type)
 {
 /#
 	println("DIALOG DEBUGGER: " + self.zmbvoxid + " attempting to speak");
-	iprintlnbold(self.zmbvoxid + " tried to play a line, but no alias exists. Category: " + category + " Type: " + type);
-	println("DIALOG DEBUGGER ERROR: Alias Not Defined For " + category + " " + type);
-	println("DIALOG DEBUGGER ERROR: Response Alias Not Defined For " + category + " " + type + "_response");
-IsDefined(level.vox.speaker[self.zmbvoxid].response)
-IsDefined(level.vox.speaker[self.zmbvoxid].alias[category][type])
+	if(!(IsDefined(level.vox.speaker[self.zmbvoxid].alias[category][type])))
+	{
+		iprintlnbold(self.zmbvoxid + " tried to play a line, but no alias exists. Category: " + category + " Type: " + type);
+		println("DIALOG DEBUGGER ERROR: Alias Not Defined For " + category + " " + type);
+	}
+
+	if(!(IsDefined(level.vox.speaker[self.zmbvoxid].response)))
+	{
+		println("DIALOG DEBUGGER ERROR: Response Alias Not Defined For " + category + " " + type + "_response");
+	}
 #/
 }
 
@@ -1519,8 +1533,10 @@ zmbvoxgetlinevariant(prefix,alias_suffix,force_variant,override)
 		if(num_variants <= 0)
 		{
 /#
-			println("DIALOG DEBUGGER: No variants found for - " + prefix + alias_suffix);
-GetDvarInt(#"AEB127D") > 0
+			if(GetDvarInt(#"AEB127D") > 0)
+			{
+				println("DIALOG DEBUGGER: No variants found for - " + prefix + alias_suffix);
+			}
 #/
 			return undefined;
 		}

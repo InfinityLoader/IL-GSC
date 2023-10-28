@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 1
- * Decompile Time: 4 ms
- * Timestamp: 10/27/2023 3:02:01 AM
+ * Decompile Time: 2774 ms
+ * Timestamp: 10/28/2023 12:11:25 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/traverse/shared;
@@ -40,11 +40,11 @@ main()
 				break;
 
 			default:
-				traversealias = self [[ level.zm_mantle_over_40_move_speed_override ]]();
-	/#
-				assertmsg("Zombie \'" + self.classname + "\' move speed of \'" + self.zombie_move_speed + "\' is not supported for mantle_over_40.");
-	#/
-	IsDefined(level.zm_mantle_over_40_move_speed_override)
+				if(IsDefined(level.zm_mantle_over_40_move_speed_override))
+					traversealias = self [[ level.zm_mantle_over_40_move_speed_override ]]();
+/#				else
+					assertmsg("Zombie \'" + self.classname + "\' move speed of \'" + self.zombie_move_speed + "\' is not supported for mantle_over_40.");
+#/
 				break;
 		}
 	}
@@ -53,6 +53,5 @@ main()
 		traversestate = "zm_traverse_barrier_crawl";
 		traversealias = "barrier_crawl";
 	}
-
-	self dotraverse(traversestate,traversealias);
+	self dotraverse( traversestate, traversealias );
 }

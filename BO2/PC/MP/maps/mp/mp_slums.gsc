@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 2
- * Decompile Time: 138 ms
- * Timestamp: 10/27/2023 3:01:54 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:11:12 AM
 *******************************************************************/
 
 #include maps/mp/_compass;

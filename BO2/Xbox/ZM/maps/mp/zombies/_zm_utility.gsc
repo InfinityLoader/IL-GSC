@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 306
- * Decompile Time: 359 ms
- * Timestamp: 10/27/2023 3:06:21 AM
+ * Decompile Time: 112 ms
+ * Timestamp: 10/28/2023 12:14:19 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -479,7 +479,7 @@ all_chunks_destroyed(barrier,barrier_chunks)
 	else if(IsDefined(barrier_chunks))
 	{
 /#
-			assert(IsDefined(barrier_chunks),"_zm_utility::all_chunks_destroyed - Barrier chunks undefined");
+		assert(IsDefined(barrier_chunks),"_zm_utility::all_chunks_destroyed - Barrier chunks undefined");
 #/
 		for(i = 0;i < barrier_chunks.size;i++)
 		{
@@ -808,22 +808,27 @@ generated_radius_attract_positions(forward,offset,num_positions,attract_radius)
 debug_draw_attractor_positions()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		wait(0.05);
-		i = 0;
-		for(;;)
+			for(;;)
+			{
+			while(!(IsDefined(self.attractor_positions)))
+			{
+				wait(0.05);
+			}
+		}
+
+		for(i = 0;i < self.attractor_positions.size;i++)
 		{
 			line(self.origin,self.attractor_positions[i][0],(1,0,0),1,1);
-			i++;
 		}
+
 		wait(0.05);
-		return;
+		if(!(IsDefined(self)))
+		{
+			return;
+		}
 	}
-IsDefined(self)
-i < self.attractor_positions.size
-IsDefined(self.attractor_positions)
-1
 #/
 }
 
@@ -1669,7 +1674,7 @@ non_destroyed_grate_order(origin,chunks_grate)
 					else if(grate_order3[i].state == "repaired")
 					{
 /#
-							iprintlnbold(" pull bar3 ");
+						iprintlnbold(" pull bar3 ");
 #/
 						grate_order4[i] thread show_grate_pull();
 						return grate_order3[i];
@@ -1677,7 +1682,7 @@ non_destroyed_grate_order(origin,chunks_grate)
 					else if(grate_order4[i].state == "repaired")
 					{
 /#
-								iprintlnbold(" pull bar4 ");
+						iprintlnbold(" pull bar4 ");
 #/
 						grate_order5[i] thread show_grate_pull();
 						return grate_order4[i];
@@ -1685,7 +1690,7 @@ non_destroyed_grate_order(origin,chunks_grate)
 					else if(grate_order5[i].state == "repaired")
 					{
 /#
-									iprintlnbold(" pull bar5 ");
+						iprintlnbold(" pull bar5 ");
 #/
 						grate_order6[i] thread show_grate_pull();
 						return grate_order5[i];
@@ -2507,7 +2512,7 @@ grate_order_destroyed(chunks_repair_grate)
 				else if(grate_repair_order4[i].state == "destroyed")
 				{
 /#
-						iprintlnbold(" Fix grate4 ");
+					iprintlnbold(" Fix grate4 ");
 #/
 					grate_repair_order5[i] thread show_grate_repair();
 					return grate_repair_order4[i];
@@ -2515,7 +2520,7 @@ grate_order_destroyed(chunks_repair_grate)
 				else if(grate_repair_order3[i].state == "destroyed")
 				{
 /#
-							iprintlnbold(" Fix grate3 ");
+					iprintlnbold(" Fix grate3 ");
 #/
 					grate_repair_order4[i] thread show_grate_repair();
 					return grate_repair_order3[i];
@@ -2523,7 +2528,7 @@ grate_order_destroyed(chunks_repair_grate)
 				else if(grate_repair_order2[i].state == "destroyed")
 				{
 /#
-								iprintlnbold(" Fix grate2 ");
+					iprintlnbold(" Fix grate2 ");
 #/
 					grate_repair_order3[i] thread show_grate_repair();
 					return grate_repair_order2[i];
@@ -2531,7 +2536,7 @@ grate_order_destroyed(chunks_repair_grate)
 				else if(grate_repair_order1[i].state == "destroyed")
 				{
 /#
-									iprintlnbold(" Fix grate1 ");
+					iprintlnbold(" Fix grate1 ");
 #/
 					grate_repair_order2[i] thread show_grate_repair();
 					return grate_repair_order1[i];
@@ -2966,14 +2971,16 @@ hudelem_count()
 /#
 	max = 0;
 	curr_total = 0;
-	for(;;)
+	while(1)
 	{
-		max = level.hudelem_count;
+		if(level.hudelem_count > max)
+		{
+			max = level.hudelem_count;
+		}
+
 		println("HudElems: " + level.hudelem_count + "[Peak: " + max + "]");
 		wait(0.05);
 	}
-level.hudelem_count > max
-1
 #/
 }
 
@@ -2981,19 +2988,15 @@ level.hudelem_count > max
 debug_round_advancer()
 {
 /#
-	for(;;)
+	while(1)
 	{
 		zombs = get_round_enemy_array();
-		i = 0;
-		for(;;)
+		for(i = 0;i < zombs.size;i++)
 		{
 			zombs[i] dodamage(zombs[i].health + 666,(0,0,0));
 			wait(0.5);
-			i++;
 		}
 	}
-i < zombs.size
-1
 #/
 }
 
@@ -3002,13 +3005,11 @@ print_run_speed(speed)
 {
 /#
 	self endon("death");
-	for(;;)
+	while(1)
 	{
 		print3d(64 + VectorScale((0,0,1)),self.origin,speed);
 		wait(0.05);
 	}
-(1,1,1)
-1
 #/
 }
 
@@ -3016,15 +3017,18 @@ print_run_speed(speed)
 draw_line_ent_to_ent(ent1,ent2)
 {
 /#
-	return;
-	ent1 endon("death",GetDvarInt(#"FA91EA91") != 1);
+	if(GetDvarInt(#"FA91EA91") != 1)
+	{
+		return;
+	}
+
+	ent1 endon("death");
 	ent2 endon("death");
-	for(;;)
+	while(1)
 	{
 		line(ent1.origin,ent2.origin);
 		wait(0.05);
 	}
-1
 #/
 }
 
@@ -3032,17 +3036,24 @@ draw_line_ent_to_ent(ent1,ent2)
 draw_line_ent_to_pos(ent,pos,end_on)
 {
 /#
-	return;
-	ent endon("death",GetDvarInt(#"FA91EA91") != 1);
+	if(GetDvarInt(#"FA91EA91") != 1)
+	{
+		return;
+	}
+
+	ent endon("death");
 	ent notify("stop_draw_line_ent_to_pos");
 	ent endon("stop_draw_line_ent_to_pos");
-	ent endon(end_on,IsDefined(end_on));
-	for(;;)
+	if(IsDefined(end_on))
+	{
+		ent endon(end_on);
+	}
+
+	while(1)
 	{
 		line(ent.origin,pos);
 		wait(0.05);
 	}
-1
 #/
 }
 
@@ -3050,8 +3061,10 @@ draw_line_ent_to_pos(ent,pos,end_on)
 debug_print(msg)
 {
 /#
-	println("######### ZOMBIE: " + msg);
-GetDvarInt(#"FA91EA91") > 0
+	if(GetDvarInt(#"FA91EA91") > 0)
+	{
+		println("######### ZOMBIE: " + msg);
+	}
 #/
 }
 
@@ -3063,11 +3076,14 @@ debug_blocker(pos,rad,height)
 	self endon("stop_debug_blocker");
 	for(;;)
 	{
-		return;
+		if(GetDvarInt(#"FA91EA91") != 1)
+		{
+			return;
+		}
+
 		wait(0.05);
 		drawcylinder(pos,rad,height);
 	}
-GetDvarInt(#"FA91EA91") != 1
 #/
 }
 
@@ -3077,17 +3093,14 @@ drawcylinder(pos,rad,height)
 /#
 	currad = rad;
 	curheight = height;
-	r = 0;
-	for(;;)
+	for(r = 0;r < 20;r++)
 	{
 		theta = r / 20 * 360;
 		theta2 = r + 1 / 20 * 360;
 		line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta2) * currad,sin(theta2) * currad,0));
 		line(pos + (cos(theta) * currad,sin(theta) * currad,curheight),pos + (cos(theta2) * currad,sin(theta2) * currad,curheight));
 		line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta) * currad,sin(theta) * currad,curheight));
-		r++;
 	}
-r < 20
 #/
 }
 
@@ -3096,16 +3109,22 @@ print3d_at_pos(msg,pos,thread_endon,offset)
 {
 /#
 	self endon("death");
-	self notify(thread_endon,IsDefined(thread_endon));
-	self endon(thread_endon);
-	offset = (0,0,0);
-	for(;;)
+	if(IsDefined(thread_endon))
+	{
+		self notify(thread_endon);
+		self endon(thread_endon);
+	}
+
+	if(!(IsDefined(offset)))
+	{
+		offset = (0,0,0);
+	}
+
+	while(1)
 	{
 		print3d(self.origin + offset,msg);
 		wait(0.05);
 	}
-1
-IsDefined(offset)
 #/
 }
 
@@ -3116,20 +3135,21 @@ debug_breadcrumbs()
 	self endon("disconnect");
 	self notify("stop_debug_breadcrumbs");
 	self endon("stop_debug_breadcrumbs");
-	for(;;)
+	while(1)
 	{
-		wait(1);
-		i = 0;
-		for(;;)
+		if(GetDvarInt(#"FA91EA91") != 1)
+		{
+			wait(1);
+			continue;
+		}
+
+		for(i = 0;i < self.zombie_breadcrumbs.size;i++)
 		{
 			drawcylinder(self.zombie_breadcrumbs[i],5,5);
-			i++;
 		}
+
 		wait(0.05);
 	}
-i < self.zombie_breadcrumbs.size
-GetDvarInt(#"FA91EA91") != 1
-1
 #/
 }
 
@@ -3139,24 +3159,32 @@ debug_attack_spots_taken()
 /#
 	self notify("stop_debug_breadcrumbs");
 	self endon("stop_debug_breadcrumbs");
-	for(;;)
+	while(1)
 	{
-		wait(1);
+		if(GetDvarInt(#"FA91EA91") != 2)
+		{
+			wait(1);
+			continue;
+		}
+
 		wait(0.05);
 		count = 0;
-		i = 0;
-		for(;;)
+		for(i = 0;i < self.attack_spots_taken.size;i++)
 		{
-			count++;
-			circle(self.attack_spots[i],12,(1,0,0),0,1,1);
-			circle(self.attack_spots[i],12,(0,1,0),0,1,1);
-			i++;
+			if(self.attack_spots_taken[i])
+			{
+				count++;
+				circle(self.attack_spots[i],12,(1,0,0),0,1,1);
+			}
+			else
+			{
+				circle(self.attack_spots[i],12,(0,1,0),0,1,1);
+			}
 		}
+
 		msg = "" + count + " / " + self.attack_spots_taken.size;
 		print3d(self.origin,msg);
 	}
-(GetDvarInt(#"FA91EA91") != 2) ? i < self.attack_spots_taken.size : self.attack_spots_taken[i]
-1
 #/
 }
 
@@ -3167,15 +3195,12 @@ float_print3d(msg,time)
 	self endon("death");
 	time = GetTime() + time * 1000;
 	offset = VectorScale((0,0,1));
-	for(;;)
+	while(GetTime() < time)
 	{
 		offset = 2 + VectorScale((0,0,1));
 		print3d(self.origin + offset,msg,(1,1,1));
 		wait(0.05);
 	}
-offset
-GetTime() < time
-72
 #/
 }
 
@@ -3245,9 +3270,9 @@ magic_bullet_shield()
 		{
 /#
 			assertmsg("magic_bullet_shield does not support entity of classname \'" + self.classname + "\'.");
-#/
 		}
 	}
+#/
 }
 
 //Function Number: 119
@@ -3424,12 +3449,11 @@ print3d_ent(text,color,scale,offset,end_msg,overwrite)
 
 	self._debug_print3d_msg = text;
 /#
-	for(;;)
+	while(1)
 	{
 		print3d(self.origin + offset,self._debug_print3d_msg,color,scale);
 		wait(0.05);
 	}
-1
 #/
 }
 
@@ -3674,8 +3698,11 @@ shock_onexplosion(damage,shocktype,shocklight)
 increment_is_drinking()
 {
 /#
-	self.is_drinking++;
-IsDefined(level.devgui_dpad_watch) && level.devgui_dpad_watch
+	if(IsDefined(level.devgui_dpad_watch) && level.devgui_dpad_watch)
+	{
+		self.is_drinking++;
+		return;
+	}
 #/
 	if(!(IsDefined(self.is_drinking)))
 	{
@@ -3708,9 +3735,8 @@ decrement_is_drinking()
 	{
 /#
 		assertmsg("making is_drinking less than 0");
-#/
 	}
-
+#/
 	if(self.is_drinking == 0)
 	{
 		self enableoffhandweapons();
@@ -4803,9 +4829,8 @@ ent_flag_init(message,val)
 	{
 /#
 		assert(!IsDefined(self.ent_flag[message]),"Attempt to reinitialize existing flag \'" + message + "\' on entity.");
-#/
 	}
-
+#/
 	if(IsDefined(val) && val)
 	{
 		self.ent_flag[message] = 1;
@@ -4818,8 +4843,8 @@ ent_flag_init(message,val)
 		self.ent_flag[message] = 0;
 /#
 		self.ent_flags_lock[message] = 0;
-#/
 	}
+#/
 }
 
 //Function Number: 238
@@ -5031,7 +5056,7 @@ track_players_intersection_tracker()
 								else
 								{
 /#
-										iprintlnbold("PLAYERS ARE TOO FRIENDLY!!!!!");
+									iprintlnbold("PLAYERS ARE TOO FRIENDLY!!!!!");
 #/
 									players[i] dodamage(1000,(0,0,0));
 									players[j] dodamage(1000,(0,0,0));
@@ -5406,11 +5431,14 @@ general_vox_timer(timer,type)
 	level endon("end_game");
 /#
 	println("ZM >> VOX TIMER STARTED FOR  " + type + " ( " + timer + ")");
+		for(;;)
+		{
 #/
-	while(timer > 0)
-	{
-		wait(1);
-		timer--;
+		if(timer > 0)
+		{
+			wait(1);
+			timer--;
+		}
 	}
 
 	level.votimer[type] = timer;

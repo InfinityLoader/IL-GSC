@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 22
- * Decompile Time: 93 ms
- * Timestamp: 10/27/2023 2:59:57 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:10:29 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -22,29 +22,43 @@ dev_cac_init()
 	{
 		wait(0.5);
 		reset = 1;
-		continue;
+		if(GetDvar(#"E6D8B517") != "")
+		{
+			continue;
+		}
+
 		host = gethostplayer();
-		level.dev_cac_player = host;
+		if(!(IsDefined(level.dev_cac_player)))
+		{
+			level.dev_cac_player = host;
+		}
+
 		switch(GetDvar(#"CA7B9CD"))
 		{
 			case "":
 				reset = 0;
 				break;
+	
 			case "dpad_body":
 				host thread dev_cac_dpad_think("body",::dev_cac_cycle_body,"");
 				break;
+	
 			case "dpad_head":
 				host thread dev_cac_dpad_think("head",::dev_cac_cycle_head,"");
 				break;
+	
 			case "dpad_character":
 				host thread dev_cac_dpad_think("character",::dev_cac_cycle_character,"");
 				break;
+	
 			case "next_player":
 				dev_cac_cycle_player(1);
 				break;
+	
 			case "prev_player":
 				dev_cac_cycle_player(0);
 				break;
+	
 			case "cac_overlay":
 				level notify("dev_cac_overlay_think");
 				level thread dev_cac_overlay_think();
@@ -52,64 +66,82 @@ dev_cac_init()
 				break;
 		dev_cac_overlay
 				break;
+	
 			case "best_bullet_armor":
 				dev_cac_set_model_range(::sort_greatest,"armor_bullet");
 				break;
+	
 			case "worst_bullet_armor":
 				dev_cac_set_model_range(::sort_least,"armor_bullet");
 				break;
+	
 			case "best_explosive_armor":
 				dev_cac_set_model_range(::sort_greatest,"armor_explosive");
 				break;
+	
 			case "worst_explosive_armor":
 				dev_cac_set_model_range(::sort_least,"armor_explosive");
 				break;
+	
 			case "best_mobility":
 				dev_cac_set_model_range(::sort_greatest,"mobility");
 				break;
+	
 			case "worst_mobility":
 				dev_cac_set_model_range(::sort_least,"mobility");
 				break;
+	
 			case "camera":
 				dev_cac_camera_on = !dev_cac_camera_on;
 				dev_cac_camera(dev_cac_camera_on);
 				break;
+	
 			case "dpad_camo":
 				host thread dev_cac_dpad_think("camo",::dev_cac_cycle_render_options,"camo");
 				break;
+	
 			case "dpad_meleecamo":
 				host thread dev_cac_dpad_think("meleecamo",::dev_cac_cycle_render_options,"meleecamo");
 				break;
+	
 			case "dpad_lens":
 				host thread dev_cac_dpad_think("lens",::dev_cac_cycle_render_options,"lens");
 				break;
+	
 			case "dpad_reticle":
 				host thread dev_cac_dpad_think("reticle",::dev_cac_cycle_render_options,"reticle");
 				break;
+	
 			case "dpad_reticle_color":
 				host thread dev_cac_dpad_think("reticle color",::dev_cac_cycle_render_options,"reticle_color");
 				break;
+	
 			case "dpad_emblem":
 				host thread dev_cac_dpad_think("emblem",::dev_cac_cycle_render_options,"emblem");
 				break;
+	
 			case "dpad_tag":
 				host thread dev_cac_dpad_think("tag",::dev_cac_cycle_render_options,"tag");
 				break;
+	
 			case "dpad_facepaint_pattern":
 				host thread dev_cac_dpad_think("facepaint pattern",::dev_cac_cycle_render_options,"facepaint_pattern");
 				break;
+	
 			case "dpad_facepaint_color":
 				host thread dev_cac_dpad_think("facepaint color",::dev_cac_cycle_render_options,"facepaint_color");
 				break;
+	
 			case "dpad_reset":
 				host notify("dev_cac_dpad_think");
 				break;
 		}
-		setdvar("devgui_dev_cac","");
+
+		if(reset)
+		{
+			setdvar("devgui_dev_cac","");
+		}
 	}
-reset
-IsDefined(level.dev_cac_player)
-GetDvar(#"E6D8B517") != ""
 #/
 }
 
@@ -117,13 +149,18 @@ GetDvar(#"E6D8B517") != ""
 dev_cac_camera(on)
 {
 /#
-	self setclientthirdperson(1);
-	setdvar("cg_thirdPersonAngle","185");
-	setdvar("cg_thirdPersonRange","138");
-	setdvar("cg_fov","20");
-	self setclientthirdperson(0);
-	setdvar("cg_fov",GetDvar(#"55DDAF3D"));
-Stack-Empty ? Stack-Empty : on
+	if(on)
+	{
+		self setclientthirdperson(1);
+		setdvar("cg_thirdPersonAngle","185");
+		setdvar("cg_thirdPersonRange","138");
+		setdvar("cg_fov","20");
+	}
+	else
+	{
+		self setclientthirdperson(0);
+		setdvar("cg_fov",GetDvar(#"55DDAF3D"));
+	}
 #/
 }
 
@@ -143,15 +180,28 @@ dev_cac_dpad_think(part_name,cycle_function,tag)
 	{
 		self setactionslot(3,"");
 		self setactionslot(4,"");
-		[[ cycle_function ]](0,tag);
-		dpad_left = 1;
-		dpad_left = 0;
-		[[ cycle_function ]](1,tag);
-		dpad_right = 1;
-		dpad_right = 0;
+		if(!dpad_left && self buttonpressed("DPAD_LEFT"))
+		{
+			[[ cycle_function ]](0,tag);
+			dpad_left = 1;
+		}
+		else if(!(self buttonpressed("DPAD_LEFT")))
+		{
+			dpad_left = 0;
+		}
+
+		if(!dpad_right && self buttonpressed("DPAD_RIGHT"))
+		{
+			[[ cycle_function ]](1,tag);
+			dpad_right = 1;
+		}
+		else if(!(self buttonpressed("DPAD_RIGHT")))
+		{
+			dpad_right = 0;
+		}
+
 		wait(0.05);
 	}
-(Stack-Empty ? !dpad_left && self buttonpressed("DPAD_LEFT") : self buttonpressed("DPAD_LEFT")) ? !dpad_right && self buttonpressed("DPAD_RIGHT") : self buttonpressed("DPAD_RIGHT")
 #/
 }
 
@@ -159,21 +209,27 @@ dev_cac_dpad_think(part_name,cycle_function,tag)
 next_in_list(value,list)
 {
 /#
-	return list[0];
-	i = 0;
-	for(;;)
+	if(!(IsDefined(value)))
 	{
-		value = list[i + 1];
-		continue;
-		value = list[0];
-		break;
-		i++;
+		return list[0];
 	}
+
+	for(i = 0;i < list.size;i++)
+	{
+		if(value == list[i])
+		{
+			if(IsDefined(list[i + 1]))
+			{
+				value = list[i + 1];
+				continue;
+			}
+
+			value = list[0];
+			break;
+		}
+	}
+
 	return value;
-IsDefined(list[i + 1])
-value == list[i]
-i < list.size
-IsDefined(value)
 #/
 }
 
@@ -181,21 +237,27 @@ IsDefined(value)
 prev_in_list(value,list)
 {
 /#
-	return list[0];
-	i = 0;
-	for(;;)
+	if(!(IsDefined(value)))
 	{
-		value = list[i - 1];
-		continue;
-		value = list[list.size - 1];
-		break;
-		i++;
+		return list[0];
 	}
+
+	for(i = 0;i < list.size;i++)
+	{
+		if(value == list[i])
+		{
+			if(IsDefined(list[i - 1]))
+			{
+				value = list[i - 1];
+				continue;
+			}
+
+			value = list[list.size - 1];
+			break;
+		}
+	}
+
 	return value;
-IsDefined(list[i - 1])
-value == list[i]
-i < list.size
-IsDefined(value)
 #/
 }
 
@@ -212,13 +274,23 @@ dev_cac_set_player_model()
 dev_cac_cycle_body(forward,tag)
 {
 /#
-	return;
+	if(!(dev_cac_player_valid()))
+	{
+		return;
+	}
+
 	player = level.dev_cac_player;
 	keys = getarraykeys(level.cac_functions["set_body_model"]);
-	player.cac_body_type = next_in_list(player.cac_body_type,keys);
-	player.cac_body_type = prev_in_list(player.cac_body_type,keys);
+	if(forward)
+	{
+		player.cac_body_type = next_in_list(player.cac_body_type,keys);
+	}
+	else
+	{
+		player.cac_body_type = prev_in_list(player.cac_body_type,keys);
+	}
+
 	player dev_cac_set_player_model();
-Stack-Empty ? dev_cac_player_valid() : forward
 #/
 }
 
@@ -226,14 +298,24 @@ Stack-Empty ? dev_cac_player_valid() : forward
 dev_cac_cycle_head(forward,tag)
 {
 /#
-	return;
+	if(!(dev_cac_player_valid()))
+	{
+		return;
+	}
+
 	player = level.dev_cac_player;
 	keys = getarraykeys(level.cac_functions["set_head_model"]);
-	player.cac_head_type = next_in_list(player.cac_head_type,keys);
-	player.cac_head_type = prev_in_list(player.cac_head_type,keys);
+	if(forward)
+	{
+		player.cac_head_type = next_in_list(player.cac_head_type,keys);
+	}
+	else
+	{
+		player.cac_head_type = prev_in_list(player.cac_head_type,keys);
+	}
+
 	player.cac_hat_type = "none";
 	player dev_cac_set_player_model();
-Stack-Empty ? dev_cac_player_valid() : forward
 #/
 }
 
@@ -241,14 +323,24 @@ Stack-Empty ? dev_cac_player_valid() : forward
 dev_cac_cycle_character(forward,tag)
 {
 /#
-	return;
+	if(!(dev_cac_player_valid()))
+	{
+		return;
+	}
+
 	player = level.dev_cac_player;
 	keys = getarraykeys(level.cac_functions["set_body_model"]);
-	player.cac_body_type = next_in_list(player.cac_body_type,keys);
-	player.cac_body_type = prev_in_list(player.cac_body_type,keys);
+	if(forward)
+	{
+		player.cac_body_type = next_in_list(player.cac_body_type,keys);
+	}
+	else
+	{
+		player.cac_body_type = prev_in_list(player.cac_body_type,keys);
+	}
+
 	player.cac_hat_type = "none";
 	player dev_cac_set_player_model();
-Stack-Empty ? dev_cac_player_valid() : forward
 #/
 }
 
@@ -256,9 +348,12 @@ Stack-Empty ? dev_cac_player_valid() : forward
 dev_cac_cycle_render_options(forward,tag)
 {
 /#
-	return;
+	if(!(dev_cac_player_valid()))
+	{
+		return;
+	}
+
 	level.dev_cac_player nextplayerrenderoption(tag,forward);
-dev_cac_player_valid()
 #/
 }
 
@@ -275,18 +370,25 @@ dev_cac_cycle_player(forward)
 {
 /#
 	players = get_players();
-	i = 0;
-	for(;;)
+	for(i = 0;i < players.size;i++)
 	{
-		level.dev_cac_player = next_in_list(level.dev_cac_player,players);
-		level.dev_cac_player = prev_in_list(level.dev_cac_player,players);
-		level.dev_cac_player thread highlight_player();
-		return;
-		i++;
+		if(forward)
+		{
+			level.dev_cac_player = next_in_list(level.dev_cac_player,players);
+		}
+		else
+		{
+			level.dev_cac_player = prev_in_list(level.dev_cac_player,players);
+		}
+
+		if(dev_cac_player_valid())
+		{
+			level.dev_cac_player thread highlight_player();
+			return;
+		}
 	}
+
 	level.dev_cac_player = undefined;
-dev_cac_player_valid()
-Stack-Empty ? i < players.size : forward
 #/
 }
 
@@ -322,15 +424,13 @@ dev_cac_overlay_update(hud)
 dev_cac_overlay_destroy(hud)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < hud.menu.size;i++)
 	{
 		hud.menu[i] destroy();
-		i++;
 	}
+
 	hud destroy();
 	setdvar("player_debugSprint","0");
-i < hud.menu.size
 #/
 }
 
@@ -397,7 +497,6 @@ dev_cac_overlay_create()
 	hud.menu[42] = maps/mp/gametypes/_dev::new_hud(menu_name,"",x + x_offset,y + 265,1);
 	hud.menu[43] = maps/mp/gametypes/_dev::new_hud(menu_name,"",x + x_offset,y + 275,1);
 	return hud;
-0.5
 #/
 }
 
@@ -409,11 +508,17 @@ color(value)
 	g = 1;
 	b = 0;
 	color = (0,0,0);
-	r = r - value;
-	g = g + value;
+	if(value > 0)
+	{
+		r = r - value;
+	}
+	else
+	{
+		g = g + value;
+	}
+
 	c = (r,g,b);
 	return c;
-Stack-Empty ? Stack-Empty : value > 0
 #/
 }
 
@@ -431,31 +536,40 @@ dev_cac_gdt_update_think()
 			case "armorBullet":
 				key = "armor_bullet";
 				break;
+	
 			case "armorExplosive":
 				key = "armor_explosive";
 				break;
+	
 			case "moveSpeed":
 				key = "mobility";
 				break;
+	
 			case "sprintTimeTotal":
 				key = "sprint_time_total";
 				break;
+	
 			case "sprintTimeCooldown":
 				key = "sprint_time_cooldown";
 				break;
+	
 			default:
 				key = undefined;
 				break;
 		}
-		continue;
+
+		if(!(IsDefined(key)))
+		{
+			continue;
+		}
+
 		value = float(keyvalue[1]);
 		level.cac_attributes[key][asset] = value;
 		players = get_players();
-		i = 0;
-		i++;
+		for(i = 0;i < players.size;i++)
+		{
+		}
 	}
-i < players.size
-IsDefined(key)
 #/
 }
 
@@ -465,15 +579,15 @@ sort_greatest(function,attribute,greatest)
 /#
 	keys = getarraykeys(level.cac_functions[function]);
 	greatest = keys[0];
-	i = 0;
-	for(;;)
+	for(i = 0;i < keys.size;i++)
 	{
-		greatest = keys[i];
-		i++;
+		if(level.cac_attributes[attribute][keys[i]] > level.cac_attributes[attribute][greatest])
+		{
+			greatest = keys[i];
+		}
 	}
+
 	return greatest;
-level.cac_attributes[attribute][keys[i]] > level.cac_attributes[attribute][greatest]
-i < keys.size
 #/
 }
 
@@ -483,15 +597,15 @@ sort_least(function,attribute,least)
 /#
 	keys = getarraykeys(level.cac_functions[function]);
 	least = keys[0];
-	i = 0;
-	for(;;)
+	for(i = 0;i < keys.size;i++)
 	{
-		least = keys[i];
-		i++;
+		if(level.cac_attributes[attribute][keys[i]] < level.cac_attributes[attribute][least])
+		{
+			least = keys[i];
+		}
 	}
+
 	return least;
-level.cac_attributes[attribute][keys[i]] < level.cac_attributes[attribute][least]
-i < keys.size
 #/
 }
 
@@ -499,12 +613,15 @@ i < keys.size
 dev_cac_set_model_range(sort_function,attribute)
 {
 /#
-	return;
+	if(!(dev_cac_player_valid()))
+	{
+		return;
+	}
+
 	player = level.dev_cac_player;
 	player.cac_body_type = [[ sort_function ]]("set_body_model",attribute);
 	player.cac_head_type = [[ sort_function ]]("set_head_model",attribute);
 	player.cac_hat_type = [[ sort_function ]]("set_hat_model",attribute);
 	player dev_cac_set_player_model();
-dev_cac_player_valid()
 #/
 }

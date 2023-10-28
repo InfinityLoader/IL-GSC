@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 39
- * Decompile Time: 56 ms
- * Timestamp: 10/27/2023 3:00:09 AM
+ * Decompile Time: 11 ms
+ * Timestamp: 10/28/2023 12:10:34 AM
 *******************************************************************/
 
 #include maps/mp/_challenges;
@@ -548,9 +548,11 @@ finalkillcam(winner)
 	}
 
 /#
-	setmatchflag("final_killcam",1);
-	setmatchflag("round_end_killcam",0);
-GetDvarInt(#"9003F201") == 1
+	if(GetDvarInt(#"9003F201") == 1)
+	{
+		setmatchflag("final_killcam",1);
+		setmatchflag("round_end_killcam",0);
+	}
 #/
 	if(level.console)
 	{

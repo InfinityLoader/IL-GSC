@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 13
- * Decompile Time: 55 ms
- * Timestamp: 10/27/2023 3:00:11 AM
+ * Decompile Time: 4 ms
+ * Timestamp: 10/28/2023 12:10:35 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -244,9 +244,11 @@ pregamemain()
 		}
 
 /#
-		setdvar("scr_pregame_abort",0);
-		break;
-	GetDvarInt(#"9CAAE1C4") > 0
+		if(GetDvarInt(#"9CAAE1C4") > 0)
+		{
+			setdvar("scr_pregame_abort",0);
+			break;
+		}
 #/
 		if(oldcount != count)
 		{

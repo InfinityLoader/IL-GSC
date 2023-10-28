@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 21
- * Decompile Time: 99 ms
- * Timestamp: 10/27/2023 3:02:38 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:11:37 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -19,18 +19,27 @@
 debug_script_structs()
 {
 /#
-	println("*** Num structs " + level.struct.size);
-	println("");
-	i = 0;
-	for(;;)
+	if(IsDefined(level.struct))
 	{
-		struct = level.struct[i];
-		println("---" + i + " : " + struct.targetname);
-		println("---" + i + " : " + "NONE");
-		i++;
+		println("*** Num structs " + level.struct.size);
+		println("");
+		for(i = 0;i < level.struct.size;i++)
+		{
+			struct = level.struct[i];
+			if(IsDefined(struct.targetname))
+			{
+				println("---" + i + " : " + struct.targetname);
+			}
+			else
+			{
+				println("---" + i + " : " + "NONE");
+			}
+		}
 	}
-	println("*** No structs defined.");
-Stack-Empty ? Stack-Empty : ((IsDefined(level.struct)) ? i < level.struct.size : IsDefined(struct.targetname))
+	else
+	{
+		println("*** No structs defined.");
+	}
 #/
 }
 
@@ -310,9 +319,8 @@ hostmigrationtimerthink_internal()
 		self._host_migration_link_helper = ent;
 /#
 		println("Linking player to ent " + self._host_migration_link_entity.targetname);
-#/
 	}
-
+#/
 	self.hostmigrationcontrolsfrozen = 1;
 	self freezecontrols(1);
 	level waittill("host_migration_end");
@@ -330,9 +338,8 @@ hostmigrationtimerthink()
 		self.hostmigrationcontrolsfrozen = 0;
 /#
 		println(" Host migration unfreeze controls");
-#/
 	}
-
+#/
 	if(IsDefined(self._host_migration_link_entity))
 	{
 		self unlink();
@@ -399,9 +406,8 @@ waitlongdurationwithhostmigrationpause(duration)
 	{
 /#
 		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
-#/
 	}
-
+#/
 	waittillhostmigrationdone();
 	return GetTime() - starttime;
 }
@@ -431,14 +437,20 @@ waitlongdurationwithgameendtimeupdate(duration)
 	}
 
 /#
-	println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
-GetTime() != endtime
-#/
-	while(IsDefined(level.hostmigrationtimer))
+	if(GetTime() != endtime)
 	{
-		endtime = endtime + 1000;
-		setgameendtime(int(endtime));
-		wait(1);
+		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
+	}
+
+		for(;;)
+		{
+#/
+		if(IsDefined(level.hostmigrationtimer))
+		{
+			endtime = endtime + 1000;
+			setgameendtime(int(endtime));
+			wait(1);
+		}
 	}
 
 	return GetTime() - starttime;

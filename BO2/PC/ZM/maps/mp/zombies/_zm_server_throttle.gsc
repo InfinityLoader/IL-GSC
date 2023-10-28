@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 10
- * Decompile Time: 11 ms
- * Timestamp: 10/27/2023 3:03:22 AM
+ * Decompile Time: 0 ms
+ * Timestamp: 10/28/2023 12:11:54 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -46,10 +46,13 @@ server_choke_action(id,choke_action,arg1,arg2,arg3)
 {
 /#
 	assert(IsDefined(level.zombie_server_choke_ids_max[id]),"server Choke: " + id + " undefined");
+		for(;;)
+		{
 #/
-	while(!(server_choke_safe(id)))
-	{
-		wait(0.05);
+		if(!(server_choke_safe(id)))
+		{
+			wait(0.05);
+		}
 	}
 
 	level.zombie_server_choke_ids_count[id]++;

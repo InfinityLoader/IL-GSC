@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 32
- * Decompile Time: 152 ms
- * Timestamp: 10/27/2023 3:00:02 AM
+ * Decompile Time: 10 ms
+ * Timestamp: 10/28/2023 12:10:31 AM
 *******************************************************************/
 
 #include maps/mp/_music;
@@ -173,7 +173,7 @@ registerdialoggroup(group,skipifcurrentlyplayinggroup)
 	else if(IsDefined(level.dialoggroup[group]))
 	{
 /#
-			error("registerDialogGroup:  Dialog group " + group + " already registered.");
+		error("registerDialogGroup:  Dialog group " + group + " already registered.");
 #/
 		return;
 	}
@@ -196,8 +196,10 @@ sndstartmusicsystem()
 	if(game["state"] == "pregame")
 	{
 /#
-		println("Music System - music state is undefined Waiting 15 seconds to set music state");
-GetDvarInt(#"BC4784C") > 0
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - music state is undefined Waiting 15 seconds to set music state");
+		}
 #/
 		wait(45);
 		if(!(IsDefined(level.nextmusicstate)))
@@ -210,8 +212,10 @@ GetDvarInt(#"BC4784C") > 0
 	if(!(IsDefined(level.nextmusicstate)))
 	{
 /#
-		println("Music System - music state is undefined Waiting 15 seconds to set music state");
-GetDvarInt(#"BC4784C") > 0
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - music state is undefined Waiting 15 seconds to set music state");
+		}
 #/
 		self.pers["music"].currentstate = "UNDERSCORE";
 		self thread suspensemusic();
@@ -224,8 +228,10 @@ suspensemusicforplayer()
 	self endon("disconnect");
 	self thread set_music_on_player("UNDERSCORE",0);
 /#
-	println("Music System - Setting Music State Random Underscore " + self.pers["music"].returnstate + " On player " + self getentitynumber());
-GetDvarInt(#"BC4784C") > 0
+	if(GetDvarInt(#"BC4784C") > 0)
+	{
+		println("Music System - Setting Music State Random Underscore " + self.pers["music"].returnstate + " On player " + self getentitynumber());
+	}
 #/
 }
 
@@ -236,44 +242,55 @@ suspensemusic(random)
 	level endon("match_ending_soon");
 	self endon("disconnect");
 /#
-	println("Music System - Starting random underscore");
-GetDvarInt(#"BC4784C") > 0
-#/
-	if(1)
+	if(GetDvarInt(#"BC4784C") > 0)
 	{
-		wait(randomintrange(25,60));
-/#
-		println("Music System - Checking for random underscore");
-GetDvarInt(#"BC4784C") > 0
-#/
-		if(!(IsDefined(self.pers["music"].inque)))
-		{
-			self.pers["music"].inque = 0;
-		}
+		println("Music System - Starting random underscore");
+	}
 
-		if(self.pers["music"].inque)
+		for(;;)
 		{
-/#
-			println("Music System - Inque no random underscore");
-GetDvarInt(#"BC4784C") > 0
 #/
-			continue;
-		}
-
-		if(!(IsDefined(self.pers["music"].currentstate)))
+		if(1)
 		{
-			self.pers["music"].currentstate = "SILENT";
-		}
-
-		if(randomint(100) < self.underscorechance && self.pers["music"].currentstate != "ACTION" && self.pers["music"].currentstate != "TIME_OUT")
-		{
-			self thread suspensemusicforplayer();
-			self.underscorechance = self.underscorechance - 20;
+			wait(randomintrange(25,60));
 /#
-			println("Music System - Starting random underscore");
-GetDvarInt(#"BC4784C") > 0
+			if(GetDvarInt(#"BC4784C") > 0)
+			{
+				println("Music System - Checking for random underscore");
+			}
 #/
-			continue;
+			if(!(IsDefined(self.pers["music"].inque)))
+			{
+				self.pers["music"].inque = 0;
+			}
+
+			if(self.pers["music"].inque)
+			{
+/#
+				if(GetDvarInt(#"BC4784C") > 0)
+				{
+					println("Music System - Inque no random underscore");
+				}
+#/
+				continue;
+			}
+
+			if(!(IsDefined(self.pers["music"].currentstate)))
+			{
+				self.pers["music"].currentstate = "SILENT";
+			}
+
+			if(randomint(100) < self.underscorechance && self.pers["music"].currentstate != "ACTION" && self.pers["music"].currentstate != "TIME_OUT")
+			{
+				self thread suspensemusicforplayer();
+				self.underscorechance = self.underscorechance - 20;
+/#
+				if(GetDvarInt(#"BC4784C") > 0)
+				{
+					println("Music System - Starting random underscore");
+				}
+			}
+#/
 		}
 	}
 }
@@ -742,38 +759,42 @@ set_music_on_team(state,team,save_state,return_state,wait_time)
 	{
 		team = "both";
 /#
-		println("Music System - team undefined: Setting to both");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - team undefined: Setting to both");
+		}
 	}
-
+#/
 	if(!(IsDefined(save_state)))
 	{
 		save_sate = 0;
 /#
-		println("Music System - save_sate undefined: Setting to false");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - save_sate undefined: Setting to false");
+		}
 	}
-
+#/
 	if(!(IsDefined(return_state)))
 	{
 		return_state = 0;
 /#
-		println("Music System - Music System - return_state undefined: Setting to false");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - Music System - return_state undefined: Setting to false");
+		}
 	}
-
+#/
 	if(!(IsDefined(wait_time)))
 	{
 		wait_time = 0;
 /#
-		println("Music System - wait_time undefined: Setting to 0");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - wait_time undefined: Setting to 0");
+		}
 	}
-
+#/
 	for(i = 0;i < level.players.size;i++)
 	{
 		player = level.players[i];
@@ -785,10 +806,12 @@ GetDvarInt(#"BC4784C") > 0
 		{
 			player thread set_music_on_player(state,save_state,return_state,wait_time);
 /#
+			if(GetDvarInt(#"BC4784C") > 0)
+			{
 				println("Music System - Setting Music State " + state + " On player " + player getentitynumber());
-GetDvarInt(#"BC4784C") > 0
-#/
+			}
 		}
+#/
 	}
 }
 
@@ -808,59 +831,68 @@ set_music_on_player(state,save_state,return_state,wait_time)
 	{
 		save_state = 0;
 /#
-		println("Music System - Music System - save_sate undefined: Setting to false");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - Music System - save_sate undefined: Setting to false");
+		}
 	}
-
+#/
 	if(!(IsDefined(return_state)))
 	{
 		return_state = 0;
 /#
-		println("Music System - Music System - return_state undefined: Setting to false");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - Music System - return_state undefined: Setting to false");
+		}
 	}
-
+#/
 	if(!(IsDefined(wait_time)))
 	{
 		wait_time = 0;
 /#
-		println("Music System - wait_time undefined: Setting to 0");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - wait_time undefined: Setting to 0");
+		}
 	}
-
+#/
 	if(!(IsDefined(state)))
 	{
 		state = "UNDERSCORE";
 /#
-		println("Music System - state undefined: Setting to UNDERSCORE");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - state undefined: Setting to UNDERSCORE");
+		}
 	}
-
+#/
 	maps/mp/_music::setmusicstate(state,self);
 	if(IsDefined(self.pers["music"].currentstate) && save_state)
 	{
 		self.pers["music"].returnstate = state;
 /#
-		println("Music System - Saving Music State " + self.pers["music"].returnstate + " On " + self getentitynumber());
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - Saving Music State " + self.pers["music"].returnstate + " On " + self getentitynumber());
+		}
 	}
-
+#/
 	self.pers["music"].previousstate = self.pers["music"].currentstate;
 	self.pers["music"].currentstate = state;
 /#
-	println("Music System - Setting Music State " + state + " On player " + self getentitynumber());
-GetDvarInt(#"BC4784C") > 0
+	if(GetDvarInt(#"BC4784C") > 0)
+	{
+		println("Music System - Setting Music State " + state + " On player " + self getentitynumber());
+	}
 #/
 	if(IsDefined(self.pers["music"].returnstate) && return_state)
 	{
 /#
-		println("Music System - Starting Return State " + self.pers["music"].returnstate + " On " + self getentitynumber());
-GetDvarInt(#"BC4784C") > 0
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - Starting Return State " + self.pers["music"].returnstate + " On " + self getentitynumber());
+		}
 #/
 		self set_next_music_state(self.pers["music"].returnstate,wait_time);
 	}
@@ -873,11 +905,12 @@ return_music_state_player(wait_time)
 	{
 		wait_time = 0;
 /#
-		println("Music System - wait_time undefined: Setting to 0");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - wait_time undefined: Setting to 0");
+		}
 	}
-
+#/
 	self set_next_music_state(self.pers["music"].returnstate,wait_time);
 }
 
@@ -888,11 +921,12 @@ return_music_state_team(team,wait_time)
 	{
 		wait_time = 0;
 /#
-		println("Music System - wait_time undefined: Setting to 0");
-GetDvarInt(#"BC4784C") > 0
-#/
+		if(GetDvarInt(#"BC4784C") > 0)
+		{
+			println("Music System - wait_time undefined: Setting to 0");
+		}
 	}
-
+#/
 	for(i = 0;i < level.players.size;i++)
 	{
 		player = level.players[i];
@@ -904,10 +938,12 @@ GetDvarInt(#"BC4784C") > 0
 		{
 			player thread set_next_music_state(self.pers["music"].returnstate,wait_time);
 /#
+			if(GetDvarInt(#"BC4784C") > 0)
+			{
 				println("Music System - Setting Music State " + self.pers["music"].returnstate + " On player " + player getentitynumber());
-GetDvarInt(#"BC4784C") > 0
-#/
+			}
 		}
+#/
 	}
 }
 
@@ -917,8 +953,10 @@ set_next_music_state(nextstate,wait_time)
 	self endon("disconnect");
 	self.pers["music"].nextstate = nextstate;
 /#
-	println("Music System - Setting next Music State " + self.pers["music"].nextstate + " On " + self getentitynumber());
-GetDvarInt(#"BC4784C") > 0
+	if(GetDvarInt(#"BC4784C") > 0)
+	{
+		println("Music System - Setting next Music State " + self.pers["music"].nextstate + " On " + self getentitynumber());
+	}
 #/
 	if(!(IsDefined(self.pers["music"].inque)))
 	{

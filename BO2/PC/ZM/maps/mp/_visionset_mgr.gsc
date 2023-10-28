@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 27
- * Decompile Time: 60 ms
- * Timestamp: 10/27/2023 3:03:48 AM
+ * Decompile Time: 15 ms
+ * Timestamp: 10/28/2023 12:12:05 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -415,9 +415,14 @@ monitor()
 				for(player_index = 0;player_index < players.size;player_index++)
 				{
 /#
-is_true(players[player_index].pers["isBot"])
+					if(is_true(players[player_index].pers["isBot"]))
+					{
+					}
+					else
+					{
 #/
-					update_clientfields(players[player_index],level.vsmgr[type]);
+						update_clientfields(players[player_index],level.vsmgr[type]);
+					}
 				}
 			}
 		}

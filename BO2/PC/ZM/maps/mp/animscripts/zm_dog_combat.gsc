@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 23
- * Decompile Time: 116 ms
- * Timestamp: 10/27/2023 3:02:08 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:11:28 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -21,8 +21,11 @@ main()
 	self endon("killanimscript");
 	self setaimanimweights(0,0);
 /#
-	combatidle();
-debug_allow_combat()
+	if(!(debug_allow_combat()))
+	{
+		combatidle();
+		return;
+	}
 #/
 	if(IsDefined(level.hostmigrationtimer))
 	{
@@ -127,8 +130,10 @@ meleebiteattackplayer2(player)
 		self animmode("gravity");
 		self.safetochangescript = 0;
 /#
-		iprintln("dog " + self getentnum() + " attack player " + GetTime());
-	GetDvarInt(#"7B06BF0D")
+		if(GetDvarInt(#"7B06BF0D"))
+		{
+			iprintln("dog " + self getentnum() + " attack player " + GetTime());
+		}
 #/
 		player setnextdogattackallowtime(200);
 		if(dog_cant_kill_in_one_hit(player))
@@ -226,7 +231,7 @@ handlemeleebiteattacknotetracks(note,player)
 			melee_time = level.dogmeleebiteattacktime;
 			self thread orienttoplayerdeadreckoning(player,melee_time);
 			break;
-	Stack-Empty ? Stack-Empty : IsDefined(level.dogmeleebiteattacktime)
+	IsDefined(level.dogmeleebiteattacktime)
 			break;
 	}
 }
@@ -243,7 +248,9 @@ handlemeleefinishattacknotetracks(note,player)
 			break;
 			attackmiss();
 			return 1;
-	(IsDefined(level.dogmeleefinishattacktime)) ? IsDefined(hitent) && isalive(player) : hitent == player
+	hitent == player
+	IsDefined(hitent) && isalive(player)
+	IsDefined(level.dogmeleefinishattacktime)
 			break;
 
 		case "dog_early":
@@ -268,7 +275,7 @@ handlemeleefinishattacknotetracks(note,player)
 			melee_time = level.dogmeleefinishattacktime;
 			self thread orienttoplayerdeadreckoning(player,melee_time);
 			break;
-	Stack-Empty ? Stack-Empty : IsDefined(level.dogmeleefinishattacktime)
+	IsDefined(level.dogmeleefinishattacktime)
 			break;
 	}
 }

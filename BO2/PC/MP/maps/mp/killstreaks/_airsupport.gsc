@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 53
- * Decompile Time: 192 ms
- * Timestamp: 10/27/2023 3:00:34 AM
+ * Decompile Time: 11 ms
+ * Timestamp: 10/28/2023 12:10:41 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -25,18 +25,24 @@ initairsupport()
 	level.noflyzones = getentarray("no_fly_zone","targetname");
 	airsupport_heights = getstructarray("air_support_height","targetname");
 /#
-	error("Found more then one \'air_support_height\' structs in the map");
-airsupport_heights.size > 1
+	if(airsupport_heights.size > 1)
+	{
+		error("Found more then one \'air_support_height\' structs in the map");
+	}
 #/
 	airsupport_heights = getentarray("air_support_height","targetname");
 /#
-	error("Found an entity in the map with an \'air_support_height\' targetname.  There should be only structs.");
-airsupport_heights.size > 0
+	if(airsupport_heights.size > 0)
+	{
+		error("Found an entity in the map with an \'air_support_height\' targetname.  There should be only structs.");
+	}
 #/
 	heli_height_meshes = getentarray("heli_height_lock","classname");
 /#
-	error("Found more then one \'heli_height_lock\' classname in the map");
-heli_height_meshes.size > 1
+	if(heli_height_meshes.size > 1)
+	{
+		error("Found more then one \'heli_height_lock\' classname in the map");
+	}
 #/
 }
 
@@ -703,13 +709,10 @@ entlosradiusdamage(ent,pos,radius,max,min,owner,einflictor)
 debug_no_fly_zones()
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < level.noflyzones.size;i++)
 	{
 		debug_cylinder(level.noflyzones[i].origin,level.noflyzones[i].radius,level.noflyzones[i].height,(1,1,1),undefined,5000);
-		i++;
 	}
-i < level.noflyzones.size
 #/
 }
 
@@ -741,19 +744,26 @@ debug_draw_bomb_path(projectile,color,time)
 /#
 	self endon("death");
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	color = (0.5,1,0);
-	prevpos = self.origin;
-	for(;;)
+	if(!(IsDefined(color)))
 	{
-		thread debug_line(prevpos,self.origin,color,time);
-		prevpos = self.origin;
-		thread debug_draw_bomb_explosion(prevpos);
-		wait(0.2);
+		color = (0.5,1,0);
 	}
-IsDefined(projectile) && projectile
-IsDefined(self.origin)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
-IsDefined(color)
+
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		prevpos = self.origin;
+		while(IsDefined(self.origin))
+		{
+			thread debug_line(prevpos,self.origin,color,time);
+			prevpos = self.origin;
+			if(IsDefined(projectile) && projectile)
+			{
+				thread debug_draw_bomb_explosion(prevpos);
+			}
+
+			wait(0.2);
+		}
+	}
 #/
 }
 
@@ -762,10 +772,17 @@ debug_print3d_simple(message,ent,offset,frames)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	thread draw_text(message,VectorScale((1,1,1)),0.8,ent,offset);
-	thread draw_text(message,VectorScale((1,1,1)),0.8,ent,offset);
-IsDefined(frames) ? frames : 0
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		if(IsDefined(frames))
+		{
+			thread draw_text(message,VectorScale((1,1,1)),0.8,ent,offset);
+		}
+		else
+		{
+			thread draw_text(message,VectorScale((1,1,1)),0.8,ent,offset);
+		}
+	}
 #/
 }
 
@@ -773,21 +790,27 @@ IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
 draw_text(msg,color,ent,offset,frames)
 {
 /#
-	for(;;)
+	if(frames == 0)
 	{
-		print3d(ent.origin + offset,msg,color,0.5,4);
-		wait(0.05);
+		while(IsDefined(ent) && IsDefined(ent.origin))
+		{
+			print3d(ent.origin + offset,msg,color,0.5,4);
+			wait(0.05);
+		}
 	}
-	i = 0;
-	for(;;)
+	else
 	{
-		break;
-		print3d(ent.origin + offset,msg,color,0.5,4);
-		wait(0.05);
-		i++;
+		for(i = 0;i < frames;i++)
+		{
+			if(!(IsDefined(ent)))
+			{
+				break;
+			}
+
+			print3d(ent.origin + offset,msg,color,0.5,4);
+			wait(0.05);
+		}
 	}
-(IsDefined(ent) && IsDefined(ent.origin)) ? i < frames : IsDefined(ent)
-frames == 0
 #/
 }
 
@@ -796,8 +819,10 @@ debug_print3d(message,color,ent,origin_offset,frames)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	self thread draw_text(message,color,ent,origin_offset,frames);
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		self thread draw_text(message,color,ent,origin_offset,frames);
+	}
 #/
 }
 
@@ -806,12 +831,20 @@ debug_line(from,to,color,time,depthtest)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	time = 1000;
-	depthtest = 1;
-	line(from,to,color,1,depthtest,time);
-IsDefined(depthtest)
-IsDefined(time)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		if(!(IsDefined(time)))
+		{
+			time = 1000;
+		}
+
+		if(!(IsDefined(depthtest)))
+		{
+			depthtest = 1;
+		}
+
+		line(from,to,color,1,depthtest,time);
+	}
 #/
 }
 
@@ -820,12 +853,20 @@ debug_star(origin,color,time)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	time = 1000;
-	color = (1,1,1);
-	debugstar(origin,time,color);
-IsDefined(color)
-IsDefined(time)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		if(!(IsDefined(time)))
+		{
+			time = 1000;
+		}
+
+		if(!(IsDefined(color)))
+		{
+			color = (1,1,1);
+		}
+
+		debugstar(origin,time,color);
+	}
 #/
 }
 
@@ -834,12 +875,20 @@ debug_circle(origin,radius,color,time)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	time = 1000;
-	color = (1,1,1);
-	circle(origin,radius,color,1,1,time);
-IsDefined(color)
-IsDefined(time)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		if(!(IsDefined(time)))
+		{
+			time = 1000;
+		}
+
+		if(!(IsDefined(color)))
+		{
+			color = (1,1,1);
+		}
+
+		circle(origin,radius,color,1,1,time);
+	}
 #/
 }
 
@@ -848,13 +897,21 @@ debug_sphere(origin,radius,color,alpha,time)
 {
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
-	time = 1000;
-	color = (1,1,1);
-	sides = int(10 * 1 + int(radius / 100));
-	sphere(origin,radius,color,alpha,1,sides,time);
-IsDefined(color)
-IsDefined(time)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
+	{
+		if(!(IsDefined(time)))
+		{
+			time = 1000;
+		}
+
+		if(!(IsDefined(color)))
+		{
+			color = (1,1,1);
+		}
+
+		sides = int(10 * 1 + int(radius / 100));
+		sphere(origin,radius,color,alpha,1,sides,time);
+	}
 #/
 }
 
@@ -864,23 +921,31 @@ debug_cylinder(origin,radius,height,color,mustrenderheight,time)
 /#
 	level.airsupport_debug = getdvarintdefault("scr_airsupport_debug",0);
 	subdivision = 600;
-	time = 1000;
-	color = (1,1,1);
-	count = height / subdivision;
-	i = 0;
-	for(;;)
+	if(IsDefined(level.airsupport_debug) && level.airsupport_debug == 1)
 	{
-		point = origin + (0,0,i * subdivision);
-		circle(point,radius,color,1,1,time);
-		i++;
+		if(!(IsDefined(time)))
+		{
+			time = 1000;
+		}
+
+		if(!(IsDefined(color)))
+		{
+			color = (1,1,1);
+		}
+
+		count = height / subdivision;
+		for(i = 0;i < count;i++)
+		{
+			point = origin + (0,0,i * subdivision);
+			circle(point,radius,color,1,1,time);
+		}
+
+		if(IsDefined(mustrenderheight))
+		{
+			point = origin + (0,0,mustrenderheight);
+			circle(point,radius,color,1,1,time);
+		}
 	}
-	point = origin + (0,0,mustrenderheight);
-	circle(point,radius,color,1,1,time);
-IsDefined(mustrenderheight)
-i < count
-IsDefined(color)
-IsDefined(time)
-IsDefined(level.airsupport_debug) && level.airsupport_debug == 1
 #/
 }
 

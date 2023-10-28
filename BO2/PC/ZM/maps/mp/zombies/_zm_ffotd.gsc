@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 10
- * Decompile Time: 42 ms
- * Timestamp: 10/27/2023 3:03:07 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:11:46 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -164,13 +164,16 @@ path_exploit_fix(zombie_trigger_origin,zombie_trigger_radius,zombie_trigger_heig
 	zombie_trigger setteamfortrigger(level.zombie_team);
 /#
 	thread debug_exploit(zombie_trigger_origin,zombie_trigger_radius,player_trigger_origin,player_trigger_radius,zombie_goto_point);
-#/
-	while(1)
-	{
-		zombie_trigger waittill("trigger",who);
-		if(!(is_true(who.reroute)))
+		for(;;)
 		{
-			who thread exploit_reroute(zombie_trigger,player_trigger_origin,player_trigger_radius,zombie_goto_point);
+#/
+		if(1)
+		{
+			zombie_trigger waittill("trigger",who);
+			if(!(is_true(who.reroute)))
+			{
+				who thread exploit_reroute(zombie_trigger,player_trigger_origin,player_trigger_radius,zombie_goto_point);
+			}
 		}
 	}
 }
@@ -208,7 +211,7 @@ exploit_reroute(zombie_trigger,player_trigger_origin,player_trigger_radius,zombi
 debug_exploit(player_origin,player_radius,enemy_origin,enemy_radius,zombie_goto_point)
 {
 /#
-	for(;;)
+	while(IsDefined(self))
 	{
 		circle(player_origin,player_radius,(0,0,1),0,1,1);
 		circle(enemy_origin,enemy_radius,(1,0,0),0,1,1);
@@ -216,7 +219,6 @@ debug_exploit(player_origin,player_radius,enemy_origin,enemy_radius,zombie_goto_
 		line(enemy_origin,zombie_goto_point,(1,1,0),1);
 		wait(0.05);
 	}
-IsDefined(self)
 #/
 }
 

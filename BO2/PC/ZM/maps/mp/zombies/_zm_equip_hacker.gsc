@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 31
- * Decompile Time: 59 ms
- * Timestamp: 10/27/2023 3:03:05 AM
+ * Decompile Time: 11 ms
+ * Timestamp: 10/28/2023 12:11:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -100,16 +100,14 @@ hacker_debug()
 
 /#
 				print3d(hackable.origin,"+",VectorScale((0,0,1)),255,1);
-1
 #/
 			}
 			else
 			{
 /#
 				print3d(hackable.origin,"+",VectorScale((1,0,0)),255,1);
-1
-#/
 			}
+#/
 		}
 
 		wait(0.1);
@@ -940,11 +938,16 @@ hide_hint_when_hackers_active(custom_logic_func,custom_logic_func_param)
 hacker_debug_print(msg,color)
 {
 /#
-	return;
-	color = (1,1,1);
+	if(!(GetDvarInt(#"428DE100")))
+	{
+		return;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,1,1);
+	}
+
 	print3d(60 + VectorScale((0,0,1)),self.origin,msg,color,1,1);
-40
-IsDefined(color)
-GetDvarInt(#"428DE100")
 #/
 }

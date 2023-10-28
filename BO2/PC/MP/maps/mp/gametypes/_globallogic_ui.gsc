@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 21
- * Decompile Time: 65 ms
- * Timestamp: 10/27/2023 3:00:06 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:10:32 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -245,7 +245,8 @@ menuautoassign(comingfrommenu)
 						assignment = "";
 						assignment = team;
 						self setclientscriptmainmenu(game["menu_class"]);
-Stack-Empty ? IsDefined(level.teams[team]) : team == "spectator" && !level.forceautoassign
+team == "spectator" && !level.forceautoassign
+IsDefined(level.teams[team])
 						break;
 				}
 			}
@@ -261,7 +262,7 @@ Stack-Empty ? IsDefined(level.teams[team]) : team == "spectator" && !level.force
 			{
 				host = gethostplayerforbots();
 /#
-						assert(IsDefined(host));
+				assert(IsDefined(host));
 #/
 				if(!IsDefined(host.team) || host.team == "spectator")
 				{

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 23
- * Decompile Time: 67 ms
- * Timestamp: 10/27/2023 3:00:36 AM
+ * Decompile Time: 3 ms
+ * Timestamp: 10/28/2023 12:10:42 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -449,7 +449,7 @@ destroyactivevehicles(attacker,teamemped)
 			}
 			else
 			{
-				planemortar notify("emp_deployed",attacker,Stack-Empty ? Stack-Empty : Stack-Empty);
+				planemortar notify("emp_deployed",attacker);
 			}
 		}
 	}
@@ -467,7 +467,7 @@ destroyactivevehicles(attacker,teamemped)
 			}
 			else
 			{
-				satellite notify("emp_deployed",attacker,Stack-Empty ? Stack-Empty : _k458);
+				satellite notify("emp_deployed",attacker,_k458);
 			}
 		}
 	}
@@ -504,7 +504,7 @@ destroyentities(entities,attacker,team)
 			}
 			else
 			{
-				entity notify("damage",damage,attacker,direction_vec,point,meansofdeath,tagname,modelname,partname,weapon,Stack-Empty ? Stack-Empty : Stack-Empty);
+				entity notify("damage",damage,attacker,direction_vec,point,meansofdeath,tagname,modelname,partname,weapon);
 			}
 		}
 	}
@@ -514,7 +514,7 @@ destroyentities(entities,attacker,team)
 drawempdamageorigin(pos,ang,radius)
 {
 /#
-	for(;;)
+	while(GetDvarInt(#"D04570F2"))
 	{
 		line(pos,pos + AnglesToForward(ang) * radius,(1,0,0));
 		line(pos,pos + AnglesToRight(ang) * radius,(0,1,0));
@@ -524,7 +524,6 @@ drawempdamageorigin(pos,ang,radius)
 		line(pos,pos - AnglesToUp(ang) * radius,(0,0,1));
 		wait(0.05);
 	}
-GetDvarInt(#"D04570F2")
 #/
 }
 

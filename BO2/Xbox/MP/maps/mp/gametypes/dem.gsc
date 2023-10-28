@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 41
- * Decompile Time: 231 ms
- * Timestamp: 10/27/2023 3:04:32 AM
+ * Decompile Time: 29 ms
+ * Timestamp: 10/28/2023 12:13:37 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -464,38 +464,39 @@ onplayerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shitloc,ps
 			{
 /#
 				attacker iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU OFFENSIVE CREDIT AS BOOSTING PREVENTION");
+			}
 #/
-			}
-		}
-
-		if(!(IsDefined(attacker.dem_defends)))
-		{
-			attacker.dem_defends = 0;
-		}
-
-		attacker.dem_defends++;
-		if(level.playerdefensivemax >= attacker.dem_defends)
-		{
-			if(IsDefined(attacker.pers["defends"]))
-			{
-				attacker.pers["defends"]++;
-				attacker.defends = attacker.pers["defends"];
-			}
-
-			attacker maps/mp/_medals::defenseglobalcount();
-			attacker addplayerstatwithgametype("DEFENDS",1);
-			self recordkillmodifier("assaulting");
-			maps/mp/_scoreevents::processscoreevent("killed_attacker",attacker,self,sweapon);
 		}
 		else
 		{
+			if(!(IsDefined(attacker.dem_defends)))
+			{
+				attacker.dem_defends = 0;
+			}
+
+			attacker.dem_defends++;
+			if(level.playerdefensivemax >= attacker.dem_defends)
+			{
+				if(IsDefined(attacker.pers["defends"]))
+				{
+					attacker.pers["defends"]++;
+					attacker.defends = attacker.pers["defends"];
+				}
+
+				attacker maps/mp/_medals::defenseglobalcount();
+				attacker addplayerstatwithgametype("DEFENDS",1);
+				self recordkillmodifier("assaulting");
+				maps/mp/_scoreevents::processscoreevent("killed_attacker",attacker,self,sweapon);
+			}
+			else
+			{
 /#
-			attacker iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU DEFENSIVE CREDIT AS BOOSTING PREVENTION");
-#/
+				attacker iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU DEFENSIVE CREDIT AS BOOSTING PREVENTION");
+			}
 		}
 	}
-
-	if(Stack-Empty ? Stack-Empty : self.isplanting == 1)
+#/
+	if(self.isplanting == 1)
 	{
 		self recordkillmodifier("planting");
 	}
@@ -974,9 +975,8 @@ onuseobject(player)
 		{
 /#
 			player iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU PLANT CREDIT AS BOOSTING PREVENTION");
-#/
 		}
-
+#/
 		level thread maps/mp/_popups::displayteammessagetoall(&"MP_EXPLOSIVES_PLANTED_BY",player);
 		maps/mp/gametypes/_globallogic_audio::leaderdialog("bomb_planted");
 	}
@@ -1005,9 +1005,8 @@ onuseobject(player)
 		{
 /#
 			player iprintlnbold("GAMETYPE DEBUG: NOT GIVING YOU DEFUSE CREDIT AS BOOSTING PREVENTION");
-#/
 		}
-
+#/
 		level thread maps/mp/_popups::displayteammessagetoall(&"MP_EXPLOSIVES_DEFUSED_BY",player);
 		thread maps/mp/gametypes/_globallogic_audio::set_music_on_team("DEM_WE_DEFUSE",team,0,0,5);
 		thread maps/mp/gametypes/_globallogic_audio::set_music_on_team("DEM_THEY_DEFUSE",enemyteam,0,0,5);
@@ -1286,14 +1285,20 @@ waitlongdurationwithbombtimeupdate(whichbomb,duration)
 	}
 
 /#
-	println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
-GetTime() != endtime
-#/
-	while(IsDefined(level.hostmigrationtimer))
+	if(GetTime() != endtime)
 	{
-		endtime = endtime + 250;
-		updatebombtimers(whichbomb,endtime);
-		wait(0.25);
+		println("SCRIPT WARNING: gettime() = " + GetTime() + " NOT EQUAL TO endtime = " + endtime);
+	}
+
+		for(;;)
+		{
+#/
+		if(IsDefined(level.hostmigrationtimer))
+		{
+			endtime = endtime + 250;
+			updatebombtimers(whichbomb,endtime);
+			wait(0.25);
+		}
 	}
 
 	return GetTime() - starttime;

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 56
- * Decompile Time: 189 ms
- * Timestamp: 10/27/2023 3:03:12 AM
+ * Decompile Time: 15 ms
+ * Timestamp: 10/28/2023 12:11:50 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1384,17 +1384,14 @@ drawcylinder(pos,rad,height)
 /#
 	currad = rad;
 	curheight = height;
-	r = 0;
-	for(;;)
+	for(r = 0;r < 20;r++)
 	{
 		theta = r / 20 * 360;
 		theta2 = r + 1 / 20 * 360;
 		line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta2) * currad,sin(theta2) * currad,0));
 		line(pos + (cos(theta) * currad,sin(theta) * currad,curheight),pos + (cos(theta2) * currad,sin(theta2) * currad,curheight));
 		line(pos + (cos(theta) * currad,sin(theta) * currad,0),pos + (cos(theta) * currad,sin(theta) * currad,curheight));
-		r++;
 	}
-r < 20
 #/
 }
 
@@ -1419,9 +1416,23 @@ update_lives_remaining(increment)
 /#
 	assert(IsDefined(increment),"Must specify increment true or false");
 #/
-	increment = IsDefined(increment) ? increment : 0;
-	self.laststand_info.type_getup_lives = max(0,increment ? self.laststand_info.type_getup_lives + 1 : self.laststand_info.type_getup_lives - 1);
-	self notify("laststand_lives_updated");
+	if(IsDefined(increment))
+	{
+	}
+	else
+	{
+	}
+
+	increment = 0;
+	if(increment)
+	{
+	}
+	else
+	{
+	}
+
+	self.laststand_info.type_getup_lives = max(0,self.laststand_info.type_getup_lives - 1);
+	self notify("laststand_lives_updated",self.laststand_info.type_getup_lives + 1,increment);
 }
 
 //Function Number: 48

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 10
- * Decompile Time: 11 ms
- * Timestamp: 10/27/2023 3:03:14 AM
+ * Decompile Time: 2 ms
+ * Timestamp: 10/28/2023 12:11:51 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -48,10 +48,13 @@ network_choke_action(id,choke_action,arg1,arg2,arg3)
 {
 /#
 	assert(IsDefined(level.zombie_network_choke_ids_max[id]),"Network Choke: " + id + " undefined");
+		for(;;)
+		{
 #/
-	while(!(network_choke_safe(id)))
-	{
-		wait(0.05);
+		if(!(network_choke_safe(id)))
+		{
+			wait(0.05);
+		}
 	}
 
 	level.zombie_network_choke_ids_count[id]++;

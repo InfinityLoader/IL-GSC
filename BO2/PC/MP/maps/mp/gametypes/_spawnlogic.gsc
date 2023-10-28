@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 62
- * Decompile Time: 129 ms
- * Timestamp: 10/27/2023 3:00:14 AM
+ * Decompile Time: 24 ms
+ * Timestamp: 10/28/2023 12:10:36 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -150,8 +150,10 @@ placespawnpoints(spawnpointname)
 	addspawnpointclassname(spawnpointname);
 	spawnpoints = getspawnpointarray(spawnpointname);
 /#
-	level.extraspawnpointsused = [];
-IsDefined(level.extraspawnpointsused)
+	if(!(IsDefined(level.extraspawnpointsused)))
+	{
+		level.extraspawnpointsused = [];
+	}
 #/
 	if(!(spawnpoints.size))
 	{
@@ -393,8 +395,10 @@ getbestweightedspawnpoint(spawnpoints)
 
 		penalty = getlospenalty();
 /#
-		bestspawnpoint.spawndata[bestspawnpoint.spawndata.size] = "Last minute sight trace: -" + penalty;
-level.storespawndata || level.debugspawning
+		if(level.storespawndata || level.debugspawning)
+		{
+			bestspawnpoint.spawndata[bestspawnpoint.spawndata.size] = "Last minute sight trace: -" + penalty;
+		}
 #/
 		bestspawnpoint.weight = bestspawnpoint.weight - penalty;
 		bestspawnpoint.lastsighttracetime = GetTime();
@@ -405,16 +409,24 @@ level.storespawndata || level.debugspawning
 checkbad(spawnpoint)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < level.players.size;i++)
 	{
 		player = level.players[i];
-		losexists = bullettracepassed(50 + VectorScale((0,0,1)),player.origin,spawnpoint.sighttracepoint,0);
-		thread badspawnline(spawnpoint.sighttracepoint,50 + VectorScale((0,0,1)),player.origin,self.name);
-		i++;
+		if(!isalive(player) || player.sessionstate != "playing")
+		{
+		}
+		else if(level.teambased && player.team == self.team)
+		{
+		}
+		else
+		{
+			losexists = bullettracepassed(50 + VectorScale((0,0,1)),player.origin,spawnpoint.sighttracepoint,0);
+			if(losexists)
+			{
+				thread badspawnline(spawnpoint.sighttracepoint,50 + VectorScale((0,0,1)),player.origin,self.name);
+			}
+		}
 	}
-(!isalive(player) || player.sessionstate != "playing") ? level.teambased && player.team == self.team : (undefined ? losexists : player.name)
-i < level.players.size
 #/
 }
 
@@ -423,16 +435,13 @@ badspawnline(start,end,name1,name2)
 {
 /#
 	dist = distance(start,end);
-	i = 0;
-	for(;;)
+	for(i = 0;i < 200;i++)
 	{
 		line(start,end,(1,0,0));
 		print3d(start,"Bad spawn! " + name1 + ", dist = " + dist);
 		print3d(end,name2);
 		wait(0.05);
-		i++;
 	}
-i < 200
 #/
 }
 
@@ -440,105 +449,143 @@ i < 200
 storespawndata(spawnpoints,useweights,bestspawnpoint)
 {
 /#
-	return;
+	if(!IsDefined(level.storespawndata) || !level.storespawndata)
+	{
+		return;
+	}
+
 	level.storespawndata = GetDvarInt(#"96EBB72E");
-	return;
-	level.spawngameid = randomint(100);
-	level.spawnid = 0;
-	return;
+	if(!(level.storespawndata))
+	{
+		return;
+	}
+
+	if(!(IsDefined(level.spawnid)))
+	{
+		level.spawngameid = randomint(100);
+		level.spawnid = 0;
+	}
+
+	if(bestspawnpoint.classname == "mp_global_intermission")
+	{
+		return;
+	}
+
 	level.spawnid++;
 	file = openfile("spawndata.txt","append");
 	fprintfields(file,level.spawngameid + "." + level.spawnid + "," + spawnpoints.size + "," + self.name);
-	i = 0;
-	for(;;)
+	for(i = 0;i < spawnpoints.size;i++)
 	{
 		str = vectostr(spawnpoints[i].origin) + ",";
-		str = str + "1,";
-		str = str + "0,";
-		str = str + "0,";
-		str = str + spawnpoints[i].weight + ",";
-		spawnpoints[i].spawndata = [];
-		spawnpoints[i].sightchecks = [];
+		if(spawnpoints[i] == bestspawnpoint)
+		{
+			str = str + "1,";
+		}
+		else
+		{
+			str = str + "0,";
+		}
+
+		if(!(useweights))
+		{
+			str = str + "0,";
+		}
+		else
+		{
+			str = str + spawnpoints[i].weight + ",";
+		}
+
+		if(!(IsDefined(spawnpoints[i].spawndata)))
+		{
+			spawnpoints[i].spawndata = [];
+		}
+
+		if(!(IsDefined(spawnpoints[i].sightchecks)))
+		{
+			spawnpoints[i].sightchecks = [];
+		}
+
 		str = str + spawnpoints[i].spawndata.size + ",";
-		j = 0;
-		for(;;)
+		for(j = 0;j < spawnpoints[i].spawndata.size;j++)
 		{
 			str = str + spawnpoints[i].spawndata[j] + ",";
-			j++;
 		}
+
 		str = str + spawnpoints[i].sightchecks.size + ",";
-		j = 0;
-		for(;;)
+		for(j = 0;j < spawnpoints[i].sightchecks.size;j++)
 		{
 			str = str + spawnpoints[i].sightchecks[j].penalty + "," + vectostr(spawnpoints[i].origin) + ",";
-			j++;
 		}
+
 		fprintfields(file,str);
-		i++;
 	}
+
 	obj = spawnstruct();
 	getallalliedandenemyplayers(obj);
 	numallies = 0;
 	numenemies = 0;
 	str = "";
-	i = 0;
-	for(;;)
+	for(i = 0;i < obj.allies.size;i++)
 	{
-		numallies++;
-		str = str + vectostr(obj.allies[i].origin) + ",";
-		i++;
+		if(obj.allies[i] == self)
+		{
+		}
+		else
+		{
+			numallies++;
+			str = str + vectostr(obj.allies[i].origin) + ",";
+		}
 	}
-	i = 0;
-	for(;;)
+
+	for(i = 0;i < obj.enemies.size;i++)
 	{
 		numenemies++;
 		str = str + vectostr(obj.enemies[i].origin) + ",";
-		i++;
 	}
+
 	str = numallies + "," + numenemies + "," + str;
 	fprintfields(file,str);
 	otherdata = [];
-	index = otherdata.size;
-	otherdata[index] = spawnstruct();
-	otherdata[index].origin = 20 + VectorScale((0,0,1));
-	otherdata[index].text = "Bomb holder";
-	index = otherdata.size;
-	otherdata[index] = spawnstruct();
-	otherdata[index].origin = level.bombpos;
-	otherdata[index].text = "Bomb";
-	i = 0;
-	for(;;)
+	if(IsDefined(level.bombguy))
 	{
 		index = otherdata.size;
 		otherdata[index] = spawnstruct();
-		otherdata[index].origin = level.flags[i].origin;
-		otherdata[index].text = level.flags[i].useobj maps/mp/gametypes/_gameobjects::getownerteam() + " flag";
-		i++;
+		otherdata[index].origin = 20 + VectorScale((0,0,1));
+		otherdata[index].text = "Bomb holder";
 	}
+	else if(IsDefined(level.bombpos))
+	{
+		index = otherdata.size;
+		otherdata[index] = spawnstruct();
+		otherdata[index].origin = level.bombpos;
+		otherdata[index].text = "Bomb";
+	}
+
+	if(IsDefined(level.flags))
+	{
+		for(i = 0;i < level.flags.size;i++)
+		{
+			index = otherdata.size;
+			otherdata[index] = spawnstruct();
+			otherdata[index].origin = level.flags[i].origin;
+			otherdata[index].text = level.flags[i].useobj maps/mp/gametypes/_gameobjects::getownerteam() + " flag";
+		}
+	}
+
 	str = otherdata.size + ",";
-	i = 0;
-	for(;;)
+	for(i = 0;i < otherdata.size;i++)
 	{
 		str = str + vectostr(otherdata[i].origin) + "," + otherdata[i].text + ",";
-		i++;
 	}
+
 	fprintfields(file,str);
 	closefile(file);
 	thisspawnid = level.spawngameid + "." + level.spawnid;
+	if(IsDefined(self.thisspawnid))
+	{
+	}
+
 	self.thisspawnid = thisspawnid;
-IsDefined(self.thisspawnid)
-i < otherdata.size
-i < level.flags.size
-IsDefined(level.flags)
-(IsDefined(level.bombguy)) ? level.bombguy.origin : IsDefined(level.bombpos)
-i < obj.enemies.size
-(j < spawnpoints[i].sightchecks.size) ? i < obj.allies.size : obj.allies[i] == self
-j < spawnpoints[i].spawndata.size
-IsDefined(spawnpoints[i].sightchecks)
-IsDefined(spawnpoints[i].spawndata)
-(IsDefined(level.spawnid)) ? ((bestspawnpoint.classname == "mp_global_intermission") ? i < spawnpoints.size : spawnpoints[i] == bestspawnpoint) : useweights
-level.storespawndata
-!IsDefined(level.storespawndata) || !level.storespawndata
 #/
 }
 
@@ -547,55 +594,94 @@ readspawndata(desiredid,relativepos)
 {
 /#
 	file = openfile("spawndata.txt","read");
-	return;
+	if(file < 0)
+	{
+		return;
+	}
+
 	oldspawndata = level.curspawndata;
 	level.curspawndata = undefined;
 	prev = undefined;
 	prevthisplayer = undefined;
 	lookingfornextthisplayer = 0;
 	lookingfornext = 0;
-	return;
-	for(;;)
+	if(IsDefined(relativepos) && !IsDefined(oldspawndata))
 	{
-		break;
+		return;
+	}
+
+	while(1)
+	{
+		if(freadln(file) <= 0)
+		{
+			break;
+		}
+
 		data = spawnstruct();
 		data.id = fgetarg(file,0);
 		numspawns = int(fgetarg(file,1));
-		break;
+		if(numspawns > 256)
+		{
+			break;
+		}
+
 		data.playername = fgetarg(file,2);
 		data.spawnpoints = [];
 		data.friends = [];
 		data.enemies = [];
 		data.otherdata = [];
-		i = 0;
-		for(;;)
+		for(i = 0;i < numspawns;i++)
 		{
-			break;
+			if(freadln(file) <= 0)
+			{
+				break;
+			}
+
 			spawnpoint = spawnstruct();
 			spawnpoint.origin = strtovec(fgetarg(file,0));
 			spawnpoint.winner = int(fgetarg(file,1));
 			spawnpoint.weight = int(fgetarg(file,2));
 			spawnpoint.data = [];
 			spawnpoint.sightchecks = [];
-			data.minweight = spawnpoint.weight;
-			data.maxweight = spawnpoint.weight;
-			data.minweight = spawnpoint.weight;
-			data.maxweight = spawnpoint.weight;
+			if(i == 0)
+			{
+				data.minweight = spawnpoint.weight;
+				data.maxweight = spawnpoint.weight;
+			}
+			else
+			{
+				if(spawnpoint.weight < data.minweight)
+				{
+					data.minweight = spawnpoint.weight;
+				}
+
+				if(spawnpoint.weight > data.maxweight)
+				{
+					data.maxweight = spawnpoint.weight;
+				}
+			}
+
 			argnum = 4;
 			numdata = int(fgetarg(file,3));
-			break;
-			j = 0;
-			for(;;)
+			if(numdata > 256)
+			{
+				break;
+			}
+
+			for(j = 0;j < numdata;j++)
 			{
 				spawnpoint.data[spawnpoint.data.size] = fgetarg(file,argnum);
 				argnum++;
-				j++;
 			}
+
 			numsightchecks = int(fgetarg(file,argnum));
 			argnum++;
-			break;
-			j = 0;
-			for(;;)
+			if(numsightchecks > 256)
+			{
+				break;
+			}
+
+			for(j = 0;j < numsightchecks;j++)
 			{
 				index = spawnpoint.sightchecks.size;
 				spawnpoint.sightchecks[index] = spawnstruct();
@@ -603,38 +689,55 @@ readspawndata(desiredid,relativepos)
 				argnum++;
 				spawnpoint.sightchecks[index].origin = strtovec(fgetarg(file,argnum));
 				argnum++;
-				j++;
 			}
+
 			data.spawnpoints[data.spawnpoints.size] = spawnpoint;
-			i++;
 		}
-		data.minweight = -1;
-		data.maxweight = 0;
-		data.minweight = data.minweight - 1;
-		break;
+
+		if(!(IsDefined(data.minweight)))
+		{
+			data.minweight = -1;
+			data.maxweight = 0;
+		}
+
+		if(data.minweight == data.maxweight)
+		{
+			data.minweight = data.minweight - 1;
+		}
+
+		if(freadln(file) <= 0)
+		{
+			break;
+		}
+
 		numfriends = int(fgetarg(file,0));
 		numenemies = int(fgetarg(file,1));
-		break;
+		if(numfriends > 32 || numenemies > 32)
+		{
+			break;
+		}
+
 		argnum = 2;
-		i = 0;
-		for(;;)
+		for(i = 0;i < numfriends;i++)
 		{
 			data.friends[data.friends.size] = strtovec(fgetarg(file,argnum));
 			argnum++;
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < numenemies;i++)
 		{
 			data.enemies[data.enemies.size] = strtovec(fgetarg(file,argnum));
 			argnum++;
-			i++;
 		}
-		break;
+
+		if(freadln(file) <= 0)
+		{
+			break;
+		}
+
 		numotherdata = int(fgetarg(file,0));
 		argnum = 1;
-		i = 0;
-		for(;;)
+		for(i = 0;i < numotherdata;i++)
 		{
 			otherdata = spawnstruct();
 			otherdata.origin = strtovec(fgetarg(file,argnum));
@@ -642,48 +745,74 @@ readspawndata(desiredid,relativepos)
 			otherdata.text = fgetarg(file,argnum);
 			argnum++;
 			data.otherdata[data.otherdata.size] = otherdata;
-			i++;
 		}
-		level.curspawndata = prevthisplayer;
-		break;
-		level.curspawndata = prev;
-		break;
-		level.curspawndata = data;
-		break;
-		lookingfornextthisplayer = 1;
-		continue;
-		level.curspawndata = data;
-		break;
-		lookingfornext = 1;
-		level.curspawndata = data;
-		break;
+
+		if(IsDefined(relativepos))
+		{
+			if(relativepos == "prevthisplayer")
+			{
+				if(data.id == oldspawndata.id)
+				{
+					level.curspawndata = prevthisplayer;
+					break;
+				}
+
+				continue;
+			}
+
+			if(relativepos == "prev")
+			{
+				if(data.id == oldspawndata.id)
+				{
+					level.curspawndata = prev;
+					break;
+				}
+
+				continue;
+			}
+
+			if(relativepos == "nextthisplayer")
+			{
+				if(lookingfornextthisplayer)
+				{
+					level.curspawndata = data;
+					break;
+				}
+				else if(data.id == oldspawndata.id)
+				{
+					lookingfornextthisplayer = 1;
+				}
+
+				continue;
+			}
+
+			if(relativepos == "next")
+			{
+				if(lookingfornext)
+				{
+					level.curspawndata = data;
+					break;
+				}
+				else if(data.id == oldspawndata.id)
+				{
+					lookingfornext = 1;
+				}
+			}
+		}
+		else if(data.id == desiredid)
+		{
+			level.curspawndata = data;
+			break;
+		}
+
 		prev = data;
-		prevthisplayer = data;
+		if(IsDefined(oldspawndata) && data.playername == oldspawndata.playername)
+		{
+			prevthisplayer = data;
+		}
 	}
+
 	closefile(file);
-IsDefined(oldspawndata) && data.playername == oldspawndata.playername
-(relativepos == "prevthisplayer") ? ((data.id == oldspawndata.id) ? relativepos == "prev" : ((data.id == oldspawndata.id) ? ((relativepos == "nextthisplayer") ? lookingfornextthisplayer : data.id == oldspawndata.id) : ((relativepos == "next") ? lookingfornext : data.id == oldspawndata.id))) : data.id == desiredid
-IsDefined(relativepos)
-i < numotherdata
-freadln(file) <= 0
-i < numenemies
-i < numfriends
-numfriends > 32 || numenemies > 32
-freadln(file) <= 0
-data.minweight == data.maxweight
-IsDefined(data.minweight)
-j < numsightchecks
-numsightchecks > 256
-j < numdata
-numdata > 256
-i == 0 ? spawnpoint.weight < data.minweight : spawnpoint.weight > data.maxweight
-freadln(file) <= 0
-i < numspawns
-numspawns > 256
-freadln(file) <= 0
-1
-IsDefined(relativepos) && !IsDefined(oldspawndata)
-file < 0
 #/
 }
 
@@ -694,65 +823,57 @@ drawspawndata()
 	level notify("drawing_spawn_data");
 	level endon("drawing_spawn_data");
 	textoffset = VectorScale((0,0,-1));
-	for(;;)
+	while(1)
 	{
-		wait(0.5);
-		i = 0;
-		for(;;)
+		if(!(IsDefined(level.curspawndata)))
+		{
+			wait(0.5);
+			continue;
+		}
+
+		for(i = 0;i < level.curspawndata.friends.size;i++)
 		{
 			print3d(level.curspawndata.friends[i],"=)",(0.5,1,0.5),1,5);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < level.curspawndata.enemies.size;i++)
 		{
 			print3d(level.curspawndata.enemies[i],"=(",(1,0.5,0.5),1,5);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < level.curspawndata.otherdata.size;i++)
 		{
 			print3d(level.curspawndata.otherdata[i].origin,level.curspawndata.otherdata[i].text,(0.5,0.75,1),1,2);
-			i++;
 		}
-		i = 0;
-		for(;;)
+
+		for(i = 0;i < level.curspawndata.spawnpoints.size;i++)
 		{
 			sp = level.curspawndata.spawnpoints[i];
 			orig = sp.sighttracepoint;
-			print3d(orig,level.curspawndata.playername + " spawned here",(0.5,0.5,1),1,2);
-			orig = orig + textoffset;
+			if(sp.winner)
+			{
+				print3d(orig,level.curspawndata.playername + " spawned here",(0.5,0.5,1),1,2);
+				orig = orig + textoffset;
+			}
+
 			amnt = sp.weight - level.curspawndata.minweight / level.curspawndata.maxweight - level.curspawndata.minweight;
 			print3d(orig,"Weight: " + sp.weight,(1 - amnt,amnt,0.5));
 			orig = orig + textoffset;
-			j = 0;
-			for(;;)
+			for(j = 0;j < sp.data.size;j++)
 			{
 				print3d(orig,sp.data[j],(1,1,1));
 				orig = orig + textoffset;
-				j++;
 			}
-			j = 0;
-			for(;;)
+
+			for(j = 0;j < sp.sightchecks.size;j++)
 			{
 				print3d(orig,"Sightchecks: -" + sp.sightchecks[j].penalty,(1,0.5,0.5));
 				orig = orig + textoffset;
-				j++;
 			}
-			i++;
 		}
+
 		wait(0.05);
 	}
-j < sp.sightchecks.size
-j < sp.data.size
-sp.winner
-i < level.curspawndata.spawnpoints.size
-i < level.curspawndata.otherdata.size
-i < level.curspawndata.enemies.size
-i < level.curspawndata.friends.size
-IsDefined(level.curspawndata)
-1
-12
 #/
 }
 
@@ -769,9 +890,12 @@ strtovec(str)
 {
 /#
 	parts = strtok(str,"/");
-	return (0,0,0);
+	if(parts.size != 3)
+	{
+		return (0,0,0);
+	}
+
 	return (int(parts[0]),int(parts[1]),int(parts[2]));
-parts.size != 3
 #/
 }
 
@@ -863,15 +987,14 @@ initweights(spawnpoints)
 	}
 
 /#
-	i = 0;
-	for(;;)
+	if(level.storespawndata || level.debugspawning)
 	{
-		spawnpoints[i].spawndata = [];
-		spawnpoints[i].sightchecks = [];
-		i++;
+		for(i = 0;i < spawnpoints.size;i++)
+		{
+			spawnpoints[i].spawndata = [];
+			spawnpoints[i].sightchecks = [];
+		}
 	}
-i < spawnpoints.size
-level.storespawndata || level.debugspawning
 #/
 }
 
@@ -884,10 +1007,15 @@ getspawnpoint_nearteam(spawnpoints,favoredspawnpoints)
 	}
 
 /#
-	setdvar("scr_spawn_randomly","0");
-	return getspawnpoint_random(spawnpoints);
-GetDvar(#"6486379A") == "1"
-GetDvar(#"6486379A") == ""
+	if(GetDvar(#"6486379A") == "")
+	{
+		setdvar("scr_spawn_randomly","0");
+	}
+
+	if(GetDvar(#"6486379A") == "1")
+	{
+		return getspawnpoint_random(spawnpoints);
+	}
 #/
 	if(GetDvarInt(#"292A749F") > 0)
 	{
@@ -916,18 +1044,22 @@ GetDvar(#"6486379A") == ""
 			enemydistsum = spawnpoint.enemydistsum[myteam];
 			spawnpoint.weight = enemydistsum - allieddistanceweight * allydistsum / spawnpoint.numplayersatlastupdate;
 /#
-			spawnpoint.spawndata[spawnpoint.spawndata.size] = "Base weight: " + int(spawnpoint.weight) + " = (" + int(enemydistsum) + " - " + allieddistanceweight + "*" + int(allydistsum) + ") / " + spawnpoint.numplayersatlastupdate;
-level.storespawndata || level.debugspawning
+			if(level.storespawndata || level.debugspawning)
+			{
+				spawnpoint.spawndata[spawnpoint.spawndata.size] = "Base weight: " + int(spawnpoint.weight) + " = (" + int(enemydistsum) + " - " + allieddistanceweight + "*" + int(allydistsum) + ") / " + spawnpoint.numplayersatlastupdate;
+			}
 #/
 		}
 		else
 		{
 			spawnpoint.weight = 0;
 /#
-			spawnpoint.spawndata[spawnpoint.spawndata.size] = "Base weight: 0";
-level.storespawndata || level.debugspawning
-#/
+			if(level.storespawndata || level.debugspawning)
+			{
+				spawnpoint.spawndata[spawnpoint.spawndata.size] = "Base weight: 0";
+			}
 		}
+#/
 	}
 
 	if(IsDefined(favoredspawnpoints))
@@ -951,10 +1083,15 @@ level.storespawndata || level.debugspawning
 	avoidvisibleenemies(spawnpoints,1);
 	result = getspawnpoint_final(spawnpoints);
 /#
-	setdvar("scr_spawn_showbad","0");
-	checkbad(result);
-GetDvar(#"9E85FAFC") == "1"
-GetDvar(#"9E85FAFC") == ""
+	if(GetDvar(#"9E85FAFC") == "")
+	{
+		setdvar("scr_spawn_showbad","0");
+	}
+
+	if(GetDvar(#"9E85FAFC") == "1")
+	{
+		checkbad(result);
+	}
 #/
 	return result;
 }
@@ -1016,14 +1153,23 @@ spawnlogic_begin()
 init()
 {
 /#
-	setdvar("scr_recordspawndata",0);
+	if(GetDvar(#"96EBB72E") == "")
+	{
+		setdvar("scr_recordspawndata",0);
+	}
+
 	level.storespawndata = GetDvarInt(#"96EBB72E");
-	setdvar("scr_killbots",0);
-	setdvar("scr_killbottimer",0.25);
+	if(GetDvar(#"45A06390") == "")
+	{
+		setdvar("scr_killbots",0);
+	}
+
+	if(GetDvar(#"1F9534FE") == "")
+	{
+		setdvar("scr_killbottimer",0.25);
+	}
+
 	thread loopbotspawns();
-GetDvar(#"1F9534FE") == ""
-GetDvar(#"45A06390") == ""
-GetDvar(#"96EBB72E") == ""
 #/
 	level.spawnlogic_deaths = [];
 	level.spawnlogic_spawnkills = [];
@@ -1052,20 +1198,35 @@ GetDvar(#"96EBB72E") == ""
 	}
 
 /#
-	setdvar("scr_spawnsimple","0");
-	setdvar("scr_spawnpointdebug","0");
-	thread showdeathsdebug();
-	thread updatedeathinfodebug();
-	thread profiledebug();
-	thread allowspawndatareading();
-	setdvar("scr_spawnprofile","0");
+	if(GetDvar(#"292A749F") == "")
+	{
+		setdvar("scr_spawnsimple","0");
+	}
+
+	if(GetDvar(#"632110E6") == "")
+	{
+		setdvar("scr_spawnpointdebug","0");
+	}
+
+	if(GetDvarInt(#"632110E6") > 0)
+	{
+		thread showdeathsdebug();
+		thread updatedeathinfodebug();
+		thread profiledebug();
+	}
+
+	if(level.storespawndata)
+	{
+		thread allowspawndatareading();
+	}
+
+	if(GetDvar(#"7CA769A6") == "")
+	{
+		setdvar("scr_spawnprofile","0");
+	}
+
 	thread watchspawnprofile();
 	thread spawngraphcheck();
-GetDvar(#"7CA769A6") == ""
-level.storespawndata
-GetDvarInt(#"632110E6") > 0
-GetDvar(#"632110E6") == ""
-GetDvar(#"292A749F") == ""
 #/
 }
 
@@ -1073,20 +1234,30 @@ GetDvar(#"292A749F") == ""
 watchspawnprofile()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		while(1)
 		{
-			break;
+			if(GetDvarInt(#"7CA769A6") > 0)
+			{
+				break;
+			}
+
 			wait(0.05);
 		}
+
 		thread spawnprofile();
-		for(;;)
+		while(1)
 		{
-			break;
+			if(GetDvarInt(#"7CA769A6") <= 0)
+			{
+				break;
+			}
+
 			wait(0.05);
 		}
-		level notify("stop_spawn_profile",GetDvarInt(#"7CA769A6") <= 0,1,GetDvarInt(#"7CA769A6") > 0,1,1);
+
+		level notify("stop_spawn_profile");
 	}
 #/
 }
@@ -1096,23 +1267,25 @@ spawnprofile()
 {
 /#
 	level endon("stop_spawn_profile");
-	for(;;)
+	while(1)
 	{
-		playernum = randomint(level.players.size);
-		player = level.players[playernum];
-		attempt = 1;
-		for(;;)
+		if(level.players.size > 0 && level.spawnpoints.size > 0)
 		{
-			playernum = playernum + 1 % level.players.size;
-			attempt++;
+			playernum = randomint(level.players.size);
 			player = level.players[playernum];
+			attempt = 1;
+			while(!IsDefined(player) && attempt < level.players.size)
+			{
+				playernum = playernum + 1 % level.players.size;
+				attempt++;
+				player = level.players[playernum];
+			}
+
+			player getspawnpoint_nearteam(level.spawnpoints);
 		}
-		player getspawnpoint_nearteam(level.spawnpoints);
+
 		wait(0.05);
 	}
-!IsDefined(player) && attempt < level.players.size
-level.players.size > 0 && level.spawnpoints.size > 0
-1
 #/
 }
 
@@ -1120,14 +1293,17 @@ level.players.size > 0 && level.spawnpoints.size > 0
 spawngraphcheck()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		wait(3);
+		if(GetDvarInt(#"C25B6B47") < 1)
+		{
+			wait(3);
+			continue;
+		}
+
 		thread spawngraph();
 		return;
 	}
-GetDvarInt(#"C25B6B47") < 1
-1
 #/
 }
 
@@ -1140,21 +1316,37 @@ spawngraph()
 	weightscale = 0.1;
 	fakespawnpoints = [];
 	corners = getentarray("minimap_corner","targetname");
-	println("^1 can\'t spawn graph: no minimap corners");
-	return;
+	if(corners.size != 2)
+	{
+		println("^1 can\'t spawn graph: no minimap corners");
+		return;
+	}
+
 	min = corners[0].origin;
 	max = corners[0].origin;
-	max = (corners[1].origin[0],max[1],max[2]);
-	min = (corners[1].origin[0],min[1],min[2]);
-	max = (max[0],corners[1].origin[1],max[2]);
-	min = (min[0],corners[1].origin[1],min[2]);
+	if(corners[1].origin[0] > max[0])
+	{
+		max = (corners[1].origin[0],max[1],max[2]);
+	}
+	else
+	{
+		min = (corners[1].origin[0],min[1],min[2]);
+	}
+
+	if(corners[1].origin[1] > max[1])
+	{
+		max = (max[0],corners[1].origin[1],max[2]);
+	}
+	else
+	{
+		min = (min[0],corners[1].origin[1],min[2]);
+	}
+
 	i = 0;
-	y = 0;
-	for(;;)
+	for(y = 0;y < h;y++)
 	{
 		yamnt = y / h - 1;
-		x = 0;
-		for(;;)
+		for(x = 0;x < w;x++)
 		{
 			xamnt = x / w - 1;
 			fakespawnpoints[i] = spawnstruct();
@@ -1163,56 +1355,57 @@ spawngraph()
 			fakespawnpoints[i].forward = AnglesToForward(fakespawnpoints[i].angles);
 			fakespawnpoints[i].sighttracepoint = fakespawnpoints[i].origin;
 			i++;
-			x++;
 		}
-		y++;
 	}
+
 	didweights = 0;
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		spawni = 0;
+		numiters = 5;
+		for(i = 0;i < numiters;i++)
 		{
-			spawni = 0;
-			numiters = 5;
-			i = 0;
-			for(;;)
+			if(!level.players.size || !IsDefined(level.players[0].team) || level.players[0].team == "spectator" || !IsDefined(level.players[0].class))
 			{
 				break;
-				endspawni = spawni + fakespawnpoints.size / numiters;
-				endspawni = fakespawnpoints.size;
-				for(;;)
-				{
-					spawnpointupdate(fakespawnpoints[spawni]);
-					spawni++;
-				}
-				level.players[0] drawspawngraph(fakespawnpoints,w,h,weightscale);
-				wait(0.05);
-				i++;
 			}
-			wait(1);
+
+			endspawni = spawni + fakespawnpoints.size / numiters;
+			if(i == numiters - 1)
+			{
+				endspawni = fakespawnpoints.size;
+			}
+
+			while(spawni < endspawni)
+			{
+				spawnpointupdate(fakespawnpoints[spawni]);
+				spawni++;
+			}
+
+			if(didweights)
+			{
+				level.players[0] drawspawngraph(fakespawnpoints,w,h,weightscale);
+			}
+
+			wait(0.05);
 		}
+
+		if(!level.players.size || !IsDefined(level.players[0].team) || level.players[0].team == "spectator" || !IsDefined(level.players[0].class))
+		{
+			wait(1);
+			continue;
+		}
+
 		level.players[0] getspawnpoint_nearteam(fakespawnpoints);
-		i = 0;
-		for(;;)
+		for(i = 0;i < fakespawnpoints.size;i++)
 		{
 			setupspawngraphpoint(fakespawnpoints[i],weightscale);
-			i++;
 		}
+
 		didweights = 1;
 		level.players[0] drawspawngraph(fakespawnpoints,w,h,weightscale);
 		wait(0.05);
 	}
-i < fakespawnpoints.size
-!level.players.size || !IsDefined(level.players[0].team) || level.players[0].team == "spectator" || !IsDefined(level.players[0].class)
-didweights
-spawni < endspawni
-i == numiters - 1
-!level.players.size || !IsDefined(level.players[0].team) || level.players[0].team == "spectator" || !IsDefined(level.players[0].class)
-i < numiters
-1
-x < w
-y < h
-Stack-Empty ? (Stack-Empty ? corners.size != 2 : corners[1].origin[0] > max[0]) : corners[1].origin[1] > max[1]
 #/
 }
 
@@ -1221,25 +1414,25 @@ drawspawngraph(fakespawnpoints,w,h,weightscale)
 {
 /#
 	i = 0;
-	y = 0;
-	for(;;)
+	for(y = 0;y < h;y++)
 	{
 		yamnt = y / h - 1;
-		x = 0;
-		for(;;)
+		for(x = 0;x < w;x++)
 		{
 			xamnt = x / w - 1;
-			spawngraphline(fakespawnpoints[i],fakespawnpoints[i - w],weightscale);
-			spawngraphline(fakespawnpoints[i],fakespawnpoints[i - 1],weightscale);
+			if(y > 0)
+			{
+				spawngraphline(fakespawnpoints[i],fakespawnpoints[i - w],weightscale);
+			}
+
+			if(x > 0)
+			{
+				spawngraphline(fakespawnpoints[i],fakespawnpoints[i - 1],weightscale);
+			}
+
 			i++;
-			x++;
 		}
-		y++;
 	}
-x > 0
-y > 0
-x < w
-y < h
 #/
 }
 
@@ -1248,8 +1441,10 @@ setupspawngraphpoint(s1,weightscale)
 {
 /#
 	s1.visible = 1;
-	s1.visible = 0;
-s1.weight < -1000 / weightscale
+	if(s1.weight < -1000 / weightscale)
+	{
+		s1.visible = 0;
+	}
 #/
 }
 
@@ -1257,11 +1452,14 @@ s1.weight < -1000 / weightscale
 spawngraphline(s1,s2,weightscale)
 {
 /#
-	return;
+	if(!s1.visible || !s2.visible)
+	{
+		return;
+	}
+
 	p1 = s1.origin + (0,0,s1.weight * weightscale + 100);
 	p2 = s2.origin + (0,0,s2.weight * weightscale + 100);
 	line(p1,p2,(1,1,1));
-!s1.visible || !s2.visible
 #/
 }
 
@@ -1269,46 +1467,67 @@ spawngraphline(s1,s2,weightscale)
 loopbotspawns()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		if(GetDvarInt(#"45A06390") < 1)
 		{
 			wait(3);
+			continue;
+		}
+
+		if(!(IsDefined(level.players)))
+		{
 			wait(0.05);
+			continue;
 		}
+
 		bots = [];
-		i = 0;
-		for(;;)
+		for(i = 0;i < level.players.size;i++)
 		{
-			bots[bots.size] = level.players[i];
-			i++;
+			if(!(IsDefined(level.players[i])))
+			{
+			}
+			else if(level.players[i].sessionstate == "playing" && issubstr(level.players[i].name,"bot"))
+			{
+				bots[bots.size] = level.players[i];
+			}
 		}
-		killer = bots[randomint(bots.size)];
-		victim = bots[randomint(bots.size)];
-		victim thread [[ level.callbackplayerdamage ]](killer,killer,1000,0,"MOD_RIFLE_BULLET","none",(0,0,0),(0,0,0),"none",0,0);
-		numkills = GetDvarInt(#"45A06390");
-		lastvictim = undefined;
-		index = 0;
-		for(;;)
+
+		if(bots.size > 0)
 		{
-			killer = bots[randomint(bots.size)];
-			victim = bots[randomint(bots.size)];
-			victim = bots[randomint(bots.size)];
-			victim thread [[ level.callbackplayerdamage ]](killer,killer,1000,0,"MOD_RIFLE_BULLET","none",(0,0,0),(0,0,0),"none",0,0);
-			lastvictim = victim;
-			index++;
+			if(GetDvarInt(#"45A06390") == 1)
+			{
+				killer = bots[randomint(bots.size)];
+				victim = bots[randomint(bots.size)];
+				victim thread [[ level.callbackplayerdamage ]](killer,killer,1000,0,"MOD_RIFLE_BULLET","none",(0,0,0),(0,0,0),"none",0,0);
+			}
+			else
+			{
+				numkills = GetDvarInt(#"45A06390");
+				lastvictim = undefined;
+				for(index = 0;index < numkills;index++)
+				{
+					killer = bots[randomint(bots.size)];
+					victim = bots[randomint(bots.size)];
+					while(IsDefined(lastvictim) && victim == lastvictim)
+					{
+						victim = bots[randomint(bots.size)];
+					}
+
+					victim thread [[ level.callbackplayerdamage ]](killer,killer,1000,0,"MOD_RIFLE_BULLET","none",(0,0,0),(0,0,0),"none",0,0);
+					lastvictim = victim;
+				}
+			}
 		}
-		wait(GetDvarFloat(#"1F9534FE"));
-		continue;
+
+		if(GetDvar(#"1F9534FE") != "")
+		{
+			wait(GetDvarFloat(#"1F9534FE"));
+			continue;
+		}
+
 		wait(0.05);
 	}
-GetDvar(#"1F9534FE") != ""
-(GetDvarInt(#"45A06390") == 1) ? index < numkills : IsDefined(lastvictim) && victim == lastvictim
-bots.size > 0
-(i < level.players.size) ? IsDefined(level.players[i]) : level.players[i].sessionstate == "playing" && issubstr(level.players[i].name,"bot")
-IsDefined(level.players)
-GetDvarInt(#"45A06390") < 1
-1
 #/
 }
 
@@ -1320,26 +1539,37 @@ allowspawndatareading()
 	prevval = GetDvar(#"E0FC7E63");
 	prevrelval = GetDvar(#"4058B332");
 	readthistime = 0;
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		val = GetDvar(#"E0FC7E63");
+		relval = undefined;
+		if(!IsDefined(val) || val == prevval)
 		{
-			val = GetDvar(#"E0FC7E63");
-			relval = undefined;
 			relval = GetDvar(#"4058B332");
-			setdvar("scr_spawnidcycle","");
-			break;
+			if(IsDefined(relval) && relval != "")
+			{
+				setdvar("scr_spawnidcycle","");
+				break;
+			}
+
 			wait(0.5);
+			continue;
 		}
+
 		prevval = val;
 		readthistime = 0;
 		readspawndata(val,relval);
-		println("No spawn data to draw.");
-		println("Drawing spawn ID " + level.curspawndata.id);
+		if(!(IsDefined(level.curspawndata)))
+		{
+			println("No spawn data to draw.");
+		}
+		else
+		{
+			println("Drawing spawn ID " + level.curspawndata.id);
+		}
+
 		thread drawspawndata();
 	}
-(!IsDefined(val) || val == prevval) ? IsDefined(relval) && relval != "" : IsDefined(level.curspawndata)
-1
 #/
 }
 
@@ -1347,50 +1577,70 @@ allowspawndatareading()
 showdeathsdebug()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		wait(3);
+		if(GetDvar(#"632110E6") == "0")
+		{
+			wait(3);
+			continue;
+		}
+
 		time = GetTime();
-		i = 0;
-		for(;;)
+		for(i = 0;i < level.spawnlogic_deaths.size;i++)
 		{
-			line(level.spawnlogic_deaths[i].org,level.spawnlogic_deaths[i].killorg,(1,0,0));
-			line(level.spawnlogic_deaths[i].org,level.spawnlogic_deaths[i].killorg,(1,1,1));
+			if(IsDefined(level.spawnlogic_deaths[i].los))
+			{
+				line(level.spawnlogic_deaths[i].org,level.spawnlogic_deaths[i].killorg,(1,0,0));
+			}
+			else
+			{
+				line(level.spawnlogic_deaths[i].org,level.spawnlogic_deaths[i].killorg,(1,1,1));
+			}
+
 			killer = level.spawnlogic_deaths[i].killer;
-			line(level.spawnlogic_deaths[i].killorg,killer.origin,(0.4,0.4,0.8));
-			i++;
+			if(IsDefined(killer) && isalive(killer))
+			{
+				line(level.spawnlogic_deaths[i].killorg,killer.origin,(0.4,0.4,0.8));
+			}
 		}
-		p = 0;
-		for(;;)
+
+		for(p = 0;p < level.players.size;p++)
 		{
-			print3d(64 + VectorScale((0,0,1)),level.players[p].origin,level.players[p].spawnlogic_killdist);
-			p++;
+			if(!(IsDefined(level.players[p])))
+			{
+			}
+			else if(IsDefined(level.players[p].spawnlogic_killdist))
+			{
+				print3d(64 + VectorScale((0,0,1)),level.players[p].origin,level.players[p].spawnlogic_killdist);
+			}
 		}
+
 		oldspawnkills = level.spawnlogic_spawnkills;
 		level.spawnlogic_spawnkills = [];
-		i = 0;
-		for(;;)
+		for(i = 0;i < oldspawnkills.size;i++)
 		{
 			spawnkill = oldspawnkills[i];
-			line(spawnkill.spawnpointorigin,spawnkill.dierorigin,(0.4,0.5,0.4));
-			line(spawnkill.dierorigin,spawnkill.killerorigin,(0,1,1));
-			print3d(32 + VectorScale((0,0,1)),spawnkill.dierorigin,"SPAWNKILLED!");
-			line(spawnkill.spawnpointorigin,spawnkill.killerorigin,(0.4,0.5,0.4));
-			line(spawnkill.killerorigin,spawnkill.dierorigin,(0,1,1));
-			print3d(32 + VectorScale((0,0,1)),spawnkill.dierorigin,"SPAWNDIED!");
-			level.spawnlogic_spawnkills[level.spawnlogic_spawnkills.size] = oldspawnkills[i];
-			i++;
+			if(spawnkill.dierwasspawner)
+			{
+				line(spawnkill.spawnpointorigin,spawnkill.dierorigin,(0.4,0.5,0.4));
+				line(spawnkill.dierorigin,spawnkill.killerorigin,(0,1,1));
+				print3d(32 + VectorScale((0,0,1)),spawnkill.dierorigin,"SPAWNKILLED!");
+			}
+			else
+			{
+				line(spawnkill.spawnpointorigin,spawnkill.killerorigin,(0.4,0.5,0.4));
+				line(spawnkill.killerorigin,spawnkill.dierorigin,(0,1,1));
+				print3d(32 + VectorScale((0,0,1)),spawnkill.dierorigin,"SPAWNDIED!");
+			}
+
+			if(time - spawnkill.time < 60000)
+			{
+				level.spawnlogic_spawnkills[level.spawnlogic_spawnkills.size] = oldspawnkills[i];
+			}
 		}
+
 		wait(0.05);
 	}
-time - spawnkill.time < 60000
-(spawnkill.dierwasspawner) ? (0,1,1) : (0,1,1)
-i < oldspawnkills.size
-(IsDefined(level.players[p])) ? IsDefined(level.players[p].spawnlogic_killdist) : (1,1,1)
-p < level.players.size
-IsDefined(killer) && isalive(killer)
-(GetDvar(#"632110E6") == "0") ? i < level.spawnlogic_deaths.size : IsDefined(level.spawnlogic_deaths[i].los)
-1
 #/
 }
 
@@ -1416,49 +1666,58 @@ spawnweightdebug(spawnpoints)
 	level notify("stop_spawn_weight_debug");
 	level endon("stop_spawn_weight_debug");
 /#
-	for(;;)
+	while(1)
 	{
-		wait(3);
+		if(GetDvar(#"632110E6") == "0")
+		{
+			wait(3);
+			continue;
+		}
+
 		textoffset = VectorScale((0,0,-1));
-		i = 0;
-		for(;;)
+		for(i = 0;i < spawnpoints.size;i++)
 		{
 			amnt = 1 * 1 - spawnpoints[i].weight / -100000;
-			amnt = 0;
-			amnt = 1;
+			if(amnt < 0)
+			{
+				amnt = 0;
+			}
+
+			if(amnt > 1)
+			{
+				amnt = 1;
+			}
+
 			orig = 80 + VectorScale((0,0,1));
 			print3d(orig,int(spawnpoints[i].weight),(1,amnt,0.5));
 			orig = orig + textoffset;
-			j = 0;
-			for(;;)
+			if(IsDefined(spawnpoints[i].spawndata))
 			{
-				print3d(orig,spawnpoints[i].spawndata[j],VectorScale((1,1,1)));
-				orig = orig + textoffset;
-				j++;
+				for(j = 0;j < spawnpoints[i].spawndata.size;j++)
+				{
+					print3d(orig,spawnpoints[i].spawndata[j],VectorScale((1,1,1)));
+					orig = orig + textoffset;
+				}
 			}
-			j = 0;
-			for(;;)
+
+			if(IsDefined(spawnpoints[i].sightchecks))
 			{
-				print3d(orig,"Sight to enemy: -" + spawnpoints[i].sightchecks[j].penalty,VectorScale((1,1,1)));
-				orig = orig + textoffset;
-				j++;
+				for(j = 0;j < spawnpoints[i].sightchecks.size;j++)
+				{
+					if(spawnpoints[i].sightchecks[j].penalty == 0)
+					{
+					}
+					else
+					{
+						print3d(orig,"Sight to enemy: -" + spawnpoints[i].sightchecks[j].penalty,VectorScale((1,1,1)));
+						orig = orig + textoffset;
+					}
+				}
 			}
-			i++;
 		}
+
 		wait(0.05);
 	}
-(j < spawnpoints[i].sightchecks.size) ? spawnpoints[i].sightchecks[j].penalty == 0 : 0.5
-IsDefined(spawnpoints[i].sightchecks)
-0.5
-j < spawnpoints[i].spawndata.size
-IsDefined(spawnpoints[i].spawndata)
-spawnpoints[i].origin
-amnt > 1
-amnt < 0
-i < spawnpoints.size
-12
-GetDvar(#"632110E6") == "0"
-1
 #/
 }
 
@@ -1491,23 +1750,26 @@ profiledebug()
 debugnearbyplayers(players,origin)
 {
 /#
-	return;
-	starttime = GetTime();
-	for(;;)
+	if(GetDvar(#"632110E6") == "0")
 	{
-		i = 0;
-		for(;;)
+		return;
+	}
+
+	starttime = GetTime();
+	while(1)
+	{
+		for(i = 0;i < players.size;i++)
 		{
 			line(players[i].origin,origin,(0.5,1,0.5));
-			i++;
 		}
-		return;
+
+		if(GetTime() - starttime > 5000)
+		{
+			return;
+		}
+
 		wait(0.05);
 	}
-GetTime() - starttime > 5000
-i < players.size
-1
-GetDvar(#"632110E6") == "0"
 #/
 }
 
@@ -1616,10 +1878,12 @@ avoidweapondamage(spawnpoints)
 			{
 				spawnpoints[i].weight = spawnpoints[i].weight - weapondamagepenalty;
 /#
+				if(level.storespawndata || level.debugspawning)
+				{
 					spawnpoints[i].spawndata[spawnpoints[i].spawndata.size] = "Was near grenade: -" + int(weapondamagepenalty);
-level.storespawndata || level.debugspawning
-#/
+				}
 			}
+#/
 		}
 	}
 }
@@ -1767,13 +2031,14 @@ spawnpointupdate(spawnpoint)
 					}
 
 /#
-					line(50 + VectorScale((0,0,1)),player.origin,spawnpoint.sighttracepoint);
-(0.5,1,0.5)
-debug
-#/
+					if(debug)
+					{
+						line(50 + VectorScale((0,0,1)),player.origin,spawnpoint.sighttracepoint);
+					}
 				}
 			}
 		}
+#/
 	}
 
 	if(level.teambased)
@@ -1897,12 +2162,14 @@ avoidvisibleenemies(spawnpoints,teambased)
 				penalty = lospenalty * spawnpoints[i].enemysights[self.team];
 				spawnpoints[i].weight = spawnpoints[i].weight - penalty;
 /#
-				index = spawnpoints[i].sightchecks.size;
-				spawnpoints[i].sightchecks[index] = spawnstruct();
-				spawnpoints[i].sightchecks[index].penalty = penalty;
-level.storespawndata || level.debugspawning
-#/
+				if(level.storespawndata || level.debugspawning)
+				{
+					index = spawnpoints[i].sightchecks.size;
+					spawnpoints[i].sightchecks[index] = spawnstruct();
+					spawnpoints[i].sightchecks[index].penalty = penalty;
+				}
 			}
+#/
 		}
 	}
 	else
@@ -1917,12 +2184,14 @@ level.storespawndata || level.debugspawning
 				penalty = lospenalty * spawnpoints[i].enemysights;
 				spawnpoints[i].weight = spawnpoints[i].weight - penalty;
 /#
-				index = spawnpoints[i].sightchecks.size;
-				spawnpoints[i].sightchecks[index] = spawnstruct();
-				spawnpoints[i].sightchecks[index].penalty = penalty;
-level.storespawndata || level.debugspawning
-#/
+				if(level.storespawndata || level.debugspawning)
+				{
+					index = spawnpoints[i].sightchecks.size;
+					spawnpoints[i].sightchecks[index] = spawnstruct();
+					spawnpoints[i].sightchecks[index].penalty = penalty;
+				}
 			}
+#/
 		}
 
 		mindistteam = "all";
@@ -1962,11 +2231,13 @@ level.storespawndata || level.debugspawning
 				{
 					spawnpoints[i].weight = spawnpoints[i].weight - penalty;
 /#
-					spawnpoints[i].spawndata[spawnpoints[i].spawndata.size] = "Nearest enemy at " + int(spawnpoints[i].minenemydist[mindistteam]) + " units: -" + int(penalty);
-level.storespawndata || level.debugspawning
-#/
+					if(level.storespawndata || level.debugspawning)
+					{
+						spawnpoints[i].spawndata[spawnpoints[i].spawndata.size] = "Nearest enemy at " + int(spawnpoints[i].minenemydist[mindistteam]) + " units: -" + int(penalty);
+					}
 				}
 			}
+#/
 		}
 	}
 }
@@ -2005,8 +2276,10 @@ avoidspawnreuse(spawnpoints,teambased)
 					worsen = 5000 * 1 - distsq / maxdistsq * 1 - timepassed / maxtime;
 					spawnpoint.weight = spawnpoint.weight - worsen;
 /#
-							spawnpoint.spawndata[spawnpoint.spawndata.size] = "Was recently used: -" + worsen;
-level.storespawndata || level.debugspawning
+					if(level.storespawndata || level.debugspawning)
+					{
+						spawnpoint.spawndata[spawnpoint.spawndata.size] = "Was recently used: -" + worsen;
+					}
 #/
 					continue;
 				}
@@ -2040,8 +2313,10 @@ avoidsamespawn(spawnpoints)
 		{
 			spawnpoints[i].weight = spawnpoints[i].weight - 50000;
 /#
-			spawnpoints[i].spawndata[spawnpoints[i].spawndata.size] = "Was last spawnpoint: -50000";
-level.storespawndata || level.debugspawning
+			if(level.storespawndata || level.debugspawning)
+			{
+				spawnpoints[i].spawndata[spawnpoints[i].spawndata.size] = "Was last spawnpoint: -50000";
+			}
 #/
 			break;
 		}

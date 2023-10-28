@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 5
- * Decompile Time: 21 ms
- * Timestamp: 10/27/2023 3:02:01 AM
+ * Decompile Time: 0 ms
+ * Timestamp: 10/28/2023 12:11:25 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -19,8 +19,11 @@ main()
 	self endon("killanimscript");
 	self setaimanimweights(0,0);
 /#
-	combatidle();
-debug_allow_combat()
+	if(!(debug_allow_combat()))
+	{
+		combatidle();
+		return;
+	}
 #/
 	if(IsDefined(level.hostmigrationtimer))
 	{

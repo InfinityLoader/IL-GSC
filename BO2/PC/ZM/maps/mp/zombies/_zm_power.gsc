@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 41
- * Decompile Time: 67 ms
- * Timestamp: 10/27/2023 3:03:19 AM
+ * Decompile Time: 17 ms
+ * Timestamp: 10/28/2023 12:11:53 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -38,23 +38,21 @@ init()
 debug_powered_items()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		_a32 = level.local_power;
-		_k32 = FirstArrayKey(_a32);
-		for(;;)
+		if(GetDvarInt(#"EB512CB7"))
 		{
-			localpower = _a32[_k32];
-			circle(localpower.origin,localpower.radius,(1,0,0),0,1,1);
-			_k32 = NextArrayKey(_a32);
+			if(IsDefined(level.local_power))
+			{
+				foreach(localpower in level.local_power)
+				{
+					circle(localpower.origin,localpower.radius,(1,0,0),0,1,1);
+				}
+			}
 		}
+
 		wait(0.05);
 	}
-_k32
-IsDefined(_k32)
-IsDefined(level.local_power)
-GetDvarInt(#"EB512CB7")
-1
 #/
 }
 
@@ -266,7 +264,7 @@ revert_power(delta,origin,radius,powered_list)
 	{
 		self.powered_count--;
 /#
-			assert(self.powered_count >= 0,"Repower underflow in power system");
+		assert(self.powered_count >= 0,"Repower underflow in power system");
 #/
 		if(self.powered_count == 0 && self.power)
 		{

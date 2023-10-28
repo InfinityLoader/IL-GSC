@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 8
- * Decompile Time: 35 ms
- * Timestamp: 10/27/2023 3:03:18 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:11:53 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -28,9 +28,8 @@ pers_register_upgrade(name,upgrade_active_func,stat_name,stat_desired_value,game
 	{
 /#
 		assert(0,"A persistent upgrade is already registered for name: " + name);
-#/
 	}
-
+#/
 	level.pers_upgrades_keys[level.pers_upgrades_keys.size] = name;
 	level.pers_upgrades[name] = spawnstruct();
 	level.pers_upgrades[name].stat_names = [];
@@ -39,8 +38,10 @@ pers_register_upgrade(name,upgrade_active_func,stat_name,stat_desired_value,game
 	level.pers_upgrades[name].game_end_reset_if_not_achieved = game_end_reset_if_not_achieved;
 	add_pers_upgrade_stat(name,stat_name,stat_desired_value);
 /#
-	[[ level.devgui_add_ability ]](name,upgrade_active_func,stat_name,stat_desired_value,game_end_reset_if_not_achieved);
-IsDefined(level.devgui_add_ability)
+	if(IsDefined(level.devgui_add_ability))
+	{
+		[[ level.devgui_add_ability ]](name,upgrade_active_func,stat_name,stat_desired_value,game_end_reset_if_not_achieved);
+	}
 #/
 }
 
@@ -51,9 +52,8 @@ add_pers_upgrade_stat(name,stat_name,stat_desired_value)
 	{
 /#
 		assert(0,name + " - Persistent upgrade is not registered yet.");
-#/
 	}
-
+#/
 	stats_size = level.pers_upgrades[name].stat_names.size;
 	level.pers_upgrades[name].stat_names[stats_size] = stat_name;
 	level.pers_upgrades[name].stat_desired_values[stats_size] = stat_desired_value;
@@ -154,9 +154,8 @@ pers_upgrades_monitor()
 
 /#
 										player iprintlnbold("Downgraded!");
-#/
 									}
-
+#/
 									player.pers_upgrades_awarded[level.pers_upgrades_keys[pers_upgrade_index]] = 0;
 								}
 							}

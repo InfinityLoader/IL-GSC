@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 34
- * Decompile Time: 226 ms
- * Timestamp: 10/27/2023 3:05:04 AM
+ * Decompile Time: 12 ms
+ * Timestamp: 10/28/2023 12:13:48 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -273,25 +273,32 @@ getbeststingertarget()
 	for(idx = 0;idx < targetsall.size;idx++)
 	{
 /#
-		targetsvalid[targetsvalid.size] = targetsall[idx];
-self insidestingerreticlenolock(targetsall[idx])
-GetDvar(#"4C560F97") == "1"
-#/
-		if(level.teambased)
+		if(GetDvar(#"4C560F97") == "1")
 		{
-			if(IsDefined(targetsall[idx].team) && targetsall[idx].team != self.team)
+			if(self insidestingerreticlenolock(targetsall[idx]))
 			{
-				if(self insidestingerreticlenolock(targetsall[idx]))
+				targetsvalid[targetsvalid.size] = targetsall[idx];
+			}
+		}
+		else
+		{
+#/
+			if(level.teambased)
+			{
+				if(IsDefined(targetsall[idx].team) && targetsall[idx].team != self.team)
+				{
+					if(self insidestingerreticlenolock(targetsall[idx]))
+					{
+						targetsvalid[targetsvalid.size] = targetsall[idx];
+					}
+				}
+			}
+			else if(self insidestingerreticlenolock(targetsall[idx]))
+			{
+				if(IsDefined(targetsall[idx].owner) && self != targetsall[idx].owner)
 				{
 					targetsvalid[targetsvalid.size] = targetsall[idx];
 				}
-			}
-		}
-		else if(self insidestingerreticlenolock(targetsall[idx]))
-		{
-			if(IsDefined(targetsall[idx].owner) && self != targetsall[idx].owner)
-			{
-				targetsvalid[targetsvalid.size] = targetsall[idx];
 			}
 		}
 	}

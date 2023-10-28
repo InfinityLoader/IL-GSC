@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 28
- * Decompile Time: 121 ms
- * Timestamp: 10/27/2023 3:02:55 AM
+ * Decompile Time: 10 ms
+ * Timestamp: 10/28/2023 12:11:42 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -116,7 +116,10 @@ dog_round_spawning()
 
 /#
 	level endon("kill_round");
-GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4
+	if(GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4)
+	{
+		return;
+	}
 #/
 	if(level.intermission)
 	{
@@ -140,8 +143,10 @@ GetDvarInt(#"FA81816F") == 2 || GetDvarInt(#"FA81816F") >= 4
 	}
 
 /#
-	max = GetDvarInt(#"4077D7E0");
-GetDvar(#"4077D7E0") != ""
+	if(GetDvar(#"4077D7E0") != "")
+	{
+		max = GetDvarInt(#"4077D7E0");
+	}
 #/
 	level.zombie_total = max;
 	dog_health_increase();
@@ -385,8 +390,10 @@ dog_round_tracker()
 	{
 		level waittill("between_round_over");
 /#
-		level.next_dog_round = level.round_number;
-GetDvarInt(#"4077D7E0") > 0
+		if(GetDvarInt(#"4077D7E0") > 0)
+		{
+			level.next_dog_round = level.round_number;
+		}
 #/
 		if(level.round_number == level.next_dog_round)
 		{

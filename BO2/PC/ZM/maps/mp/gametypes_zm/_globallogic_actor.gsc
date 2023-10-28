@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 2
- * Decompile Time: 31 ms
- * Timestamp: 10/27/2023 3:02:30 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:11:34 AM
 *******************************************************************/
 
 #include maps/mp/_challenges;
@@ -168,8 +168,10 @@ callback_actordamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapon,
 	}
 
 /#
-	println("actor:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + shitloc + ";" + boneindex + "\n");
-GetDvarInt(#"B1AE74B1")
+	if(GetDvarInt(#"B1AE74B1"))
+	{
+		println("actor:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + shitloc + ";" + boneindex + "\n");
+	}
 #/
 	if(1)
 	{

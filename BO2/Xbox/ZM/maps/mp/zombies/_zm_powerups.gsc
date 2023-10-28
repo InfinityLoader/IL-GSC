@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 102
- * Decompile Time: 296 ms
- * Timestamp: 10/27/2023 3:06:15 AM
+ * Decompile Time: 64 ms
+ * Timestamp: 10/28/2023 12:14:16 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -240,46 +240,51 @@ powerup_hud_monitor()
 			{
 				player = players[playerindex];
 /#
-IsDefined(player.pers["isBot"]) && player.pers["isBot"]
-#/
-				if(IsDefined(level.powerup_player_valid))
+				if(IsDefined(player.pers["isBot"]) && player.pers["isBot"])
 				{
-					if(!([[ level.powerup_player_valid ]](player)))
+				}
+				else
+				{
+#/
+					if(IsDefined(level.powerup_player_valid))
 					{
-					}
-					else
-					{
-						client_field_name = client_fields[client_field_keys[client_field_key_index]].client_field_name;
-						time_name = client_fields[client_field_keys[client_field_key_index]].time_name;
-						on_name = client_fields[client_field_keys[client_field_key_index]].on_name;
-						powerup_timer = undefined;
-						powerup_on = undefined;
-						if(client_fields[client_field_keys[client_field_key_index]].solo)
+						if(!([[ level.powerup_player_valid ]](player)))
 						{
-							if(IsDefined(player._show_solo_hud) && player._show_solo_hud == 1)
-							{
-								powerup_timer = player.zombie_vars[time_name];
-								powerup_on = player.zombie_vars[on_name];
-							}
-						}
-						else if(IsDefined(level.zombie_vars[player.team][time_name]))
-						{
-							powerup_timer = level.zombie_vars[player.team][time_name];
-							powerup_on = level.zombie_vars[player.team][on_name];
-						}
-						else if(IsDefined(level.zombie_vars[time_name]))
-						{
-							powerup_timer = level.zombie_vars[time_name];
-							powerup_on = level.zombie_vars[on_name];
-						}
-
-						if(IsDefined(powerup_timer) && IsDefined(powerup_on))
-						{
-							player set_clientfield_powerups(client_field_name,powerup_timer,powerup_on,flashing_timers,flashing_values);
 						}
 						else
 						{
-							player setclientfieldtoplayer(client_field_name,0);
+							client_field_name = client_fields[client_field_keys[client_field_key_index]].client_field_name;
+							time_name = client_fields[client_field_keys[client_field_key_index]].time_name;
+							on_name = client_fields[client_field_keys[client_field_key_index]].on_name;
+							powerup_timer = undefined;
+							powerup_on = undefined;
+							if(client_fields[client_field_keys[client_field_key_index]].solo)
+							{
+								if(IsDefined(player._show_solo_hud) && player._show_solo_hud == 1)
+								{
+									powerup_timer = player.zombie_vars[time_name];
+									powerup_on = player.zombie_vars[on_name];
+								}
+							}
+							else if(IsDefined(level.zombie_vars[player.team][time_name]))
+							{
+								powerup_timer = level.zombie_vars[player.team][time_name];
+								powerup_on = level.zombie_vars[player.team][on_name];
+							}
+							else if(IsDefined(level.zombie_vars[time_name]))
+							{
+								powerup_timer = level.zombie_vars[time_name];
+								powerup_on = level.zombie_vars[on_name];
+							}
+
+							if(IsDefined(powerup_timer) && IsDefined(powerup_on))
+							{
+								player set_clientfield_powerups(client_field_name,powerup_timer,powerup_on,flashing_timers,flashing_values);
+							}
+							else
+							{
+								player setclientfieldtoplayer(client_field_name,0);
+							}
 						}
 					}
 				}
@@ -342,8 +347,10 @@ get_next_powerup()
 get_valid_powerup()
 {
 /#
-	return level.zombie_powerup_array[level.zombie_powerup_index];
-IsDefined(level.zombie_devgui_power) && level.zombie_devgui_power == 1
+	if(IsDefined(level.zombie_devgui_power) && level.zombie_devgui_power == 1)
+	{
+		return level.zombie_powerup_array[level.zombie_powerup_index];
+	}
 #/
 	if(IsDefined(level.zombie_powerup_boss))
 	{
@@ -800,9 +807,11 @@ powerup_setup(powerup_override,powerup_team,powerup_location)
 		self.weapon = maps/mp/zombies/_zm_magicbox::treasure_chest_chooseweightedrandomweapon(players[0]);
 /#
 		weapon = GetDvar(#"45ED7744");
-		self.weapon = weapon;
-		setdvar("scr_force_weapon","");
-weapon != "" && IsDefined(level.zombie_weapons[weapon])
+		if(weapon != "" && IsDefined(level.zombie_weapons[weapon]))
+		{
+			self.weapon = weapon;
+			setdvar("scr_force_weapon","");
+		}
 #/
 		self.base_weapon = self.weapon;
 		if(!(IsDefined(level.random_weapon_powerups)))
@@ -935,7 +944,7 @@ special_drop_setup()
 			wait(1);
 			thread play_sound_2d("sam_nospawn");
 			self delete();
-	Stack-Empty ? Stack-Empty : IsDefined(level._zombiemode_special_drop_setup)
+	IsDefined(level._zombiemode_special_drop_setup)
 			break;
 	}
 
@@ -1118,7 +1127,8 @@ powerup_grab(powerup_team)
 										level thread start_carpenter(self.origin);
 										players[i] thread powerup_vo("carpenter");
 										break;
-Stack-Empty ? is_classic() : IsDefined(level.use_new_carpenter_func)
+IsDefined(level.use_new_carpenter_func)
+is_classic()
 										break;
 
 									case "€GSC\r\n":
@@ -2713,13 +2723,24 @@ tesla_powerup_active()
 print_powerup_drop(powerup,type)
 {
 /#
-	level.powerup_drop_time = 0;
-	level.powerup_random_count = 0;
-	level.powerup_score_count = 0;
+	if(!(IsDefined(level.powerup_drop_time)))
+	{
+		level.powerup_drop_time = 0;
+		level.powerup_random_count = 0;
+		level.powerup_score_count = 0;
+	}
+
 	time = GetTime() - level.powerup_drop_time * 0.001;
 	level.powerup_drop_time = GetTime();
-	level.powerup_random_count++;
-	level.powerup_score_count++;
+	if(type == "random")
+	{
+		level.powerup_random_count++;
+	}
+	else
+	{
+		level.powerup_score_count++;
+	}
+
 	println("========== POWER UP DROPPED ==========");
 	println("DROPPED: " + powerup);
 	println("HOW IT DROPPED: " + type);
@@ -2728,7 +2749,6 @@ print_powerup_drop(powerup,type)
 	println("Random Powerup Count: " + level.powerup_random_count);
 	println("Random Powerup Count: " + level.powerup_score_count);
 	println("======================================");
-Stack-Empty ? IsDefined(level.powerup_drop_time) : type == "random"
 #/
 }
 
@@ -2764,7 +2784,7 @@ start_carpenter_new(origin)
 		window = boards_near_players[i];
 		num_chunks_checked = 0;
 		last_repaired_chunk = undefined;
-		if(1)
+		while(1)
 		{
 			if(all_chunks_intact(window,window.barrier_chunks))
 			{
@@ -2795,8 +2815,6 @@ start_carpenter_new(origin)
 			{
 				break;
 			}
-
-			continue;
 		}
 
 		if(IsDefined(window.zbarrier))

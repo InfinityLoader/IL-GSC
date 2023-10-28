@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 19
- * Decompile Time: 131 ms
- * Timestamp: 10/27/2023 3:01:56 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:13 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -129,8 +129,12 @@ watchdevnotify()
 	for(;;)
 	{
 		takeoff_rocket = GetDvarInt(#"12AE1013");
-		level notify("dev_takeoff_rocket",takeoff_rocket != startvalue);
-		startvalue = takeoff_rocket;
+		if(takeoff_rocket != startvalue)
+		{
+			level notify("dev_takeoff_rocket");
+			startvalue = takeoff_rocket;
+		}
+
 		wait(0.2);
 	}
 #/
@@ -159,13 +163,12 @@ devgui_endgame()
 		level notify("debug_end_takeoff");
 		wait(1);
 		visionsetnaked("mp_takeoff",0.1);
-		i = 0;
-		for(;;)
+		for(i = 0;i < level.players.size;i++)
 		{
 			player = level.players[i];
 			player cameraactivate(0);
-			i++;
 		}
+
 		stop_exploder(1001);
 		rocket delete();
 		rocket = spawn("script_model",rocketorigin);
@@ -173,7 +176,6 @@ devgui_endgame()
 		rocket setmodel(rocketmodel);
 		level.mptakeoffrocket = rocket;
 	}
-i < level.players.size
 #/
 }
 

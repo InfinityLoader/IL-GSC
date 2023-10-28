@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 98
- * Decompile Time: 474 ms
- * Timestamp: 10/27/2023 3:01:17 AM
+ * Decompile Time: 66 ms
+ * Timestamp: 10/28/2023 12:10:53 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -176,10 +176,9 @@ fx_init()
 			delete_arrays_in_sp();
 /#
 			println("We\'re not in MP!");
-#/
 		}
 	}
-
+#/
 	for(i = 0;i < level.createfxent.size;i++)
 	{
 		ent = level.createfxent[i];
@@ -345,9 +344,14 @@ createfxlogic()
 	filename = level.cfx_server_scriptdata + level.script + "_fx.gsc";
 	file = openfile(filename,"append");
 	level.write_error = "";
-	level.write_error = filename;
-	closefile(file);
-Stack-Empty ? Stack-Empty : file == -1
+	if(file == -1)
+	{
+		level.write_error = filename;
+	}
+	else
+	{
+		closefile(file);
+	}
 #/
 	level.createfxhudelements = [];
 	level.createfx_hudelements = 100;
@@ -837,8 +841,7 @@ manipulate_createfx_ents(highlightedent,leftclick,leftheld,ctrlheld,colors,right
 
 	offset = level.createfx_manipulate_offset;
 	level.createfx_manipulate_offset = level.createfx_manipulate_offset + 1 % print_frames;
-	i = offset;
-	while(i < level.createfxent.size)
+	for(i = offset;i < level.createfxent.size;i = i + print_frames)
 	{
 		ent = level.createfxent[i];
 		if(!(ent.drawn))
@@ -856,19 +859,17 @@ manipulate_createfx_ents(highlightedent,leftclick,leftheld,ctrlheld,colors,right
 			}
 
 /#
-				print3d(ent.v["origin"],".",colors[ent.v["type"]][colorindex],1,scale,print_frames);
+			print3d(ent.v["origin"],".",colors[ent.v["type"]][colorindex],1,scale,print_frames);
 #/
 			if(ent.textalpha > 0)
 			{
 				printright = VectorScale(right);
 				printup = (0,0,15 * scale);
 /#
-					print3d(ent.v["origin"] + printright + printup,ent.v["fxid"],colors[ent.v["type"]][colorindex],ent.textalpha,scale,print_frames);
-#/
+				print3d(ent.v["origin"] + printright + printup,ent.v["fxid"],colors[ent.v["type"]][colorindex],ent.textalpha,scale,print_frames);
 			}
 		}
-
-		i = Stack-Empty ? ent.v["fxid"].size * -2.93 * scale : i + print_frames;
+#/
 	}
 
 	if(IsDefined(highlightedent))
@@ -925,9 +926,9 @@ manipulate_createfx_ents(highlightedent,leftclick,leftheld,ctrlheld,colors,right
 			printup = (0,0,15 * scale);
 /#
 			print3d(highlightedent.v["origin"] + printright + printup,highlightedent.v["fxid"],colors[highlightedent.v["type"]][colorindex],highlightedent.textalpha,scale,1);
-#/
 		}
 	}
+#/
 }
 
 //Function Number: 10
@@ -1495,55 +1496,214 @@ set_anglemod_move_vector()
 /#
 	ctrlheld = button_is_held("ctrl","BUTTON_LSHLDR");
 	players = get_players();
-	newmovement = players[0] getnormalizedmovement();
-	dolly_movement = players[0] getnormalizedcameramovement();
-	level.selectedrotate_yaw = level.selectedrotate_yaw - 1;
-	level.selectedrotate_yaw = level.selectedrotate_yaw + 1;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_yaw = level.selectedrotate_yaw + 0.1;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_yaw = level.selectedrotate_yaw - 0.1;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_pitch = level.selectedrotate_pitch + 1;
-	level.selectedrotate_pitch = level.selectedrotate_pitch - 1;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_pitch = level.selectedrotate_pitch + 0.1;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_pitch = level.selectedrotate_pitch - 0.1;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_roll = 0;
-	level.selectedrotate_roll = level.selectedrotate_roll + 0.1;
-	level.selectedrotate_roll = 0;
-	level.selectedrotate_roll = level.selectedrotate_roll - 0.1;
-	level.selectedrotate_roll = 0;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_pitch = 0.1;
-	wait(0.05);
-	level.selectedrotate_pitch = level.selectedrotate_pitch + 1;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_pitch = -1 * 0.1;
-	wait(0.05);
-	level.selectedrotate_pitch = level.selectedrotate_pitch - 1;
-	level.selectedrotate_pitch = 0;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_yaw = 0.1;
-	wait(0.05);
-	level.selectedrotate_yaw = level.selectedrotate_yaw + 1;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_yaw = -1 * 0.1;
-	wait(0.05);
-	level.selectedrotate_yaw = level.selectedrotate_yaw - 1;
-	level.selectedrotate_yaw = 0;
-	level.selectedrotate_roll = 0;
-	level.selectedrotate_roll = 0.1;
-	wait(0.05);
-	level.selectedrotate_roll = level.selectedrotate_roll + 1;
-	level.selectedrotate_roll = 0;
-	level.selectedrotate_roll = -1 * 0.1;
-	wait(0.05);
-	level.selectedrotate_roll = level.selectedrotate_roll - 1;
-	level.selectedrotate_roll = 0;
-Stack-Empty ? Stack-Empty : (Stack-Empty ? Stack-Empty : ((Stack-Empty ? Stack-Empty : ((Stack-Empty ? Stack-Empty : (((Stack-Empty ? Stack-Empty : ((Stack-Empty ? Stack-Empty : ((level.is_camera_on == 1) ? newmovement[1] <= -0.3 : ((newmovement[1] >= 0.3) ? buttondown("kp_leftarrow","DPAD_LEFT") : ((level.selectedrotate_yaw < 0) ? buttondown("kp_rightarrow","DPAD_RIGHT") : level.selectedrotate_yaw > 0)))) ? dolly_movement[0] <= -0.2 : ((dolly_movement[0] >= 0.2) ? buttondown("kp_uparrow","DPAD_UP") : ((level.selectedrotate_pitch < 0) ? buttondown("kp_downarrow","DPAD_DOWN") : level.selectedrotate_pitch > 0)))) ? buttondown("BUTTON_Y") : ((level.selectedrotate_roll < 0) ? buttondown("BUTTON_B") : level.selectedrotate_roll > 0)) ? ((buttondown("kp_uparrow","DPAD_UP")) ? level.selectedrotate_pitch < 0 : ctrlheld) : ((buttondown("kp_downarrow","DPAD_DOWN")) ? level.selectedrotate_pitch > 0 : ctrlheld))) ? ((buttondown("kp_leftarrow","DPAD_LEFT")) ? level.selectedrotate_yaw < 0 : ctrlheld) : ((buttondown("kp_rightarrow","DPAD_RIGHT")) ? level.selectedrotate_yaw > 0 : ctrlheld))) ? ((buttondown("BUTTON_Y")) ? level.selectedrotate_roll < 0 : ctrlheld) : ((buttondown("BUTTON_B")) ? level.selectedrotate_roll > 0 : ctrlheld)))
+	if(level.is_camera_on == 1)
+	{
+		newmovement = players[0] getnormalizedmovement();
+		dolly_movement = players[0] getnormalizedcameramovement();
+		if(newmovement[1] <= -0.3)
+		{
+			level.selectedrotate_yaw = level.selectedrotate_yaw - 1;
+		}
+		else if(newmovement[1] >= 0.3)
+		{
+			level.selectedrotate_yaw = level.selectedrotate_yaw + 1;
+		}
+		else if(buttondown("kp_leftarrow","DPAD_LEFT"))
+		{
+			if(level.selectedrotate_yaw < 0)
+			{
+				level.selectedrotate_yaw = 0;
+			}
+
+			level.selectedrotate_yaw = level.selectedrotate_yaw + 0.1;
+		}
+		else if(buttondown("kp_rightarrow","DPAD_RIGHT"))
+		{
+			if(level.selectedrotate_yaw > 0)
+			{
+				level.selectedrotate_yaw = 0;
+			}
+
+			level.selectedrotate_yaw = level.selectedrotate_yaw - 0.1;
+		}
+		else
+		{
+			level.selectedrotate_yaw = 0;
+		}
+
+		if(dolly_movement[0] <= -0.2)
+		{
+			level.selectedrotate_pitch = level.selectedrotate_pitch + 1;
+		}
+		else if(dolly_movement[0] >= 0.2)
+		{
+			level.selectedrotate_pitch = level.selectedrotate_pitch - 1;
+		}
+		else if(buttondown("kp_uparrow","DPAD_UP"))
+		{
+			if(level.selectedrotate_pitch < 0)
+			{
+				level.selectedrotate_pitch = 0;
+			}
+
+			level.selectedrotate_pitch = level.selectedrotate_pitch + 0.1;
+		}
+		else if(buttondown("kp_downarrow","DPAD_DOWN"))
+		{
+			if(level.selectedrotate_pitch > 0)
+			{
+				level.selectedrotate_pitch = 0;
+			}
+
+			level.selectedrotate_pitch = level.selectedrotate_pitch - 0.1;
+		}
+		else
+		{
+			level.selectedrotate_pitch = 0;
+		}
+
+		if(buttondown("BUTTON_Y"))
+		{
+			if(level.selectedrotate_roll < 0)
+			{
+				level.selectedrotate_roll = 0;
+			}
+
+			level.selectedrotate_roll = level.selectedrotate_roll + 0.1;
+		}
+		else if(buttondown("BUTTON_B"))
+		{
+			if(level.selectedrotate_roll > 0)
+			{
+				level.selectedrotate_roll = 0;
+			}
+
+			level.selectedrotate_roll = level.selectedrotate_roll - 0.1;
+		}
+		else
+		{
+			level.selectedrotate_roll = 0;
+		}
+	}
+	else
+	{
+		if(buttondown("kp_uparrow","DPAD_UP"))
+		{
+			if(level.selectedrotate_pitch < 0)
+			{
+				level.selectedrotate_pitch = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_pitch = 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_pitch = level.selectedrotate_pitch + 1;
+			}
+		}
+		else if(buttondown("kp_downarrow","DPAD_DOWN"))
+		{
+			if(level.selectedrotate_pitch > 0)
+			{
+				level.selectedrotate_pitch = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_pitch = -1 * 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_pitch = level.selectedrotate_pitch - 1;
+			}
+		}
+		else
+		{
+			level.selectedrotate_pitch = 0;
+		}
+
+		if(buttondown("kp_leftarrow","DPAD_LEFT"))
+		{
+			if(level.selectedrotate_yaw < 0)
+			{
+				level.selectedrotate_yaw = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_yaw = 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_yaw = level.selectedrotate_yaw + 1;
+			}
+		}
+		else if(buttondown("kp_rightarrow","DPAD_RIGHT"))
+		{
+			if(level.selectedrotate_yaw > 0)
+			{
+				level.selectedrotate_yaw = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_yaw = -1 * 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_yaw = level.selectedrotate_yaw - 1;
+			}
+		}
+		else
+		{
+			level.selectedrotate_yaw = 0;
+		}
+
+		if(buttondown("BUTTON_Y"))
+		{
+			if(level.selectedrotate_roll < 0)
+			{
+				level.selectedrotate_roll = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_roll = 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_roll = level.selectedrotate_roll + 1;
+			}
+		}
+		else if(buttondown("BUTTON_B"))
+		{
+			if(level.selectedrotate_roll > 0)
+			{
+				level.selectedrotate_roll = 0;
+			}
+
+			if(ctrlheld)
+			{
+				level.selectedrotate_roll = -1 * 0.1;
+				wait(0.05);
+			}
+			else
+			{
+				level.selectedrotate_roll = level.selectedrotate_roll - 1;
+			}
+		}
+		else
+		{
+			level.selectedrotate_roll = 0;
+		}
+	}
 #/
 }
 
@@ -1551,9 +1711,12 @@ Stack-Empty ? Stack-Empty : (Stack-Empty ? Stack-Empty : ((Stack-Empty ? Stack-E
 cfxprintln(file,string)
 {
 /#
-	return;
+	if(file == -1)
+	{
+		return;
+	}
+
 	fprintln(file,string);
-file == -1
 #/
 }
 
@@ -1582,92 +1745,170 @@ generate_fx_log(type,autosave)
 {
 /#
 	autosave = IsDefined(autosave);
-	filename = level.cfx_server_scriptdata + level.script + "_fx.gsc";
-	filename = level.cfx_server_scriptdata + "backup.gsc";
-	call_loop = level.cfx_server_loop;
-	call_oneshot = level.cfx_server_oneshot;
-	call_exploder = level.cfx_server_exploder;
-	call_loopsound = level.cfx_server_loopsound;
-	filename = level.cfx_client_scriptdata + level.script + "_fx.csc";
-	filename = level.cfx_client_scriptdata + "backup.csc";
-	call_loop = level.cfx_client_loop;
-	call_oneshot = level.cfx_client_oneshot;
-	call_exploder = level.cfx_client_exploder;
-	call_loopsound = level.cfx_client_loopsound;
-	println("^1Error: Improper type in generate_fx_log()");
-	return;
-	file = openfile(filename,"write");
-	level.write_error = filename;
-	return 1;
-	return 2;
-	return 3;
-	cfxprintln(file,"//_createfx generated. Do not touch!!");
-	cfxprintln(file,"main()");
-	cfxprintln(file,"{");
-	p = 0;
-	for(;;)
+	if(type == "server")
 	{
-		ent = level.createfxent[p];
-		origin = [];
-		angles = [];
-		i = 0;
-		for(;;)
+		if(!(autosave))
 		{
-			origin[i] = ent.v["origin"][i];
-			angles[i] = ent.v["angles"][i];
-			origin[i] = 0;
-			angles[i] = 0;
-			i++;
+			filename = level.cfx_server_scriptdata + level.script + "_fx.gsc";
 		}
-		ent.v["origin"] = (origin[0],origin[1],origin[2]);
-		ent.v["angles"] = (angles[0],angles[1],angles[2]);
-		p++;
+		else
+		{
+			filename = level.cfx_server_scriptdata + "backup.gsc";
+		}
+
+		call_loop = level.cfx_server_loop;
+		call_oneshot = level.cfx_server_oneshot;
+		call_exploder = level.cfx_server_exploder;
+		call_loopsound = level.cfx_server_loopsound;
 	}
-	println(" *** CREATING EFFECT, COPY THESE LINES TO ",level.script,"_fx.gsc *** ");
-	cfxprintln(file,"// CreateFX entities placed: " + level.createfxent.size - level.non_fx_ents);
-	breather = 0;
-	breather_pause = 1;
-	breather_pause = 5;
-	i = 0;
-	for(;;)
+	else if(type == "client")
 	{
-		e = level.createfxent[i];
-/#
-		assert(IsDefined(e.v["type"]),"effect at origin " + e.v["origin"] + " has no type");
-#/
-		output_name = "\t";
-		output_props = "\t";
-		ent_type = e.v["type"];
-		output_name = output_name + "ent = " + call_loop + "( \" + e.v["fxid"] + "\" );";
-		output_name = output_name + "ent = " + call_oneshot + "( \" + e.v["fxid"] + "\" );";
-		output_name = output_name + "ent = " + call_exploder + "( \" + e.v["fxid"] + "\" );";
-		output_name = output_name + "ent = " + call_loopsound + "();";
-		output_props = output_props + get_fx_options(e);
-		cfxprintln(file,output_name);
-		cfxprintln(file,output_props);
-		cfxprintln(file,"\t");
-		breather++;
-		wait(0.05);
-		breather = 0;
-		i++;
+		if(!(autosave))
+		{
+			filename = level.cfx_client_scriptdata + level.script + "_fx.csc";
+		}
+		else
+		{
+			filename = level.cfx_client_scriptdata + "backup.csc";
+		}
+
+		call_loop = level.cfx_client_loop;
+		call_oneshot = level.cfx_client_oneshot;
+		call_exploder = level.cfx_client_exploder;
+		call_loopsound = level.cfx_client_loopsound;
 	}
-	script_gen_dump_addline(level.cfx_server_scriptgendump,level.script + "_fx");
-	[[ level.cfx_func_script_gen_dump ]]();
-	cfxprintln(file,"}");
-	saved = closefile(file);
+	else
+	{
+		println("^1Error: Improper type in generate_fx_log()");
+		return;
+	}
+
+	file = openfile(filename,"write");
+	if(file == -1)
+	{
+		level.write_error = filename;
+		if(type == "server")
+		{
+			return 1;
+		}
+		else if(type == "client")
+		{
+			return 2;
+		}
+		else
+		{
+			return 3;
+		}
+	}
+	else
+	{
+		cfxprintln(file,"//_createfx generated. Do not touch!!");
+		cfxprintln(file,"main()");
+		cfxprintln(file,"{");
+		for(p = 0;p < level.createfxent.size;p++)
+		{
+			ent = level.createfxent[p];
+			origin = [];
+			angles = [];
+			for(i = 0;i < 3;i++)
+			{
+				origin[i] = ent.v["origin"][i];
+				angles[i] = ent.v["angles"][i];
+				if(origin[i] < 0.1 && origin[i] > 0.1 * -1)
+				{
+					origin[i] = 0;
+				}
+
+				if(angles[i] < 0.1 && angles[i] > 0.1 * -1)
+				{
+					angles[i] = 0;
+				}
+			}
+
+			ent.v["origin"] = (origin[0],origin[1],origin[2]);
+			ent.v["angles"] = (angles[0],angles[1],angles[2]);
+		}
+
+		if(!(autosave))
+		{
+			println(" *** CREATING EFFECT, COPY THESE LINES TO ",level.script,"_fx.gsc *** ");
+		}
+
+		cfxprintln(file,"// CreateFX entities placed: " + level.createfxent.size - level.non_fx_ents);
+		breather = 0;
+		if(autosave)
+		{
+			breather_pause = 1;
+		}
+		else
+		{
+			breather_pause = 5;
+		}
+
+		for(i = 0;i < level.createfxent.size;i++)
+		{
+			e = level.createfxent[i];
 /#
-	assert(saved == 1,"File not saved (see above message?): " + filename);
+			assert(IsDefined(e.v["type"]),"effect at origin " + e.v["origin"] + " has no type");
 #/
-	println("CreateFX entities placed: " + level.createfxent.size - level.non_fx_ents);
-	return 0;
-(e.v["fxid"] == "No FX") ? (ent_type == "loopfx" ? ent_type == "oneshotfx" : ((ent_type == "exploder") ? ent_type == "soundfx" : breather >= breather_pause)) : level.bscriptgened
-IsDefined(e.model)
-i < level.createfxent.size
-(angles[i] < 0.1 && angles[i] > 0.1 * -1) ? autosave : autosave
-origin[i] < 0.1 && origin[i] > 0.1 * -1
-i < 3
-p < level.createfxent.size
-Stack-Empty ? (Stack-Empty ? Stack-Empty : (Stack-Empty ? Stack-Empty : ((Stack-Empty ? type == "server" : autosave) ? type == "client" : autosave))) : (file == -1 ? type == "server" : type == "client")
+			if(IsDefined(e.model))
+			{
+			}
+			else if(e.v["fxid"] == "No FX")
+			{
+			}
+			else
+			{
+				output_name = "\t";
+				output_props = "\t";
+				ent_type = e.v["type"];
+				if(ent_type == "loopfx")
+				{
+					output_name = output_name + "ent = " + call_loop + "( \" + e.v["fxid"] + "\" );";
+				}
+
+				if(ent_type == "oneshotfx")
+				{
+					output_name = output_name + "ent = " + call_oneshot + "( \" + e.v["fxid"] + "\" );";
+				}
+
+				if(ent_type == "exploder")
+				{
+					output_name = output_name + "ent = " + call_exploder + "( \" + e.v["fxid"] + "\" );";
+				}
+
+				if(ent_type == "soundfx")
+				{
+					output_name = output_name + "ent = " + call_loopsound + "();";
+				}
+
+				output_props = output_props + get_fx_options(e);
+				cfxprintln(file,output_name);
+				cfxprintln(file,output_props);
+				cfxprintln(file,"\t");
+				breather++;
+				if(breather >= breather_pause)
+				{
+					wait(0.05);
+					breather = 0;
+				}
+			}
+		}
+
+		if(level.bscriptgened)
+		{
+			script_gen_dump_addline(level.cfx_server_scriptgendump,level.script + "_fx");
+			[[ level.cfx_func_script_gen_dump ]]();
+		}
+
+		cfxprintln(file,"}");
+		saved = closefile(file);
+/#
+		assert(saved == 1,"File not saved (see above message?): " + filename);
+#/
+		println("CreateFX entities placed: " + level.createfxent.size - level.non_fx_ents);
+		return 0;
+	}
 #/
 }
 
@@ -2421,8 +2662,10 @@ draw_distance()
 		maxdist = GetDvarInt(#"94DFBE78");
 		maxdistsqr = maxdist * maxdist;
 /#
-		println("Waiting for createfx to save...");
-	flag("createfx_saving")
+		if(flag("createfx_saving"))
+		{
+			println("Waiting for createfx to save...");
+		}
 #/
 		flag_waitopen("createfx_saving");
 		for(i = 0;i < level.createfxent.size;i++)
@@ -2550,9 +2793,8 @@ createfx_emergency_backup()
 	{
 /#
 		println("^5#### CREATEFX EMERGENCY BACKUP END ####");
-#/
 	}
-
+#/
 	flag_clear("createfx_saving");
 }
 
@@ -2786,68 +3028,62 @@ print_ambient_fx_inventory()
 	ent_list = [];
 	fx_list_count = [];
 	println("\n\n^2INVENTORY OF AMBIENT EFFECTS: ");
-	i = 0;
-	for(;;)
+	for(i = 0;i < level.createfxent.size;i++)
 	{
 		ent_list[i] = level.createfxent[i].v["fxid"];
-		i++;
 	}
-	i = 0;
-	for(;;)
+
+	for(i = 0;i < fx_list.size;i++)
 	{
 		count = 0;
-		j = 0;
-		for(;;)
+		for(j = 0;j < ent_list.size;j++)
 		{
-			count++;
-			ent_list[j] = "";
-			j++;
+			if(fx_list[i] == ent_list[j])
+			{
+				count++;
+				ent_list[j] = "";
+			}
 		}
+
 		fx_list_count[i] = count;
-		i++;
 	}
-	i = 0;
-	for(;;)
+
+	for(i = 0;i < fx_list_count.size - 1;i++)
 	{
-		j = i + 1;
-		for(;;)
+		for(j = i + 1;j < fx_list_count.size;j++)
 		{
-			temp_count = fx_list_count[i];
-			temp_id = fx_list[i];
-			fx_list_count[i] = fx_list_count[j];
-			fx_list[i] = fx_list[j];
-			fx_list_count[j] = temp_count;
-			fx_list[j] = temp_id;
-			j++;
+			if(fx_list_count[j] < fx_list_count[i])
+			{
+				temp_count = fx_list_count[i];
+				temp_id = fx_list[i];
+				fx_list_count[i] = fx_list_count[j];
+				fx_list[i] = fx_list[j];
+				fx_list_count[j] = temp_count;
+				fx_list[j] = temp_id;
+			}
 		}
-		i++;
 	}
-	i = 0;
-	for(;;)
+
+	for(i = 0;i < fx_list_count.size;i++)
 	{
 		switch(fx_list_count[i])
 		{
 			case "0":
 				print("^1");
 				break;
+
 			case "1":
 				print("^3");
 				break;
+
 			default:
 				break;
 		}
+
 		print(fx_list_count[i] + "\t" + fx_list[i] + "\n");
-		i++;
 	}
+
 	print("\n");
-i < fx_list_count.size
-fx_list_count[j] < fx_list_count[i]
-j < fx_list_count.size
-i < fx_list_count.size - 1
-fx_list[i] == ent_list[j]
-j < ent_list.size
-i < fx_list.size
-i < level.createfxent.size
 #/
 }
 
@@ -2884,8 +3120,12 @@ handle_camera()
 	level notify("new_camera");
 	level endon("new_camera");
 	movement = (0,0,0);
-	level.camera = spawn("script_origin",(0,0,0));
-	level.camera setmodel("tag_origin");
+	if(!(IsDefined(level.camera)))
+	{
+		level.camera = spawn("script_origin",(0,0,0));
+		level.camera setmodel("tag_origin");
+	}
+
 	players = get_players();
 	players[0] playerlinktodelta(level.camera,"tag_origin",1,0,0,0,0,1);
 	players[0] disableweapons();
@@ -2901,58 +3141,116 @@ handle_camera()
 	b_changes_z = 0;
 	b_changes_y = 0;
 	test_string = "";
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		if(level.camera_snapto > 0)
 		{
-			originoffset = VectorScale(level.cameravec);
-			temp_offset = 60 + VectorScale((0,0,-1));
-			anglesoffset = VectorToAngles(temp_offset);
-			players = get_players();
-			newmovement = players[0] getnormalizedmovement();
-			dolly_movement = players[0] getnormalizedcameramovement();
-			continue;
-			n_y_vector = n_y_vector + -0.2;
-			b_changes_y = 1;
-			n_y_vector = n_y_vector + 0.2;
-			b_changes_y = 1;
-			b_changes_y = 0;
-			n_x_vector = n_x_vector + -0.4;
-			b_changes_x = 1;
-			n_x_vector = n_x_vector + 0.4;
-			b_changes_x = 1;
-			b_changes_x = 0;
-			zoom_level = zoom_level + 30;
-			b_changes_z = 1;
-			zoom_level = zoom_level + -30;
-			b_changes_z = 1;
-			b_changes_z = 0;
-			newmovement = (n_x_vector,n_y_vector,newmovement[2]);
-			movement = (0,0,0);
-			movement = 1 - 0.8 + VectorScale(newmovement);
-			tilt = max(0,10 + movement[0] * 160);
-			level.cameravec = (cos(movement[1] * 180) * zoom_level,sin(movement[1] * 180) * zoom_level,tilt);
-			iprintln(level.cameravec[0] + " " + level.cameravec[1] + " " + level.cameravec[2]);
-			level.camera_prev_snapto = level.camera_snapto;
-			originoffset = VectorScale(level.cameravec);
-			temp_offset = 60 + VectorScale((0,0,-1));
-			anglesoffset = VectorToAngles(temp_offset);
-			model = spawn("script_origin",level.current_select_ent.v["origin"]);
-			model setmodel("tag_origin");
-			model.origin = level.current_select_ent.v["origin"];
-			level.camera linkto(model,"tag_origin",level.cameravec,anglesoffset);
-			break;
-			wait(0.05);
+			if(level.stick_camera)
+			{
+				originoffset = VectorScale(level.cameravec);
+				temp_offset = 60 + VectorScale((0,0,-1));
+				anglesoffset = VectorToAngles(temp_offset);
+				if(level.camera_prev_snapto == level.camera_snapto)
+				{
+					players = get_players();
+					newmovement = players[0] getnormalizedmovement();
+					dolly_movement = players[0] getnormalizedcameramovement();
+					if(button_is_held("BUTTON_LTRIG") || button_is_held("BUTTON_RTRIG"))
+					{
+						continue;
+					}
+
+					if(newmovement[1] <= -0.4)
+					{
+						n_y_vector = n_y_vector + -0.2;
+						b_changes_y = 1;
+					}
+					else if(newmovement[1] >= 0.4)
+					{
+						n_y_vector = n_y_vector + 0.2;
+						b_changes_y = 1;
+					}
+					else
+					{
+						b_changes_y = 0;
+					}
+
+					if(newmovement[0] <= -0.4)
+					{
+						n_x_vector = n_x_vector + -0.4;
+						b_changes_x = 1;
+					}
+					else if(newmovement[0] >= 0.4)
+					{
+						n_x_vector = n_x_vector + 0.4;
+						b_changes_x = 1;
+					}
+					else
+					{
+						b_changes_x = 0;
+					}
+
+					if(dolly_movement[0] <= -0.4)
+					{
+						zoom_level = zoom_level + 30;
+						b_changes_z = 1;
+					}
+					else if(dolly_movement[0] >= 0.4)
+					{
+						zoom_level = zoom_level + -30;
+						b_changes_z = 1;
+					}
+					else
+					{
+						b_changes_z = 0;
+					}
+
+					if(b_changes_z || b_changes_x || b_changes_y)
+					{
+						newmovement = (n_x_vector,n_y_vector,newmovement[2]);
+						movement = (0,0,0);
+						movement = 1 - 0.8 + VectorScale(newmovement);
+						tilt = max(0,10 + movement[0] * 160);
+						level.cameravec = (cos(movement[1] * 180) * zoom_level,sin(movement[1] * 180) * zoom_level,tilt);
+						iprintln(level.cameravec[0] + " " + level.cameravec[1] + " " + level.cameravec[2]);
+					}
+				}
+				else
+				{
+					level.camera_prev_snapto = level.camera_snapto;
+				}
+
+				if(IsDefined(level.current_select_ent))
+				{
+					originoffset = VectorScale(level.cameravec);
+					temp_offset = 60 + VectorScale((0,0,-1));
+					anglesoffset = VectorToAngles(temp_offset);
+					if(!(IsDefined(model)))
+					{
+						model = spawn("script_origin",level.current_select_ent.v["origin"]);
+						model setmodel("tag_origin");
+					}
+
+					if(model.origin != level.current_select_ent.v["origin"])
+					{
+						model.origin = level.current_select_ent.v["origin"];
+					}
+
+					level.camera linkto(model,"tag_origin",level.cameravec,anglesoffset);
+					break;
+				}
+
+				wait(0.05);
+				continue;
+			}
+			else
+			{
+				level.camera unlink();
+			}
 		}
-		level.camera unlink();
+
 		wait(0.05);
 	}
-originoffset ? IsDefined(model) : model.origin != level.current_select_ent.v["origin"]
--1
-IsDefined(level.current_select_ent)
-(b_changes_z || b_changes_x || b_changes_y) ? 0.8 : VectorScale(movement)
-1 ? level.camera_snapto > 0 : ((level.stick_camera ? -1 : ((originoffset ? level.camera_prev_snapto == level.camera_snapto : ((button_is_held("BUTTON_LTRIG") || button_is_held("BUTTON_RTRIG")) ? newmovement[1] <= -0.4 : newmovement[1] >= 0.4)) ? newmovement[0] <= -0.4 : newmovement[0] >= 0.4)) ? dolly_movement[0] <= -0.4 : dolly_movement[0] >= 0.4)
-IsDefined(level.camera)
 #/
 }
 

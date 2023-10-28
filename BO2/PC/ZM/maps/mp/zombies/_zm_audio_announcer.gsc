@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 18
- * Decompile Time: 89 ms
- * Timestamp: 10/27/2023 3:02:57 AM
+ * Decompile Time: 5 ms
+ * Timestamp: 10/28/2023 12:11:43 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -396,8 +396,10 @@ playleaderdialogonplayer(dialog,team,waittime)
 		if(!(IsDefined(game["zmbdialog"][dialog])))
 		{
 /#
-			println("DIALOG DEBUGGER: No VOX created for - " + dialog);
-GetDvarInt(#"AEB127D") > 0
+			if(GetDvarInt(#"AEB127D") > 0)
+			{
+				println("DIALOG DEBUGGER: No VOX created for - " + dialog);
+			}
 #/
 			return;
 		}
@@ -470,8 +472,10 @@ getleaderdialogvariant(alias)
 	if(num_variants <= 0)
 	{
 /#
-		println("DIALOG DEBUGGER: No variants found for - " + alias);
-GetDvarInt(#"AEB127D") > 0
+		if(GetDvarInt(#"AEB127D") > 0)
+		{
+			println("DIALOG DEBUGGER: No variants found for - " + alias);
+		}
 #/
 		return undefined;
 	}

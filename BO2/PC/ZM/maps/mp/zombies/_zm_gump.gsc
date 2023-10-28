@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 5
- * Decompile Time: 10 ms
- * Timestamp: 10/27/2023 3:03:08 AM
+ * Decompile Time: 1 ms
+ * Timestamp: 10/28/2023 12:11:46 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -79,13 +79,21 @@ gump_test()
 	pos3 = (7918,-6506,177);
 	pos2 = (1986,-73,4);
 	players = get_players();
-	players[0] setorigin(pos1);
+	if(IsDefined(players[0]))
+	{
+		players[0] setorigin(pos1);
+	}
+
 	wait(0.05);
-	players[1] setorigin(pos2);
+	if(IsDefined(players[1]))
+	{
+		players[1] setorigin(pos2);
+	}
+
 	wait(0.05);
-	players[2] setorigin(pos3);
-IsDefined(players[2])
-IsDefined(players[1])
-IsDefined(players[0])
+	if(IsDefined(players[2]))
+	{
+		players[2] setorigin(pos3);
+	}
 #/
 }

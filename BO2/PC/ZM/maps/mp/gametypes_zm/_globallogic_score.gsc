@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 50
- * Decompile Time: 217 ms
- * Timestamp: 10/27/2023 3:02:34 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:11:35 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -239,18 +239,24 @@ setplayermomentumdebug()
 {
 /#
 	setdvar("sv_momentumPercent",0);
-	for(;;)
+	while(1)
 	{
 		wait(1);
 		momentumpercent = getdvarfloatdefault("sv_momentumPercent",0);
-		player = gethostplayer();
-		return;
-		_setplayermomentum(player,int(2000 * momentumpercent / 100));
+		if(momentumpercent != 0)
+		{
+			player = gethostplayer();
+			if(!(IsDefined(player)))
+			{
+				return;
+			}
+
+			if(IsDefined(player.killstreak))
+			{
+				_setplayermomentum(player,int(2000 * momentumpercent / 100));
+			}
+		}
 	}
-IsDefined(player.killstreak)
-IsDefined(player)
-momentumpercent != 0
-1
 #/
 }
 

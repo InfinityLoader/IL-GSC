@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 53
- * Decompile Time: 159 ms
- * Timestamp: 10/27/2023 3:00:14 AM
+ * Decompile Time: 22 ms
+ * Timestamp: 10/28/2023 12:10:36 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -766,7 +766,8 @@ create_map_placed_influencer(influencer_entity,optional_score_override)
 				assertmsg("Radiant-placed sphere spawn influencers require \'radius\' parameter");
 	#/
 				break;
-	Stack-Empty ? IsDefined(influencer_entity.radius) : IsDefined(optional_score_override)
+	IsDefined(optional_score_override)
+	IsDefined(influencer_entity.radius)
 				break;
 
 			case "cylinder":
@@ -778,7 +779,8 @@ create_map_placed_influencer(influencer_entity,optional_score_override)
 				assertmsg("Radiant-placed cylinder spawn influencers require \'radius\' and \'height\' parameters");
 	#/
 				break;
-	Stack-Empty ? IsDefined(influencer_entity.radius) && IsDefined(influencer_entity.height) : IsDefined(optional_score_override)
+	IsDefined(optional_score_override)
+	IsDefined(influencer_entity.radius) && IsDefined(influencer_entity.height)
 				break;
 
 			default:
@@ -792,9 +794,8 @@ create_map_placed_influencer(influencer_entity,optional_score_override)
 	{
 /#
 		assertmsg("Radiant-placed spawn influencers require \'script_shape\', \'script_score\' and \'script_score_curve\' parameters");
-#/
 	}
-
+#/
 	return influencer_id;
 }
 
@@ -845,13 +846,12 @@ initialize_player_spawning_dvars()
 {
 /#
 	reset_dvars = 1;
-	for(;;)
+	while(1)
 	{
 		get_player_spawning_dvars(reset_dvars);
 		reset_dvars = 0;
 		wait(2);
 	}
-1
 #/
 }
 
@@ -986,9 +986,12 @@ onspawnplayer_unified(predictedspawn)
 	}
 
 /#
-	spawn_point = get_debug_spawnpoint(self);
-	self spawn(spawn_point.origin,spawn_point.angles);
-GetDvarInt(#"24A61F21") != 0
+	if(GetDvarInt(#"24A61F21") != 0)
+	{
+		spawn_point = get_debug_spawnpoint(self);
+		self spawn(spawn_point.origin,spawn_point.angles);
+		return;
+	}
 #/
 	use_new_spawn_system = 1;
 	initial_spawn = 1;

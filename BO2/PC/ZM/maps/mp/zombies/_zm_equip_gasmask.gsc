@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 8
- * Decompile Time: 27 ms
- * Timestamp: 10/27/2023 3:03:04 AM
+ * Decompile Time: 4 ms
+ * Timestamp: 10/28/2023 12:11:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -215,11 +215,16 @@ gasmask_active()
 gasmask_debug_print(msg,color)
 {
 /#
-	return;
-	color = (1,1,1);
+	if(!(GetDvarInt(#"4D1BCA99")))
+	{
+		return;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,1,1);
+	}
+
 	print3d(60 + VectorScale((0,0,1)),self.origin,msg,color,1,1);
-40
-IsDefined(color)
-GetDvarInt(#"4D1BCA99")
 #/
 }

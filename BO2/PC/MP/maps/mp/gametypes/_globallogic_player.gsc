@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 53
- * Decompile Time: 593 ms
- * Timestamp: 10/27/2023 3:00:04 AM
+ * Decompile Time: 63 ms
+ * Timestamp: 10/28/2023 12:10:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1268,8 +1268,10 @@ callback_playerdamage(einflictor,eattacker,idamage,idflags,smeansofdeath,sweapon
 
 	pixbeginevent("PlayerDamage log");
 /#
-	println("client:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
-GetDvarInt(#"B1AE74B1")
+	if(GetDvarInt(#"B1AE74B1"))
+	{
+		println("client:" + self getentitynumber() + " health:" + self.health + " attacker:" + eattacker.clientid + " inflictor is player:" + isplayer(einflictor) + " damage:" + idamage + " hitLoc:" + shitloc);
+	}
 #/
 	if(self.sessionstate != "dead")
 	{
@@ -2354,10 +2356,14 @@ callback_playerkilled(einflictor,attacker,idamage,smeansofdeath,sweapon,vdir,shi
 	maps/mp/gametypes/_globallogic_utils::waitfortimeornotifies(defaultplayerdeathwatchtime);
 	self notify("death_delay_finished");
 /#
-	dokillcam = 1;
-	lpattacknum = self getentitynumber();
-lpattacknum < 0
-GetDvarInt(#"C1849218") != 0
+	if(GetDvarInt(#"C1849218") != 0)
+	{
+		dokillcam = 1;
+		if(lpattacknum < 0)
+		{
+			lpattacknum = self getentitynumber();
+		}
+	}
 #/
 	if(hit_by_train)
 	{

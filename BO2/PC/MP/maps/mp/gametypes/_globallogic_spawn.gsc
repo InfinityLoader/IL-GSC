@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 30
- * Decompile Time: 95 ms
- * Timestamp: 10/27/2023 3:00:05 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:10:32 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -466,8 +466,10 @@ spawnplayer()
 	}
 
 /#
-	self thread maps/mp/gametypes/_globallogic_score::xpratethread();
-GetDvarInt(#"F8D00F60") > 0
+	if(GetDvarInt(#"F8D00F60") > 0)
+	{
+		self thread maps/mp/gametypes/_globallogic_score::xpratethread();
+	}
 #/
 	if(game["state"] == "postgame")
 	{
@@ -574,7 +576,10 @@ forcespawn(time)
 kickifdontspawn()
 {
 /#
-GetDvarInt(#"1F8C9394") == 1
+	if(GetDvarInt(#"1F8C9394") == 1)
+	{
+		return;
+	}
 #/
 	if(self ishost())
 	{

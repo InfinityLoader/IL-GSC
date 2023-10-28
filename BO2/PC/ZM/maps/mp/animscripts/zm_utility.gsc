@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 86
- * Decompile Time: 212 ms
- * Timestamp: 10/27/2023 3:02:25 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:11:32 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -505,14 +505,11 @@ drawstringtime(msg,org,color,timer)
 {
 /#
 	maxtime = timer * 20;
-	i = 0;
-	for(;;)
+	for(i = 0;i < maxtime;i++)
 	{
 		print3d(org,msg,color,1,1);
 		wait(0.05);
-		i++;
 	}
-i < maxtime
 #/
 }
 
@@ -523,17 +520,30 @@ showlastenemysightpos(string)
 	self notify("got known enemy2");
 	self endon("got known enemy2");
 	self endon("death");
-	return;
-	color = (0.4,0.7,1);
-	color = (1,0.7,0.4);
-	for(;;)
+	if(!(isvalidenemy(self.enemy)))
+	{
+		return;
+	}
+
+	if(self.enemy.team == "allies")
+	{
+		color = (0.4,0.7,1);
+	}
+	else
+	{
+		color = (1,0.7,0.4);
+	}
+
+	while(1)
 	{
 		wait(0.05);
+		if(!(IsDefined(self.lastenemysightpos)))
+		{
+			continue;
+		}
+
 		print3d(self.lastenemysightpos,string,color,1,2.15);
 	}
-IsDefined(self.lastenemysightpos)
-1
-Stack-Empty ? isvalidenemy(self.enemy) : self.enemy.team == "allies"
 #/
 }
 
@@ -554,15 +564,20 @@ debugposinternal(org,string,size)
 	ent = spawnstruct();
 	ent thread debugtimeout();
 	ent endon("timeout");
-	color = (0.4,0.7,1);
-	color = (1,0.7,0.4);
-	for(;;)
+	if(self.enemy.team == "allies")
+	{
+		color = (0.4,0.7,1);
+	}
+	else
+	{
+		color = (1,0.7,0.4);
+	}
+
+	while(1)
 	{
 		wait(0.05);
 		print3d(org,string,color,1,size);
 	}
-1
-Stack-Empty ? Stack-Empty : self.enemy.team == "allies"
 #/
 }
 
@@ -584,14 +599,11 @@ showdebugproc(frompoint,topoint,color,printtime)
 /#
 	self endon("death");
 	timer = printtime * 20;
-	i = 0;
-	for(;;)
+	for(i = 0;i < timer;i = i + 1)
 	{
 		wait(0.05);
 		line(frompoint,topoint,color);
-		i = i + 1;
 	}
-i < timer
 #/
 }
 
@@ -752,14 +764,11 @@ print3dtime(timer,org,msg,color,alpha,scale)
 {
 /#
 	newtime = timer / 0.05;
-	i = 0;
-	for(;;)
+	for(i = 0;i < newtime;i++)
 	{
 		print3d(org,msg,color,alpha,scale);
 		wait(0.05);
-		i++;
 	}
-i < newtime
 #/
 }
 
@@ -770,15 +779,12 @@ print3drise(org,msg,color,alpha,scale)
 	newtime = 100;
 	up = 0;
 	org = org;
-	i = 0;
-	for(;;)
+	for(i = 0;i < newtime;i++)
 	{
 		up = up + 0.5;
 		print3d(org + (0,0,up),msg,color,alpha,scale);
 		wait(0.05);
-		i++;
 	}
-i < newtime
 #/
 }
 
@@ -932,11 +938,13 @@ animarray(animname)
 	assert(IsDefined(self.a.array));
 #/
 /#
-	dumpanimarray();
+	if(!(IsDefined(self.a.array[animname])))
+	{
+		dumpanimarray();
 /#
-	assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+		assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+	}
 #/
-IsDefined(self.a.array[animname])
 #/
 	return self.a.array[animname];
 }
@@ -948,11 +956,13 @@ animarrayanyexist(animname)
 	assert(IsDefined(self.a.array));
 #/
 /#
-	dumpanimarray();
+	if(!(IsDefined(self.a.array[animname])))
+	{
+		dumpanimarray();
 /#
-	assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+		assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+	}
 #/
-IsDefined(self.a.array[animname])
 #/
 	return self.a.array[animname].size > 0;
 }
@@ -964,11 +974,13 @@ animarraypickrandom(animname)
 	assert(IsDefined(self.a.array));
 #/
 /#
-	dumpanimarray();
+	if(!(IsDefined(self.a.array[animname])))
+	{
+		dumpanimarray();
 /#
-	assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+		assert(IsDefined(self.a.array[animname]),"self.a.array[ \" + animname + "\" ] is undefined");
+	}
 #/
-IsDefined(self.a.array[animname])
 #/
 /#
 	assert(self.a.array[animname].size > 0);
@@ -991,14 +1003,17 @@ dumpanimarray()
 /#
 	println("self.a.array:");
 	keys = getarraykeys(self.a.array);
-	i = 0;
-	for(;;)
+	for(i = 0;i < keys.size;i++)
 	{
-		println(" array[ \" + keys[i] + "\" ] = {array of size " + self.a.array[keys[i]].size + "}");
-		println(" array[ \" + keys[i] + "\" ] = ",self.a.array[keys[i]]);
-		i++;
+		if(isarray(self.a.array[keys[i]]))
+		{
+			println(" array[ \" + keys[i] + "\" ] = {array of size " + self.a.array[keys[i]].size + "}");
+		}
+		else
+		{
+			println(" array[ \" + keys[i] + "\" ] = ",self.a.array[keys[i]]);
+		}
 	}
-Stack-Empty ? i < keys.size : isarray(self.a.array[keys[i]])
 #/
 }
 
@@ -1261,10 +1276,15 @@ get_skeleton()
 debug_anim_print(text)
 {
 /#
-	println(text + " " + GetTime());
-	println(text + " " + GetTime());
-IsDefined(level.dog_debug_anims_ent) && level.dog_debug_anims_ent == self getentnum()
-IsDefined(level.dog_debug_anims) && level.dog_debug_anims
+	if(IsDefined(level.dog_debug_anims) && level.dog_debug_anims)
+	{
+		println(text + " " + GetTime());
+	}
+
+	if(IsDefined(level.dog_debug_anims_ent) && level.dog_debug_anims_ent == self getentnum())
+	{
+		println(text + " " + GetTime());
+	}
 #/
 }
 
@@ -1272,17 +1292,19 @@ IsDefined(level.dog_debug_anims) && level.dog_debug_anims
 debug_turn_print(text,line)
 {
 /#
-	duration = 200;
-	currentyawcolor = (1,1,1);
-	lookaheadyawcolor = (1,0,0);
-	desiredyawcolor = (1,1,0);
-	currentyaw = AngleClamp180(self.angles[1]);
-	desiredyaw = AngleClamp180(self.desiredangle);
-	lookaheaddir = self.lookaheaddir;
-	lookaheadangles = VectorToAngles(lookaheaddir);
-	lookaheadyaw = AngleClamp180(lookaheadangles[1]);
-	println(text + " " + GetTime() + " cur: " + currentyaw + " look: " + lookaheadyaw + " desired: " + desiredyaw);
-IsDefined(level.dog_debug_turns) && level.dog_debug_turns == self getentnum()
+	if(IsDefined(level.dog_debug_turns) && level.dog_debug_turns == self getentnum())
+	{
+		duration = 200;
+		currentyawcolor = (1,1,1);
+		lookaheadyawcolor = (1,0,0);
+		desiredyawcolor = (1,1,0);
+		currentyaw = AngleClamp180(self.angles[1]);
+		desiredyaw = AngleClamp180(self.desiredangle);
+		lookaheaddir = self.lookaheaddir;
+		lookaheadangles = VectorToAngles(lookaheaddir);
+		lookaheadyaw = AngleClamp180(lookaheadangles[1]);
+		println(text + " " + GetTime() + " cur: " + currentyaw + " look: " + lookaheadyaw + " desired: " + desiredyaw);
+	}
 #/
 }
 

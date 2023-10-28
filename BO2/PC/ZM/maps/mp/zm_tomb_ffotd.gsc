@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 9
- * Decompile Time: 117 ms
- * Timestamp: 10/27/2023 3:03:50 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:12:06 AM
 *******************************************************************/
 
 #include codescripts/struct;

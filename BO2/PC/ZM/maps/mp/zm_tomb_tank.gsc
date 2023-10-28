@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 73
- * Decompile Time: 272 ms
- * Timestamp: 10/27/2023 3:03:51 AM
+ * Decompile Time: 25827 ms
+ * Timestamp: 10/28/2023 12:13:24 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -149,12 +149,8 @@ zm_mantle_over_40_move_speed_override()
 		default:
 	/#
 			assertmsg("Zombie move speed of \'" + self.zombie_move_speed + "\' is not supported for mantle_over_40.");
-	#/
 			break;
 	}
-
-	return traversealias;
-}
 
 //Function Number: 8
 init_animtree()
@@ -175,8 +171,6 @@ drawtag(tag,opcolor)
 	org = self gettagorigin(tag);
 	ang = self gettagangles(tag);
 	box(org,VectorScale((-1,-1,0)),8,VectorScale((1,1,1)),8,ang[1],opcolor,1);
-0
-1
 #/
 }
 
@@ -187,11 +181,17 @@ draw_tank_tag(tag,opcolor)
 	self endon("death");
 	for(;;)
 	{
-		drawtag(tag.str_tag,VectorScale((0,1,0)));
-		drawtag(tag.str_tag,VectorScale((1,0,0)));
+		if(self tank_tag_is_valid(tag))
+		{
+			drawtag(tag.str_tag,VectorScale((0,1,0)));
+		}
+		else
+		{
+			drawtag(tag.str_tag,VectorScale((1,0,0)));
+		}
+
 		wait(0.05);
 	}
-(self tank_tag_is_valid(tag)) ? 255 : 255
 #/
 }
 
@@ -203,53 +203,39 @@ tank_debug_tags()
 	adddebugcommand("devgui_cmd \"Zombies:2/Tomb:1/Tank Debug:5\" \"debug_tank on\"\n");
 	flag_wait("start_zombie_round_logic");
 	a_spots = getstructarray("tank_jump_down_spots","script_noteworthy");
-	for(;;)
+	while(1)
 	{
-		_a224 = self.a_tank_tags;
-		_k224 = FirstArrayKey(_a224);
-		for(;;)
+		if(GetDvar(#"55B41FB9") == "on")
 		{
-			s_tag = _a224[_k224];
-			self thread draw_tank_tag(s_tag);
-			_k224 = NextArrayKey(_a224);
+			if(!(IsDefined(self.tags_drawing) && self.tags_drawing))
+			{
+				foreach(s_tag in self.a_tank_tags)
+				{
+					self thread draw_tank_tag(s_tag);
+				}
+
+				self.tags_drawing = 1;
+			}
+
+			ang = self.angles;
+			foreach(s_spot in a_spots)
+			{
+				org = self tank_get_jump_down_offset(s_spot);
+				box(org,VectorScale((-1,-1,0)),4,VectorScale((1,1,1)),4,ang[1],VectorScale((1,1,0)),128);
+			}
+
+			a_zombies = get_round_enemy_array();
+			foreach(e_zombie in a_zombies)
+			{
+				if(IsDefined(e_zombie.tank_state))
+				{
+					print3d(60 + VectorScale((0,0,1)),e_zombie.origin,e_zombie.tank_state,VectorScale((1,0,0)));
+				}
+			}
 		}
-		self.tags_drawing = 1;
-		ang = self.angles;
-		_a232 = a_spots;
-		_k232 = FirstArrayKey(_a232);
-		for(;;)
-		{
-			s_spot = _a232[_k232];
-			org = self tank_get_jump_down_offset(s_spot);
-			box(org,VectorScale((-1,-1,0)),4,VectorScale((1,1,1)),4,ang[1],VectorScale((1,1,0)),128);
-			_k232 = NextArrayKey(_a232);
-		}
-		a_zombies = get_round_enemy_array();
-		_a239 = a_zombies;
-		_k239 = FirstArrayKey(_a239);
-		for(;;)
-		{
-			e_zombie = _a239[_k239];
-			print3d(60 + VectorScale((0,0,1)),e_zombie.origin,e_zombie.tank_state,VectorScale((1,0,0)));
-			_k239 = NextArrayKey(_a239);
-		}
+
 		wait(0.05);
 	}
-_k239
-255
-1
-IsDefined(e_zombie.tank_state)
-IsDefined(_k239)
-_k232
-1
-0
-1
-IsDefined(_k232)
-_k224
-IsDefined(_k224)
-IsDefined(self.tags_drawing) && self.tags_drawing
-GetDvar(#"55B41FB9") == "on"
-1
 #/
 }
 
@@ -1325,7 +1311,7 @@ tank_zombie_think()
 				continue;
 				self stop_chasing_tank();
 				break;
-				self notify("stop_path_to_tag",(IsDefined(self.tank_re_eval_time)) ? self.tank_re_eval_time <= 0 : self entity_on_tank());
+				self notify("stop_path_to_tag",self entity_on_tank(),self.tank_re_eval_time <= 0,IsDefined(self.tank_re_eval_time));
 				self stop_chasing_tank();
 				break;
 				dist_sq_to_tank = distancesquared(self.origin,level.vh_tank.origin);
@@ -1400,9 +1386,10 @@ update_zombie_goal_pos(str_position,stop_notify)
 		{
 			v_origin = level.vh_tank tank_get_jump_down_offset(s_script_origin);
 /#
-			line(30 + VectorScale((0,0,1)),self.origin);
-v_origin
-GetDvar(#"55B41FB9") == "on"
+			if(GetDvar(#"55B41FB9") == "on")
+			{
+				line(30 + VectorScale((0,0,1)),self.origin);
+			}
 #/
 		}
 		else

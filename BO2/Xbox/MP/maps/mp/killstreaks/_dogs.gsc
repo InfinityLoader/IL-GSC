@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 39
- * Decompile Time: 101 ms
- * Timestamp: 10/27/2023 3:04:43 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:13:40 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -338,9 +338,9 @@ dog_patrol()
 	self endon("death");
 /#
 	self endon("debug_patrol");
-#/
 	for(;;)
 	{
+#/
 		if(level.dog_abort)
 		{
 			self dog_leave();
@@ -708,6 +708,7 @@ devgui_dog_think()
 				player = gethostplayer();
 				devgui_dog_spawn(player.team);
 				break;
+	
 			case "€GSC\r\n":
 				player = gethostplayer();
 				_a769 = level.teams;
@@ -718,36 +719,49 @@ devgui_dog_think()
 					devgui_dog_spawn(team);
 					_k769 = NextArrayKey(_a769);
 				}
+		
 				break;
 		_k769
-		Stack-Empty ? IsDefined(_k769) : team == player.team
+		team == player.team
+		IsDefined(_k769)
 				break;
+	
 			case "€GSC\r\n":
 				level dog_abort();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_dog_camera();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_crate_spawn();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_crate_delete();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_spawn_show();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_exit_show();
 				break;
+	
 			case "€GSC\r\n":
 				devgui_debug_route();
 				break;
 		}
-		setdvar("devgui_dog","");
+
+		if(cmd != "")
+		{
+			setdvar("devgui_dog","");
+		}
+
 		wait(0.5);
 	}
-cmd != ""
 #/
 }
 
@@ -758,8 +772,12 @@ devgui_dog_spawn(team)
 	player = gethostplayer();
 	dog_spawner = getent("dog_spawner","targetname");
 	level.dog_abort = 0;
-	iprintln("No dog spawners found in map");
-	return;
+	if(!(IsDefined(dog_spawner)))
+	{
+		iprintln("No dog spawners found in map");
+		return;
+	}
+
 	direction = player getplayerangles();
 	direction_vec = AnglesToForward(direction);
 	eye = player geteye();
@@ -767,14 +785,21 @@ devgui_dog_spawn(team)
 	direction_vec = (direction_vec[0] * scale,direction_vec[1] * scale,direction_vec[2] * scale);
 	trace = bullettrace(eye,eye + direction_vec,0,undefined);
 	nodes = getnodesinradius(trace["position"],256,0,128,"Path",8);
-	iprintln("No nodes found near crosshair position");
-	return;
+	if(!(nodes.size))
+	{
+		iprintln("No nodes found near crosshair position");
+		return;
+	}
+
 	iprintln("Spawning dog at your crosshair position");
 	node = getclosest(trace["position"],nodes);
 	dog = dog_manager_spawn_dog(player,player.team,node,5);
-	dog.aiteam = team;
-	dog clearentityowner();
-	dog notify("clear_owner",team != player.team,nodes.size,IsDefined(dog_spawner));
+	if(team != player.team)
+	{
+		dog.aiteam = team;
+		dog clearentityowner();
+		dog notify("clear_owner");
+	}
 #/
 }
 
@@ -783,33 +808,60 @@ devgui_dog_camera()
 {
 /#
 	player = gethostplayer();
-	level.devgui_dog_camera = 0;
+	if(!(IsDefined(level.devgui_dog_camera)))
+	{
+		level.devgui_dog_camera = 0;
+	}
+
 	dog = undefined;
 	dogs = dog_manager_get_dogs();
-	level.devgui_dog_camera = undefined;
-	player cameraactivate(0);
-	return;
-	i = 0;
-	for(;;)
+	if(dogs.size <= 0)
+	{
+		level.devgui_dog_camera = undefined;
+		player cameraactivate(0);
+		return;
+	}
+
+	for(i = 0;i < dogs.size;i++)
 	{
 		dog = dogs[i];
-		dog = undefined;
-		forward = AnglesToForward(dog.angles);
-		dog.cam = spawn("script_model",50 + VectorScale((0,0,1)) + forward * -100);
-		dog.cam setmodel("tag_origin");
-		dog.cam linkto(dog);
-		dog = undefined;
-		break;
-		i++;
+		if(!IsDefined(dog) || !isalive(dog))
+		{
+			dog = undefined;
+		}
+		else
+		{
+			if(!(IsDefined(dog.cam)))
+			{
+				forward = AnglesToForward(dog.angles);
+				dog.cam = spawn("script_model",50 + VectorScale((0,0,1)) + forward * -100);
+				dog.cam setmodel("tag_origin");
+				dog.cam linkto(dog);
+			}
+
+			if(dog getentitynumber() <= level.devgui_dog_camera)
+			{
+				dog = undefined;
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
-	level.devgui_dog_camera = dog getentitynumber();
-	player camerasetposition(dog.cam);
-	player camerasetlookat(dog);
-	player cameraactivate(1);
-	level.devgui_dog_camera = undefined;
-	player cameraactivate(0);
-dogs.size <= 0 ? (i < dogs.size ? !IsDefined(dog) || !isalive(dog) : (IsDefined(dog.cam) ? dog.origin : dog getentitynumber() <= level.devgui_dog_camera)) : IsDefined(dog)
-IsDefined(level.devgui_dog_camera)
+
+	if(IsDefined(dog))
+	{
+		level.devgui_dog_camera = dog getentitynumber();
+		player camerasetposition(dog.cam);
+		player camerasetlookat(dog);
+		player cameraactivate(1);
+	}
+	else
+	{
+		level.devgui_dog_camera = undefined;
+		player cameraactivate(0);
+	}
 #/
 }
 
@@ -826,7 +878,6 @@ devgui_crate_spawn()
 	trace = bullettrace(eye,eye + direction_vec,0,undefined);
 	killcament = spawn("script_model",player.origin);
 	level thread maps/mp/killstreaks/_supplydrop::dropcrate(25 + VectorScale((0,0,1)),trace["position"],direction,"supplydrop_mp",player,player.team);
-killcament
 #/
 }
 
@@ -834,16 +885,17 @@ killcament
 devgui_crate_delete()
 {
 /#
-	return;
-	i = 0;
-	for(;;)
+	if(!(IsDefined(level.devgui_crates)))
+	{
+		return;
+	}
+
+	for(i = 0;i < level.devgui_crates.size;i++)
 	{
 		level.devgui_crates[i] delete();
-		i++;
 	}
+
 	level.devgui_crates = [];
-i < level.devgui_crates.size
-IsDefined(level.devgui_crates)
 #/
 }
 
@@ -851,19 +903,27 @@ IsDefined(level.devgui_crates)
 devgui_spawn_show()
 {
 /#
-	level.dog_spawn_show = 1;
-	level.dog_spawn_show = !level.dog_spawn_show;
-	level notify("hide_dog_spawns",level.dog_spawn_show,Stack-Empty ? Stack-Empty : IsDefined(level.dog_spawn_show));
-	return;
+	if(!(IsDefined(level.dog_spawn_show)))
+	{
+		level.dog_spawn_show = 1;
+	}
+	else
+	{
+		level.dog_spawn_show = !level.dog_spawn_show;
+	}
+
+	if(!(level.dog_spawn_show))
+	{
+		level notify("hide_dog_spawns");
+		return;
+	}
+
 	spawns = getnodearray("spawn","script_noteworthy");
 	color = (0,1,0);
-	i = 0;
-	for(;;)
+	for(i = 0;i < spawns.size;i++)
 	{
 		maps/mp/gametypes/_dev::showonespawnpoint(spawns[i],color,"hide_dog_spawns",32,"dog_spawn");
-		i++;
 	}
-i < spawns.size
 #/
 }
 
@@ -871,19 +931,27 @@ i < spawns.size
 devgui_exit_show()
 {
 /#
-	level.dog_exit_show = 1;
-	level.dog_exit_show = !level.dog_exit_show;
-	level notify("hide_dog_exits",level.dog_exit_show,Stack-Empty ? Stack-Empty : IsDefined(level.dog_exit_show));
-	return;
+	if(!(IsDefined(level.dog_exit_show)))
+	{
+		level.dog_exit_show = 1;
+	}
+	else
+	{
+		level.dog_exit_show = !level.dog_exit_show;
+	}
+
+	if(!(level.dog_exit_show))
+	{
+		level notify("hide_dog_exits");
+		return;
+	}
+
 	exits = getnodearray("exit","script_noteworthy");
 	color = (1,0,0);
-	i = 0;
-	for(;;)
+	for(i = 0;i < exits.size;i++)
 	{
 		maps/mp/gametypes/_dev::showonespawnpoint(exits[i],color,"hide_dog_exits",32,"dog_exit");
-		i++;
 	}
-i < exits.size
 #/
 }
 
@@ -911,11 +979,18 @@ devgui_debug_route()
 /#
 	iprintln("Choose nodes with \'A\' or press \'B\' to cancel");
 	nodes = maps/mp/gametypes/_dev::dev_get_node_pair();
-	iprintln("Route Debug Cancelled");
-	return;
+	if(!(IsDefined(nodes)))
+	{
+		iprintln("Route Debug Cancelled");
+		return;
+	}
+
 	iprintln("Sending dog to chosen nodes");
 	dogs = dog_manager_get_dogs();
-	dogs[0] notify("debug_patrol",IsDefined(dogs[0]),IsDefined(nodes));
-	dogs[0] thread dog_debug_patrol(nodes[0],nodes[1]);
+	if(IsDefined(dogs[0]))
+	{
+		dogs[0] notify("debug_patrol");
+		dogs[0] thread dog_debug_patrol(nodes[0],nodes[1]);
+	}
 #/
 }

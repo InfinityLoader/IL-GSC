@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 2
- * Decompile Time: 5 ms
- * Timestamp: 10/27/2023 2:59:46 AM
+ * Decompile Time: 0 ms
+ * Timestamp: 10/28/2023 12:10:23 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/shared;

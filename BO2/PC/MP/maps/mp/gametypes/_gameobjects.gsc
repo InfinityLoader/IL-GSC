@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 101
- * Decompile Time: 220 ms
- * Timestamp: 10/27/2023 2:59:58 AM
+ * Decompile Time: 43 ms
+ * Timestamp: 10/28/2023 12:10:30 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -26,8 +26,10 @@ main(allowed)
 	level.objectivepingdelay = getgametypesetting("objectivePingTime");
 	level.nonteambasedteam = "allies";
 /#
-	level.vehiclesenabled = 1;
-level.script == "mp_vehicle_test"
+	if(level.script == "mp_vehicle_test")
+	{
+		level.vehiclesenabled = 1;
+	}
 #/
 	if(level.vehiclesenabled)
 	{
@@ -2847,7 +2849,9 @@ caninteractwith(player)
 			return 0;
 			return 1;
 			return 0;
-	Stack-Empty ? Stack-Empty : (Stack-Empty ? (Stack-Empty ? level.teambased : team == self.ownerteam) : player == self.ownerteam)
+	player == self.ownerteam
+	team == self.ownerteam
+	level.teambased
 			break;
 
 		case "enemy":
@@ -2856,7 +2860,10 @@ caninteractwith(player)
 			return 0;
 			return 1;
 			return 0;
-	Stack-Empty ? Stack-Empty : (Stack-Empty ? (Stack-Empty ? Stack-Empty : (level.teambased ? team != self.ownerteam : IsDefined(self.decayprogress) && self.decayprogress && self.curprogress > 0)) : player != self.ownerteam)
+	player != self.ownerteam
+	IsDefined(self.decayprogress) && self.decayprogress && self.curprogress > 0
+	team != self.ownerteam
+	level.teambased
 			break;
 
 		default:
@@ -2948,8 +2955,10 @@ getnextobjid()
 	}
 
 /#
-	println("^3SCRIPT WARNING: Ran out of objective IDs");
-nextid >= 32
+	if(nextid >= 32)
+	{
+		println("^3SCRIPT WARNING: Ran out of objective IDs");
+	}
 #/
 	if(nextid > 31)
 	{

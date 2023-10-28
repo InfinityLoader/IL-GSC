@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 24
- * Decompile Time: 30 ms
- * Timestamp: 10/27/2023 3:02:25 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:33 AM
 *******************************************************************/
 
 #include maps/mp/_audio;

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 61
- * Decompile Time: 691 ms
- * Timestamp: 10/27/2023 3:00:52 AM
+ * Decompile Time: 27 ms
+ * Timestamp: 10/28/2023 12:10:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1145,11 +1145,14 @@ qrdrone_leave_on_timeout()
 	set_dvar_int_if_unset("scr_QRDroneFlyTime",self.flytime);
 	self.flytime = GetDvarInt(#"DA835401");
 	waittime = self.flytime - 10;
-	wait(self.flytime);
-	self setclientfield("qrdrone_state",3);
-	watcher = self.owner maps/mp/gametypes/_weaponobjects::getweaponobjectwatcher("qrdrone");
-	watcher thread maps/mp/gametypes/_weaponobjects::waitanddetonate(self,0);
-waittime < 0
+	if(waittime < 0)
+	{
+		wait(self.flytime);
+		self setclientfield("qrdrone_state",3);
+		watcher = self.owner maps/mp/gametypes/_weaponobjects::getweaponobjectwatcher("qrdrone");
+		watcher thread maps/mp/gametypes/_weaponobjects::waitanddetonate(self,0);
+		return;
+	}
 #/
 	maps/mp/gametypes/_hostmigration::waitlongdurationwithhostmigrationpause(waittime);
 	shouldtimeout = GetDvar(#"E9EC149");

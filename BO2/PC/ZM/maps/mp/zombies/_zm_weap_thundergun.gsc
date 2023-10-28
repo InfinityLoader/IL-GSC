@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 16
- * Decompile Time: 241 ms
- * Timestamp: 10/27/2023 3:03:33 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:11:58 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -56,7 +56,11 @@ init()
 thundergun_devgui_dvar_think()
 {
 /#
-	return;
+	if(!(maps/mp/zombies/_zm_weapons::is_weapon_included("thundergun_zm")))
+	{
+		return;
+	}
+
 	setdvar("scr_thundergun_cylinder_radius",level.zombie_vars["thundergun_cylinder_radius"]);
 	setdvar("scr_thundergun_fling_range",level.zombie_vars["thundergun_fling_range"]);
 	setdvar("scr_thundergun_gib_range",level.zombie_vars["thundergun_gib_range"]);
@@ -73,7 +77,6 @@ thundergun_devgui_dvar_think()
 		level.zombie_vars["thundergun_knockdown_damage"] = GetDvarInt(#"EAB5937B");
 		wait(0.5);
 	}
-maps/mp/zombies/_zm_weapons::is_weapon_included("thundergun_zm")
 #/
 }
 
@@ -163,12 +166,13 @@ thundergun_get_enemies_in_range()
 	forward_view_angles = self getweaponforwarddir();
 	end_pos = level.zombie_vars["thundergun_knockdown_range"] + VectorScale(forward_view_angles);
 /#
-	near_circle_pos = 2 + VectorScale(forward_view_angles);
-	circle(near_circle_pos,level.zombie_vars["thundergun_cylinder_radius"],(1,0,0),0,0,100);
-	line(near_circle_pos,end_pos,(0,0,1),1,0,100);
-	circle(end_pos,level.zombie_vars["thundergun_cylinder_radius"],(1,0,0),0,0,100);
-view_pos
-2 == GetDvarInt(#"AAC84AD6")
+	if(2 == GetDvarInt(#"AAC84AD6"))
+	{
+		near_circle_pos = 2 + VectorScale(forward_view_angles);
+		circle(near_circle_pos,level.zombie_vars["thundergun_cylinder_radius"],(1,0,0),0,0,100);
+		line(near_circle_pos,end_pos,(0,0,1),1,0,100);
+		circle(end_pos,level.zombie_vars["thundergun_cylinder_radius"],(1,0,0),0,0,100);
+	}
 #/
 	for(i = 0;i < zombies.size;i++)
 	{
@@ -238,12 +242,17 @@ view_pos
 thundergun_debug_print(msg,color)
 {
 /#
-	return;
-	color = (1,1,1);
+	if(!(GetDvarInt(#"AAC84AD6")))
+	{
+		return;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,1,1);
+	}
+
 	print3d(60 + VectorScale((0,0,1)),self.origin,msg,color,1,1);
-40
-IsDefined(color)
-GetDvarInt(#"AAC84AD6")
 #/
 }
 

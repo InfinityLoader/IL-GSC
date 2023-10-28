@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 124
- * Decompile Time: 197 ms
- * Timestamp: 10/27/2023 3:02:00 AM
+ * Decompile Time: 30 ms
+ * Timestamp: 10/28/2023 12:11:16 AM
 *******************************************************************/
 
 //Function Number: 1
@@ -385,14 +385,11 @@ vector_compare(vec1,vec2)
 draw_debug_line(start,end,timer)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < timer * 20;i++)
 	{
 		line(start,end,(1,1,0.5));
 		wait(0.05);
-		i++;
 	}
-i < timer * 20
 #/
 }
 
@@ -863,8 +860,8 @@ flag_delete(flagname)
 	{
 /#
 		println("flag_delete() called on flag that does not exist: " + flagname);
-#/
 	}
+#/
 }
 
 //Function Number: 51
@@ -889,9 +886,8 @@ flag_init(flagname,val,b_is_trigger)
 	{
 /#
 		assert(!IsDefined(level.flag[flagname]),"Attempt to reinitialize existing flag: " + flagname);
-#/
 	}
-
+#/
 	if(IsDefined(val) && val)
 	{
 		level.flag[flagname] = 1;
@@ -1473,9 +1469,9 @@ trigger_use(str_name,str_key,ent,b_assert)
 			{
 /#
 				assertmsg("trigger not found: " + str_name + " key: " + str_key);
-#/
-				return;
 			}
+#/
+			return;
 		}
 	}
 	else
@@ -1567,13 +1563,27 @@ init_trigger_flags()
 //Function Number: 83
 is_look_trigger(trig)
 {
-	return IsDefined(trig) ? trig has_spawnflag(256) && !(!IsDefined(trig.classname) && !IsDefined("trigger_damage")) || IsDefined(trig.classname) && IsDefined("trigger_damage") && trig.classname == "trigger_damage" : 0;
+	if(IsDefined(trig))
+	{
+	}
+	else
+	{
+	}
+
+	return 0;
 }
 
 //Function Number: 84
 is_trigger_once(trig)
 {
-	return IsDefined(trig) ? trig has_spawnflag(1024) || (!IsDefined(self.classname) && !IsDefined("trigger_once")) || IsDefined(self.classname) && IsDefined("trigger_once") && self.classname == "trigger_once" : 0;
+	if(IsDefined(trig))
+	{
+	}
+	else
+	{
+	}
+
+	return 0;
 }
 
 //Function Number: 85
@@ -1742,11 +1752,14 @@ fileprint_chk(file,str)
 {
 /#
 	level.fileprintlinecount++;
-	wait(0.05);
-	level.fileprintlinecount++;
-	level.fileprintlinecount = 0;
+	if(level.fileprintlinecount > 400)
+	{
+		wait(0.05);
+		level.fileprintlinecount++;
+		level.fileprintlinecount = 0;
+	}
+
 	fprintln(file,str);
-level.fileprintlinecount > 400
 #/
 }
 
@@ -1765,11 +1778,14 @@ fileprint_map_header(binclude_blank_worldspawn)
 	fileprint_chk(level.fileprint,"iwmap 4");
 	fileprint_chk(level.fileprint,"\"000_Global\" flags  active");
 	fileprint_chk(level.fileprint,"\"The Map\" flags");
-	return;
+	if(!(binclude_blank_worldspawn))
+	{
+		return;
+	}
+
 	fileprint_map_entity_start();
 	fileprint_map_keypairprint("classname","worldspawn");
 	fileprint_map_entity_end();
-binclude_blank_worldspawn
 #/
 }
 
@@ -1824,29 +1840,32 @@ fileprint_end()
 	assert(!IsDefined(level.fileprint_entitystart));
 #/
 	saved = closefile(level.fileprint);
-	println("-----------------------------------");
-	println(" ");
-	println("file write failure");
-	println("file with name: " + level.fileprint_filename);
-	println("make sure you checkout the file you are trying to save");
-	println("note: USE P4 Search to find the file and check that one out");
-	println("      Do not checkin files in from the xenonoutput folder, ");
-	println("      this is junctioned to the proper directory where you need to go");
-	println("junctions looks like this");
-	println(" ");
-	println("..\\xenonOutput\\scriptdata\\createfx      ..\\share\\raw\\maps\\createfx");
-	println("..\\xenonOutput\\scriptdata\\createart     ..\\share\\raw\\maps\\createart");
-	println("..\\xenonOutput\\scriptdata\\vision        ..\\share\\raw\\vision");
-	println("..\\xenonOutput\\scriptdata\\scriptgen     ..\\share\\raw\\maps\\scriptgen");
-	println("..\\xenonOutput\\scriptdata\\zone_source   ..\\xenon\\zone_source");
-	println("..\\xenonOutput\\accuracy                  ..\\share\\raw\\accuracy");
-	println("..\\xenonOutput\\scriptdata\\map_source    ..\\map_source\\xenon_export");
-	println(" ");
-	println("-----------------------------------");
-	println("File not saved( see console.log for info ) ");
+	if(saved != 1)
+	{
+		println("-----------------------------------");
+		println(" ");
+		println("file write failure");
+		println("file with name: " + level.fileprint_filename);
+		println("make sure you checkout the file you are trying to save");
+		println("note: USE P4 Search to find the file and check that one out");
+		println("      Do not checkin files in from the xenonoutput folder, ");
+		println("      this is junctioned to the proper directory where you need to go");
+		println("junctions looks like this");
+		println(" ");
+		println("..\\xenonOutput\\scriptdata\\createfx      ..\\share\\raw\\maps\\createfx");
+		println("..\\xenonOutput\\scriptdata\\createart     ..\\share\\raw\\maps\\createart");
+		println("..\\xenonOutput\\scriptdata\\vision        ..\\share\\raw\\vision");
+		println("..\\xenonOutput\\scriptdata\\scriptgen     ..\\share\\raw\\maps\\scriptgen");
+		println("..\\xenonOutput\\scriptdata\\zone_source   ..\\xenon\\zone_source");
+		println("..\\xenonOutput\\accuracy                  ..\\share\\raw\\accuracy");
+		println("..\\xenonOutput\\scriptdata\\map_source    ..\\map_source\\xenon_export");
+		println(" ");
+		println("-----------------------------------");
+		println("File not saved( see console.log for info ) ");
+	}
+
 	level.fileprint = undefined;
 	level.fileprint_filename = undefined;
-saved != 1
 #/
 }
 

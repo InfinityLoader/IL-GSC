@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 18
- * Decompile Time: 81 ms
- * Timestamp: 10/27/2023 3:03:19 AM
+ * Decompile Time: 15 ms
+ * Timestamp: 10/28/2023 12:11:53 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -232,8 +232,10 @@ playerhealthregen()
 			}
 
 /#
-			logregen(newhealth);
-	newhealth > health_ratio
+			if(newhealth > health_ratio)
+			{
+				logregen(newhealth);
+			}
 #/
 			self setnormalhealth(newhealth);
 			oldratio = self.health / self.maxhealth;
@@ -246,13 +248,17 @@ playerhealthregen()
 			self setnormalhealth(2 / self.maxhealth);
 			invulworthyhealthdrop = 1;
 /#
-			level.player_deathinvulnerabletimeout = 0;
-			level.player_deathinvulnerabletimeout = GetTime() + GetDvarInt(#"4E44E32D");
-	level.player_deathinvulnerabletimeout < GetTime()
-	IsDefined(level.player_deathinvulnerabletimeout)
-#/
-		}
+			if(!(IsDefined(level.player_deathinvulnerabletimeout)))
+			{
+				level.player_deathinvulnerabletimeout = 0;
+			}
 
+			if(level.player_deathinvulnerabletimeout < GetTime())
+			{
+				level.player_deathinvulnerabletimeout = GetTime() + GetDvarInt(#"4E44E32D");
+			}
+		}
+#/
 		oldratio = self.health / self.maxhealth;
 		level notify("hit_again");
 		health_add = 0;
@@ -469,22 +475,36 @@ showhitlog()
 playerhealthdebug()
 {
 /#
-	setdvar("scr_health_debug","0");
-	waittillframeend;
-	for(;;)
+	if(GetDvar(#"9A7D1E68") == "")
 	{
-		for(;;)
+		setdvar("scr_health_debug","0");
+	}
+
+	waittillframeend;
+	while(1)
+	{
+		while(1)
 		{
-			break;
+			if(GetDvar(#"9A7D1E68") != "0")
+			{
+				break;
+			}
+
 			wait(0.5);
 		}
+
 		thread printhealthdebug();
-		for(;;)
+		while(1)
 		{
-			break;
+			if(GetDvar(#"9A7D1E68") == "0")
+			{
+				break;
+			}
+
 			wait(0.5);
 		}
-		level notify("stop_printing_grenade_timers",GetDvar(#"9A7D1E68") == "0",1,GetDvar(#"9A7D1E68") != "0",1,1,GetDvar(#"9A7D1E68") == "");
+
+		level notify("stop_printing_grenade_timers");
 		destroyhealthdebug();
 	}
 #/
@@ -502,10 +522,17 @@ printhealthdebug()
 	level.healthbarkeys[0] = "Health";
 	level.healthbarkeys[1] = "No Hit Time";
 	level.healthbarkeys[2] = "No Die Time";
-	level.playerinvultimeend = 0;
-	level.player_deathinvulnerabletimeout = 0;
-	i = 0;
-	for(;;)
+	if(!(IsDefined(level.playerinvultimeend)))
+	{
+		level.playerinvultimeend = 0;
+	}
+
+	if(!(IsDefined(level.player_deathinvulnerabletimeout)))
+	{
+		level.player_deathinvulnerabletimeout = 0;
+	}
+
+	for(i = 0;i < level.healthbarkeys.size;i++)
 	{
 		key = level.healthbarkeys[i];
 		textelem = newhudelem();
@@ -539,40 +566,44 @@ printhealthdebug()
 		textelem.key = key;
 		y = y + 10;
 		level.healthbarhudelems[key] = textelem;
-		i++;
 	}
+
 	flag_wait("start_zombie_round_logic");
-	for(;;)
+	while(1)
 	{
 		wait(0.05);
 		players = get_players();
-		i = 0;
-		for(;;)
+		for(i = 0;i < level.healthbarkeys.size && players.size > 0;i++)
 		{
 			key = level.healthbarkeys[i];
 			player = players[0];
 			width = 0;
-			width = player.health / player.maxhealth * 300;
-			width = level.playerinvultimeend - GetTime() / 1000 * 40;
-			width = level.player_deathinvulnerabletimeout - GetTime() / 1000 * 40;
+			if(i == 0)
+			{
+				width = player.health / player.maxhealth * 300;
+			}
+			else if(i == 1)
+			{
+				width = level.playerinvultimeend - GetTime() / 1000 * 40;
+			}
+			else if(i == 2)
+			{
+				width = level.player_deathinvulnerabletimeout - GetTime() / 1000 * 40;
+			}
+
 			width = int(max(width,1));
 			width = int(min(width,300));
 			bar = level.healthbarhudelems[key].bar;
 			bar setshader("black",width,8);
 			bgbar = level.healthbarhudelems[key].bgbar;
-			bgbar.maxwidth = width + 2;
-			bgbar setshader("white",bgbar.maxwidth,10);
-			bgbar.color = VectorScale((1,1,1));
-			i++;
+			if(width + 2 > bgbar.maxwidth)
+			{
+				bgbar.maxwidth = width + 2;
+				bgbar setshader("white",bgbar.maxwidth,10);
+				bgbar.color = VectorScale((1,1,1));
+			}
 		}
 	}
-0.5
-width + 2 > bgbar.maxwidth
-1 ? i < level.healthbarkeys.size && players.size > 0 : (i == 0 ? i == 1 : i == 2)
-0.5
-i < level.healthbarkeys.size
-IsDefined(level.player_deathinvulnerabletimeout)
-IsDefined(level.playerinvultimeend)
 #/
 }
 
@@ -580,16 +611,16 @@ IsDefined(level.playerinvultimeend)
 destroyhealthdebug()
 {
 /#
-	return;
-	i = 0;
-	for(;;)
+	if(!(IsDefined(level.healthbarhudelems)))
+	{
+		return;
+	}
+
+	for(i = 0;i < level.healthbarkeys.size;i++)
 	{
 		level.healthbarhudelems[level.healthbarkeys[i]].bgbar destroy();
 		level.healthbarhudelems[level.healthbarkeys[i]].bar destroy();
 		level.healthbarhudelems[level.healthbarkeys[i]] destroy();
-		i++;
 	}
-i < level.healthbarkeys.size
-IsDefined(level.healthbarhudelems)
 #/
 }

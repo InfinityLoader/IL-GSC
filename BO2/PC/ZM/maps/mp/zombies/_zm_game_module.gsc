@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 21
- * Decompile Time: 72 ms
- * Timestamp: 10/27/2023 3:03:07 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:11:46 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -32,9 +32,9 @@ register_game_module(index,module_name,pre_init_func,post_init_func,pre_init_zom
 		else if(IsDefined(level._game_modules[i].index) && level._game_modules[i].index == index)
 		{
 /#
-				assert(level._game_modules[i].index != index,"A Game module is already registered for index (" + index + ")");
-#/
+			assert(level._game_modules[i].index != index,"A Game module is already registered for index (" + index + ")");
 		}
+#/
 	}
 
 	level._game_modules[level._num_registered_game_modules] = spawnstruct();

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 86
- * Decompile Time: 277 ms
- * Timestamp: 10/27/2023 3:00:46 AM
+ * Decompile Time: 22 ms
+ * Timestamp: 10/28/2023 12:10:44 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -331,14 +331,11 @@ drawline(start,end,timeslice,color)
 {
 /#
 	drawtime = int(timeslice * 20);
-	time = 0;
-	for(;;)
+	for(time = 0;time < drawtime;time++)
 	{
 		line(start,end,(1,0,0),0,1);
 		wait(0.05);
-		time++;
 	}
-time < drawtime
 #/
 }
 
@@ -366,12 +363,20 @@ givekillstreakifstreakcountmatches(index,killstreak,streakcount)
 {
 	pixbeginevent("giveKillstreakIfStreakCountMatches");
 /#
-	println("Killstreak Undefined.\n");
-	println("Killstreak listed as." + killstreak + "\n");
-	println("Killstreak Not Available.\n");
-iskillstreakavailable(killstreak)
-IsDefined(killstreak)
-IsDefined(killstreak)
+	if(!(IsDefined(killstreak)))
+	{
+		println("Killstreak Undefined.\n");
+	}
+
+	if(IsDefined(killstreak))
+	{
+		println("Killstreak listed as." + killstreak + "\n");
+	}
+
+	if(!(iskillstreakavailable(killstreak)))
+	{
+		println("Killstreak Not Available.\n");
+	}
 #/
 	if(self.pers["killstreaksEarnedThisKillstreak"] > index && isroundbased())
 	{
@@ -879,9 +884,8 @@ changekillstreakquantity(killstreakweapon,delta)
 	{
 /#
 		assert(quantity > 0);
-#/
 	}
-
+#/
 	quantity = quantity + delta;
 	if(quantity > level.scorestreaksmaxstacking)
 	{
@@ -1268,9 +1272,9 @@ trackweaponusage()
 
 /#
 	assert(self.lastnonkillstreakweapon != "none");
-#/
 	for(;;)
 	{
+#/
 		currentweapon = self getcurrentweapon();
 		self waittill("weapon_change",weapon);
 		if(maps/mp/gametypes/_weapons::isprimaryweapon(weapon))
@@ -2114,10 +2118,14 @@ killstreak_debug_think()
 				killstreak_data_dump();
 				break;
 		}
-		setdvar("debug_killstreak","");
+
+		if(cmd != "")
+		{
+			setdvar("debug_killstreak","");
+		}
+
 		wait(0.5);
 	}
-cmd != ""
 #/
 }
 
@@ -2129,8 +2137,7 @@ killstreak_data_dump()
 	println("##### Killstreak Data #####");
 	println("killstreak,killstreaklevel,weapon,altweapon1,altweapon2,altweapon3,altweapon4,type1,type2,type3,type4");
 	keys = getarraykeys(level.killstreaks);
-	i = 0;
-	for(;;)
+	for(i = 0;i < keys.size;i++)
 	{
 		data = level.killstreaks[keys[i]];
 		type_data = level.killstreaktype[keys[i]];
@@ -2138,47 +2145,51 @@ killstreak_data_dump()
 		print(data.killstreaklevel + ",");
 		print(data.weapon + ",");
 		alt = 0;
-/#
-		assert(data.altweapons.size <= 4);
-#/
-		alt = 0;
-		for(;;)
+		if(IsDefined(data.altweapons))
 		{
-			print(data.altweapons[alt] + ",");
-			alt++;
+/#
+			assert(data.altweapons.size <= 4);
+#/
+			for(alt = 0;alt < data.altweapons.size;alt++)
+			{
+				print(data.altweapons[alt] + ",");
+			}
 		}
-		for(;;)
+
+		while(alt < 4)
 		{
 			print(",");
 			alt++;
 		}
+
 		type = 0;
-/#
-		assert(type_data.size < 4);
-#/
-		type_keys = getarraykeys(type_data);
-		for(;;)
+		if(IsDefined(type_data))
 		{
-			print(type_keys[type] + ",");
-			type++;
+/#
+			assert(type_data.size < 4);
+#/
+			type_keys = getarraykeys(type_data);
+			while(type < type_keys.size)
+			{
+				if(type_data[type_keys[type]] == 1)
+				{
+					print(type_keys[type] + ",");
+				}
+
+				type++;
+			}
 		}
-		for(;;)
+
+		while(type < 4)
 		{
 			print(",");
 			type++;
 		}
+
 		println("");
-		i++;
 	}
+
 	println("##### End Killstreak Data #####");
-type < 4
-type_data[type_keys[type]] == 1
-type < type_keys.size
-IsDefined(type_data)
-alt < 4
-alt < data.altweapons.size
-IsDefined(data.altweapons)
-i < keys.size
 #/
 }
 

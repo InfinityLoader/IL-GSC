@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 44
- * Decompile Time: 200 ms
- * Timestamp: 10/27/2023 3:01:02 AM
+ * Decompile Time: 17 ms
+ * Timestamp: 10/28/2023 12:10:47 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -415,15 +415,16 @@ startstrafe()
 		self.gunsoundentity playloopsound(level.straferungunsound);
 		self shellshockplayers(trace["position"]);
 /#
-		time = 300;
-		debug_line(attackstartvector,20 - VectorScale((0,0,1)),trace["position"],(1,0,0),time);
-		trace = bullettrace(perfectattackstartvector,(perfectattackstartvector[0],perfectattackstartvector[1],-100000),0,self,0,1);
-		debug_line(20 + VectorScale((0,0,1)),trace["position"],20 - VectorScale((0,0,1)),trace["position"],(0,0,1));
-	time
-	0
-	count % 30 == 0
-	0
-	getdvarintdefault(#"B575F615",0)
+		if(getdvarintdefault(#"B575F615",0))
+		{
+			time = 300;
+			debug_line(attackstartvector,20 - VectorScale((0,0,1)),trace["position"],(1,0,0),time);
+			if(count % 30 == 0)
+			{
+				trace = bullettrace(perfectattackstartvector,(perfectattackstartvector[0],perfectattackstartvector[1],-100000),0,self,0,1);
+				debug_line(20 + VectorScale((0,0,1)),trace["position"],20 - VectorScale((0,0,1)),trace["position"],(0,0,1));
+			}
+		}
 #/
 		count++;
 		wait(weaponshoottime);
@@ -490,9 +491,10 @@ firerockets()
 		rocket.soundmod = "straferun";
 		rocket attachkillcamtorocket(level.straferunkillcams.rockets[rocketindex],selectedtarget,targetorigin);
 /#
-		rocket thread debug_draw_bomb_path(undefined,VectorScale((0,1,0)),0.5);
-400
-getdvarintdefault(#"9191CAAA",0)
+		if(getdvarintdefault(#"9191CAAA",0))
+		{
+			rocket thread debug_draw_bomb_path(undefined,VectorScale((0,1,0)),0.5);
+		}
 #/
 		wait(level.straferunrocketdelay);
 	}
@@ -808,9 +810,10 @@ createkillcams(numkillcams,numrockets)
 		{
 			level.straferunkillcams.strafes[level.straferunkillcams.strafes.size] = createkillcament();
 /#
-			level.straferunkillcams.strafes[i] thread debug_draw_bomb_path(undefined,VectorScale((0,0,1)),0.5);
-200
-getdvarintdefault(#"9191CAAA",0)
+			if(getdvarintdefault(#"9191CAAA",0))
+			{
+				level.straferunkillcams.strafes[i] thread debug_draw_bomb_path(undefined,VectorScale((0,0,1)),0.5);
+			}
 #/
 		}
 	}

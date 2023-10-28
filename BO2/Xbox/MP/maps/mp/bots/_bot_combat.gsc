@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 65
- * Decompile Time: 294 ms
- * Timestamp: 10/27/2023 3:04:11 AM
+ * Decompile Time: 20 ms
+ * Timestamp: 10/28/2023 12:13:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -35,10 +35,16 @@ bot_combat_think(damage,attacker,direction)
 
 		difficulty = maps/mp/bots/_bot::bot_get_difficulty();
 /#
-		self bot_combat_idle();
-	isplayer(self.bot.threat.entity) && !self.bot.threat.entity is_bot()
-	GetDvarInt(#"D3EB879")
-	bot_has_enemy()
+		if(bot_has_enemy())
+		{
+			if(GetDvarInt(#"D3EB879"))
+			{
+				if(isplayer(self.bot.threat.entity) && !self.bot.threat.entity is_bot())
+				{
+					self bot_combat_idle();
+				}
+			}
+		}
 #/
 		sight = bot_best_enemy();
 		bot_select_weapon();

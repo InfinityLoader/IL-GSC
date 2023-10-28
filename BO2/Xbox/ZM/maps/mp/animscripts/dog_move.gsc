@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 6
- * Decompile Time: 86 ms
- * Timestamp: 10/27/2023 3:05:50 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:14:05 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/dog_stop;
@@ -43,8 +43,10 @@ main()
 	self setaimanimweights(0,0);
 	do_movement = 1;
 /#
-	do_movement = 0;
-debug_allow_movement()
+	if(!(debug_allow_movement()))
+	{
+		do_movement = 0;
+	}
 #/
 	if(IsDefined(level.hostmigrationtimer))
 	{
@@ -105,8 +107,10 @@ moveloop()
 	{
 		do_movement = 1;
 /#
-		do_movement = 0;
-debug_allow_movement()
+		if(!(debug_allow_movement()))
+		{
+			do_movement = 0;
+		}
 #/
 		if(IsDefined(level.hostmigrationtimer))
 		{
@@ -172,9 +176,14 @@ stopmove()
 shouldrun()
 {
 /#
-	return 1;
-	return 0;
-Stack-Empty ? GetDvarInt(#"DFB12081") != 0 : GetDvarInt(#"D5D7999B") != 0
+	if(GetDvarInt(#"DFB12081") != 0)
+	{
+		return 1;
+	}
+	else if(GetDvarInt(#"D5D7999B") != 0)
+	{
+		return 0;
+	}
 #/
 	if(IsDefined(self.enemy))
 	{

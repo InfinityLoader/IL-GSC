@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 29
- * Decompile Time: 55 ms
- * Timestamp: 10/27/2023 3:02:36 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:11:36 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -162,27 +162,26 @@ assertproperplacement()
 {
 /#
 	numplayers = level.placement["all"].size;
-	i = 0;
-	for(;;)
+	for(i = 0;i < numplayers - 1;i++)
 	{
-		println("^1Placement array:");
-		i = 0;
-		for(;;)
+		if(IsDefined(level.placement["all"][i]) && IsDefined(level.placement["all"][i + 1]))
 		{
-			player = level.placement["all"][i];
-			println("^1" + i + ". " + player.name + ": " + player.score);
-			i++;
-		}
+			if(level.placement["all"][i].score < level.placement["all"][i + 1].score)
+			{
+				println("^1Placement array:");
+				for(i = 0;i < numplayers;i++)
+				{
+					player = level.placement["all"][i];
+					println("^1" + i + ". " + player.name + ": " + player.score);
+				}
+
 /#
-		assertmsg("Placement array was not properly sorted");
+				assertmsg("Placement array was not properly sorted");
 #/
-		break;
-		i++;
+				break;
+			}
+		}
 	}
-i < numplayers
-level.placement["all"][i].score < level.placement["all"][i + 1].score
-IsDefined(level.placement["all"][i]) && IsDefined(level.placement["all"][i + 1])
-i < numplayers - 1
 #/
 }
 
@@ -459,14 +458,11 @@ gethitlocheight(shitloc)
 debugline(start,end)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < 50;i++)
 	{
 		line(start,end);
 		wait(0.05);
-		i++;
 	}
-i < 50
 #/
 }
 

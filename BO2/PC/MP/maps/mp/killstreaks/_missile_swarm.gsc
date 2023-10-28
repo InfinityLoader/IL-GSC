@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 24
- * Decompile Time: 252 ms
- * Timestamp: 10/27/2023 3:00:47 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:10:44 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -537,8 +537,10 @@ projectile_spawn_utility(owner,target,origin,weapon,targetname,movegoal)
 	p.goal = goal;
 	p.targetname = "swarm_missile";
 /#
-	p thread projectile_cam(owner);
-!is_true(owner.swarm_cam) && GetDvarInt(#"492656A6") == 1
+	if(!is_true(owner.swarm_cam) && GetDvarInt(#"492656A6") == 1)
+	{
+		p thread projectile_cam(owner);
+	}
 #/
 	return p;
 }
@@ -773,7 +775,9 @@ player_valid_target(player,team,owner)
 	}
 
 /#
-	return 0;
-player isinmovemode("ufo","noclip")
+	if(player isinmovemode("ufo","noclip"))
+	{
+		return 0;
+	}
 #/
 }

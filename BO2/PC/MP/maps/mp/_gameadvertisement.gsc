@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 22
- * Decompile Time: 74 ms
- * Timestamp: 10/27/2023 3:01:23 AM
+ * Decompile Time: 3 ms
+ * Timestamp: 10/28/2023 12:10:56 AM
 *******************************************************************/
 
 #include maps/mp/_utility;
@@ -134,9 +134,8 @@ teamscorelimitcheck(rulescorepercent)
 
 /#
 		updatedebughud(3,"Score Percentage Left: ",int(minscorepercentageleft));
-#/
 	}
-
+#/
 	return 1;
 }
 
@@ -442,14 +441,17 @@ updatedebughud(hudindex,text,value)
 			level.sessionadverthud_1a_text = text;
 			level.sessionadverthud_1b_text = value;
 			break;
+
 		case "2":
 			level.sessionadverthud_2a_text = text;
 			level.sessionadverthud_2b_text = value;
 			break;
+
 		case "3":
 			level.sessionadverthud_3a_text = text;
 			level.sessionadverthud_3b_text = value;
 			break;
+
 		case "4":
 			level.sessionadverthud_4a_text = text;
 			level.sessionadverthud_4b_text = value;
@@ -481,73 +483,98 @@ sessionadvertismentupdatedebughud()
 	level.sessionadverthud_3b_text = "";
 	level.sessionadverthud_4a_text = "";
 	level.sessionadverthud_4b_text = "";
-	for(;;)
+	while(1)
 	{
-		for(;;)
+		wait(1);
+		showdebughud = getdvarintdefault("sessionAdvertShowDebugHud",0);
+		level.sessionadverthud_0_text = "Session is advertised";
+		if(level.sessionadvertstatus == 0)
 		{
-			wait(1);
-			showdebughud = getdvarintdefault("sessionAdvertShowDebugHud",0);
-			level.sessionadverthud_0_text = "Session is advertised";
 			level.sessionadverthud_0_text = "Session is not advertised";
-			host = gethostplayer();
 		}
-		sessionadverthud_0 = host sessionadvertismentcreatedebughud(0,0);
-		sessionadverthud_1a = host sessionadvertismentcreatedebughud(1,-20);
-		sessionadverthud_1b = host sessionadvertismentcreatedebughud(1,0);
-		sessionadverthud_2a = host sessionadvertismentcreatedebughud(2,-20);
-		sessionadverthud_2b = host sessionadvertismentcreatedebughud(2,0);
-		sessionadverthud_3a = host sessionadvertismentcreatedebughud(3,-20);
-		sessionadverthud_3b = host sessionadvertismentcreatedebughud(3,0);
-		sessionadverthud_4a = host sessionadvertismentcreatedebughud(4,-20);
-		sessionadverthud_4b = host sessionadvertismentcreatedebughud(4,0);
-		sessionadverthud_1a.color = VectorScale((0,1,0));
-		sessionadverthud_1b.color = VectorScale((0,1,0));
-		sessionadverthud_2a.color = VectorScale((0,1,0));
-		sessionadverthud_2b.color = VectorScale((0,1,0));
-		sessionadverthud_0 destroy();
-		sessionadverthud_1a destroy();
-		sessionadverthud_1b destroy();
-		sessionadverthud_2a destroy();
-		sessionadverthud_2b destroy();
-		sessionadverthud_3a destroy();
-		sessionadverthud_3b destroy();
-		sessionadverthud_4a destroy();
-		sessionadverthud_4b destroy();
-		sessionadverthud_0 = undefined;
-		sessionadverthud_1a = undefined;
-		sessionadverthud_1b = undefined;
-		sessionadverthud_2a = undefined;
-		sessionadverthud_2b = undefined;
-		sessionadverthud_3a = undefined;
-		sessionadverthud_3b = undefined;
-		sessionadverthud_4a = undefined;
-		sessionadverthud_4b = undefined;
-		continue;
-		sessionadverthud_0.color = (1,1,1);
-		sessionadverthud_0.color = VectorScale((1,0,0));
-		sessionadverthud_0 settext(level.sessionadverthud_0_text);
-		sessionadverthud_1a settext(level.sessionadverthud_1a_text);
-		sessionadverthud_1b setvalue(level.sessionadverthud_1b_text);
-		sessionadverthud_2a settext(level.sessionadverthud_2a_text);
-		sessionadverthud_2b setvalue(level.sessionadverthud_2b_text);
-		sessionadverthud_3a settext(level.sessionadverthud_3a_text);
-		sessionadverthud_3b setvalue(level.sessionadverthud_3b_text);
-		sessionadverthud_4a settext(level.sessionadverthud_4a_text);
-		sessionadverthud_4b setvalue(level.sessionadverthud_4b_text);
+
+		if(!IsDefined(sessionadverthud_0) && showdebughud != 0)
+		{
+			host = gethostplayer();
+			if(!(IsDefined(host)))
+			{
+				continue;
+			}
+
+			sessionadverthud_0 = host sessionadvertismentcreatedebughud(0,0);
+			sessionadverthud_1a = host sessionadvertismentcreatedebughud(1,-20);
+			sessionadverthud_1b = host sessionadvertismentcreatedebughud(1,0);
+			sessionadverthud_2a = host sessionadvertismentcreatedebughud(2,-20);
+			sessionadverthud_2b = host sessionadvertismentcreatedebughud(2,0);
+			sessionadverthud_3a = host sessionadvertismentcreatedebughud(3,-20);
+			sessionadverthud_3b = host sessionadvertismentcreatedebughud(3,0);
+			sessionadverthud_4a = host sessionadvertismentcreatedebughud(4,-20);
+			sessionadverthud_4b = host sessionadvertismentcreatedebughud(4,0);
+			sessionadverthud_1a.color = VectorScale((0,1,0));
+			sessionadverthud_1b.color = VectorScale((0,1,0));
+			sessionadverthud_2a.color = VectorScale((0,1,0));
+			sessionadverthud_2b.color = VectorScale((0,1,0));
+		}
+
+		if(IsDefined(sessionadverthud_0))
+		{
+			if(showdebughud == 0)
+			{
+				sessionadverthud_0 destroy();
+				sessionadverthud_1a destroy();
+				sessionadverthud_1b destroy();
+				sessionadverthud_2a destroy();
+				sessionadverthud_2b destroy();
+				sessionadverthud_3a destroy();
+				sessionadverthud_3b destroy();
+				sessionadverthud_4a destroy();
+				sessionadverthud_4b destroy();
+				sessionadverthud_0 = undefined;
+				sessionadverthud_1a = undefined;
+				sessionadverthud_1b = undefined;
+				sessionadverthud_2a = undefined;
+				sessionadverthud_2b = undefined;
+				sessionadverthud_3a = undefined;
+				sessionadverthud_3b = undefined;
+				sessionadverthud_4a = undefined;
+				sessionadverthud_4b = undefined;
+				continue;
+			}
+
+			if(level.sessionadvertstatus == 1)
+			{
+				sessionadverthud_0.color = (1,1,1);
+			}
+			else
+			{
+				sessionadverthud_0.color = VectorScale((1,0,0));
+			}
+
+			sessionadverthud_0 settext(level.sessionadverthud_0_text);
+			if(level.sessionadverthud_1a_text != "")
+			{
+				sessionadverthud_1a settext(level.sessionadverthud_1a_text);
+				sessionadverthud_1b setvalue(level.sessionadverthud_1b_text);
+			}
+
+			if(level.sessionadverthud_2a_text != "")
+			{
+				sessionadverthud_2a settext(level.sessionadverthud_2a_text);
+				sessionadverthud_2b setvalue(level.sessionadverthud_2b_text);
+			}
+
+			if(level.sessionadverthud_3a_text != "")
+			{
+				sessionadverthud_3a settext(level.sessionadverthud_3a_text);
+				sessionadverthud_3b setvalue(level.sessionadverthud_3b_text);
+			}
+
+			if(level.sessionadverthud_4a_text != "")
+			{
+				sessionadverthud_4a settext(level.sessionadverthud_4a_text);
+				sessionadverthud_4b setvalue(level.sessionadverthud_4b_text);
+			}
+		}
 	}
-level.sessionadverthud_4a_text != ""
-level.sessionadverthud_3a_text != ""
-level.sessionadverthud_2a_text != ""
-level.sessionadverthud_1a_text != ""
-showdebughud == 0 ? level.sessionadvertstatus == 1 : 0.9
-IsDefined(sessionadverthud_0)
-0.5
-0.5
-0.5
-0.5
-IsDefined(host)
-!IsDefined(sessionadverthud_0) && showdebughud != 0
-level.sessionadvertstatus == 0
-1
 #/
 }

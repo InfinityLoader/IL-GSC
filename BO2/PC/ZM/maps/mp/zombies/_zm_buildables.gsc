@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 127
- * Decompile Time: 453 ms
- * Timestamp: 10/27/2023 3:03:01 AM
+ * Decompile Time: 56 ms
+ * Timestamp: 10/28/2023 12:11:44 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -255,8 +255,10 @@ generate_zombie_buildable_piece(buildablename,modelname,radius,height,drop_offse
 	buildable_pieces = [];
 	buildable_pieces_structs = getstructarray(buildablename + "_" + modelname,"targetname");
 /#
-	println("ERROR: Missing buildable piece <" + buildablename + "> <" + modelname + ">\n");
-buildable_pieces_structs.size < 1
+	if(buildable_pieces_structs.size < 1)
+	{
+		println("ERROR: Missing buildable piece <" + buildablename + "> <" + modelname + ">\n");
+	}
 #/
 	foreach(index, struct in buildable_pieces_structs)
 	{
@@ -363,9 +365,9 @@ add_buildable_piece(piece,part_name,can_reuse)
 /#
 /#
 		assert(self.buildable_slot == piece.buildable_slot);
-#/
-#/
 	}
+#/
+#/
 }
 
 //Function Number: 18
@@ -709,10 +711,12 @@ player_set_buildable_piece(piece,slot)
 	}
 
 /#
+	if(IsDefined(slot) && IsDefined(piece) && IsDefined(piece.buildable_slot))
+	{
 /#
-	assert(slot == piece.buildable_slot);
+		assert(slot == piece.buildable_slot);
+	}
 #/
-IsDefined(slot) && IsDefined(piece) && IsDefined(piece.buildable_slot)
 #/
 	if(!(IsDefined(self.current_buildable_pieces)))
 	{
@@ -736,13 +740,12 @@ dbline(from,to)
 {
 /#
 	time = 20;
-	for(;;)
+	while(time > 0)
 	{
 		line(from,to,(0,0,1),0,1);
 		time = time - 0.05;
 		wait(0.05);
 	}
-time > 0
 #/
 }
 
@@ -1347,10 +1350,13 @@ piece_spawn_at(origin,angles)
 	}
 
 /#
-	level.drop_offset = 0;
+	if(!(IsDefined(level.drop_offset)))
+	{
+		level.drop_offset = 0;
+	}
+
 	origin = origin + (0,0,level.drop_offset);
 	unitrigger_offset = unitrigger_offset - (0,0,level.drop_offset);
-IsDefined(level.drop_offset)
 #/
 	self.model = spawn("script_model",origin);
 	if(IsDefined(angles))
@@ -2025,7 +2031,7 @@ buildablestub_update_prompt(player)
 		else
 		{
 /#
-				assert(IsDefined(level.zombie_buildables[self.equipname].hint),"Missing buildable hint");
+			assert(IsDefined(level.zombie_buildables[self.equipname].hint),"Missing buildable hint");
 #/
 			if(IsDefined(level.zombie_buildables[self.equipname].hint))
 			{
@@ -2915,8 +2921,10 @@ ai_buildable_trigger_think(parent,equipname,weaponname,trigger_hintstring,persis
 onpickuputs(player)
 {
 /#
-	println("ZM >> Buildable piece recovered by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece recovered by - " + player.name);
+	}
 #/
 }
 
@@ -2924,8 +2932,10 @@ IsDefined(player) && IsDefined(player.name)
 ondroputs(player)
 {
 /#
-	println("ZM >> Buildable piece dropped by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece dropped by - " + player.name);
+	}
 #/
 	player notify("event_ended");
 }
@@ -2934,8 +2944,10 @@ IsDefined(player) && IsDefined(player.name)
 onbeginuseuts(player)
 {
 /#
-	println("ZM >> Buildable piece begin use by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece begin use by - " + player.name);
+	}
 #/
 	if(IsDefined(self.buildablestruct.onbeginuse))
 	{
@@ -2980,8 +2992,10 @@ sndbuildableusealias(name)
 onenduseuts(team,player,result)
 {
 /#
-	println("ZM >> Buildable piece end use by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece end use by - " + player.name);
+	}
 #/
 	if(!(IsDefined(player)))
 	{
@@ -3006,8 +3020,10 @@ IsDefined(player) && IsDefined(player.name)
 oncantuseuts(player)
 {
 /#
-	println("ZM >> Buildable piece can\'t use by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece can\'t use by - " + player.name);
+	}
 #/
 	if(IsDefined(self.buildablestruct.oncantuse))
 	{
@@ -3019,8 +3035,10 @@ IsDefined(player) && IsDefined(player.name)
 onuseplantobjectuts(player)
 {
 /#
-	println("ZM >> Buildable piece crafted by - " + player.name);
-IsDefined(player) && IsDefined(player.name)
+	if(IsDefined(player) && IsDefined(player.name))
+	{
+		println("ZM >> Buildable piece crafted by - " + player.name);
+	}
 #/
 	if(IsDefined(self.buildablestruct.onuseplantobject))
 	{

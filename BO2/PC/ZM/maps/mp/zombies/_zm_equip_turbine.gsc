@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 30
- * Decompile Time: 73 ms
- * Timestamp: 10/27/2023 3:03:05 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -798,26 +798,54 @@ debugturbine(radius)
 	self endon("disconnect");
 	self endon("equip_turbine_zm_taken");
 	self.buildableturbine endon("death");
-	for(;;)
+	while(IsDefined(self.buildableturbine))
 	{
-		color = (0,1,0);
-		text = "";
-		text = "" + self.turbine_health + "";
-		text = "dying";
-		color = (0,0,0);
-		color = (0,0,1);
-		emp_time = level.zombie_vars["emp_perk_off_time"];
-		now = GetTime();
-		emp_time_left = int(emp_time - now - self.turbine_emp_time / 1000);
-		text = text + " emp(" + emp_time_left + ")";
-		text = text + " warmup";
-		color = (1,0,0);
-		color = (1,0.7,0);
-		color = (1,1,0);
-		print3d(60 + VectorScale((0,0,1)),self.buildableturbine.origin,text,color,1,0.5);
+		if(GetDvarInt(#"EB512CB7"))
+		{
+			color = (0,1,0);
+			text = "";
+			if(IsDefined(self.turbine_health))
+			{
+				text = "" + self.turbine_health + "";
+			}
+
+			if(IsDefined(self.buildableturbine.dying) && self.buildableturbine.dying)
+			{
+				text = "dying";
+				color = (0,0,0);
+			}
+			else if(IsDefined(self.turbine_emped) && self.turbine_emped)
+			{
+				color = (0,0,1);
+				emp_time = level.zombie_vars["emp_perk_off_time"];
+				now = GetTime();
+				emp_time_left = int(emp_time - now - self.turbine_emp_time / 1000);
+				text = text + " emp(" + emp_time_left + ")";
+			}
+			else if(IsDefined(self.turbine_is_powering_on) && self.turbine_is_powering_on)
+			{
+				text = text + " warmup";
+			}
+			else if(IsDefined(self.turbine_power_is_on) && self.turbine_power_is_on)
+			{
+				if(self.turbine_health < 200)
+				{
+					color = (1,0,0);
+				}
+				else if(self.turbine_health < 600)
+				{
+					color = (1,0.7,0);
+				}
+				else
+				{
+					color = (1,1,0);
+				}
+			}
+
+			print3d(60 + VectorScale((0,0,1)),self.buildableturbine.origin,text,color,1,0.5);
+		}
+
 		wait(0.05);
 	}
-1
-Stack-Empty ? Stack-Empty : ((IsDefined(self.buildableturbine)) ? GetDvarInt(#"EB512CB7") : ((IsDefined(self.turbine_health)) ? IsDefined(self.buildableturbine.dying) && self.buildableturbine.dying : ((IsDefined(self.turbine_emped) && self.turbine_emped) ? IsDefined(self.turbine_is_powering_on) && self.turbine_is_powering_on : ((IsDefined(self.turbine_power_is_on) && self.turbine_power_is_on) ? self.turbine_health < 200 : self.turbine_health < 600))))
 #/
 }

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 48
- * Decompile Time: 246 ms
- * Timestamp: 10/27/2023 3:04:43 AM
+ * Decompile Time: 26 ms
+ * Timestamp: 10/28/2023 12:13:40 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -1087,11 +1087,12 @@ valid_target(target,team,owner)
 		}
 
 /#
-		return 0;
-target isinmovemode("ufo","noclip")
-#/
+		if(target isinmovemode("ufo","noclip"))
+		{
+			return 0;
+		}
 	}
-
+#/
 	if(level.teambased)
 	{
 		if(IsDefined(target.team) && team == target.team)
@@ -1455,10 +1456,12 @@ tank_devgui_think()
 	{
 		wait(0.25);
 		level.ai_tank_turret_fire_rate = weaponfiretime("ai_tank_drone_gun_mp");
-		devgui_debug_route();
-		setdvar("devgui_tank","");
+		if(GetDvar(#"85E86196") == "routes")
+		{
+			devgui_debug_route();
+			setdvar("devgui_tank","");
+		}
 	}
-GetDvar(#"85E86196") == "routes"
 #/
 }
 
@@ -1486,20 +1489,19 @@ devgui_debug_route()
 /#
 	iprintln("Choose nodes with \'A\' or press \'B\' to cancel");
 	nodes = maps/mp/gametypes/_dev::dev_get_node_pair();
-	iprintln("Route Debug Cancelled");
-	return;
+	if(!(IsDefined(nodes)))
+	{
+		iprintln("Route Debug Cancelled");
+		return;
+	}
+
 	iprintln("Sending talons to chosen nodes");
 	tanks = getentarray("talon","targetname");
-	_a1611 = tanks;
-	_k1611 = FirstArrayKey(_a1611);
-	for(;;)
+	foreach(tank in tanks)
 	{
-		tank = _a1611[_k1611];
-		tank notify("debug_patrol",IsDefined(_k1611),IsDefined(nodes));
+		tank notify("debug_patrol");
 		tank thread tank_debug_patrol(nodes[0],nodes[1]);
-		_k1611 = NextArrayKey(_a1611);
 	}
-_k1611
 #/
 }
 
@@ -1507,12 +1509,11 @@ _k1611
 tank_debug_hud_init()
 {
 /#
-	host = gethostplayer();
-	for(;;)
+	for(host = gethostplayer();!(IsDefined(host));host = gethostplayer())
 	{
 		wait(0.25);
-		host = gethostplayer();
 	}
+
 	x = 80;
 	y = 40;
 	level.ai_tank_bar = newclienthudelem(host);
@@ -1535,7 +1536,6 @@ tank_debug_hud_init()
 	level.ai_tank_text.alpha = 0;
 	level.ai_tank_text.fontscale = 1;
 	level.ai_tank_text.foreground = 1;
-IsDefined(host)
 #/
 }
 
@@ -1549,15 +1549,18 @@ tank_debug_health()
 	for(;;)
 	{
 		wait(0.05);
-		level.ai_tank_bar.alpha = 0;
-		level.ai_tank_text.alpha = 0;
-		return;
+		if(!IsDefined(self) || !isalive(self))
+		{
+			level.ai_tank_bar.alpha = 0;
+			level.ai_tank_text.alpha = 0;
+			return;
+		}
+
 		width = self.health / self.maxhealth * 300;
 		width = int(max(width,1));
 		level.ai_tank_bar setshader("black",width,8);
 		str = self.health + "  Last Damage: " + self.damage_debug;
 		level.ai_tank_text settext(str);
 	}
-!IsDefined(self) || !isalive(self)
 #/
 }

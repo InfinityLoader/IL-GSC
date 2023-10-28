@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 12
- * Decompile Time: 31 ms
- * Timestamp: 10/27/2023 3:05:46 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:14:03 AM
 *******************************************************************/
 
 //Function Number: 1
@@ -68,9 +68,8 @@ save()
 	{
 /#
 		println("save: Guy had no name!");
-#/
 	}
-
+#/
 	attachsize = self getattachsize();
 	for(i = 0;i < attachsize;i++)
 	{
@@ -101,9 +100,8 @@ load(info)
 	{
 /#
 		println("Load: Guy had no name!");
-#/
 	}
-
+#/
 	attachinfo = info["attach"];
 	attachsize = attachinfo.size;
 	for(i = 0;i < attachsize;i++)
@@ -125,9 +123,8 @@ precache(info)
 	{
 /#
 		println("Precache: Guy had no name!");
-#/
 	}
-
+#/
 	precachemodel(info["model"]);
 	attachinfo = info["attach"];
 	attachsize = attachinfo.size;

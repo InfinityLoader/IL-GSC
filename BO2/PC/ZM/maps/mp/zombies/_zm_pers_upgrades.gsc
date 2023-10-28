@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 38
- * Decompile Time: 188 ms
- * Timestamp: 10/27/2023 3:03:17 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:52 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -451,9 +451,8 @@ pers_upgrade_carpenter_active()
 			}
 
 /#
-#/
 		}
-
+#/
 		self.pers_carpenter_kill = undefined;
 	}
 

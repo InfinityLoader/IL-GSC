@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 13
- * Decompile Time: 64 ms
- * Timestamp: 10/27/2023 3:03:11 AM
+ * Decompile Time: 8 ms
+ * Timestamp: 10/28/2023 12:11:49 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -172,11 +172,18 @@ jump_pad_start(ent_player,endon_condition)
 			z_dist = z_dist * 2.5;
 			forward_scaling = 1.1;
 /#
-			z_dist = z_dist * GetDvarFloat(#"E2494021");
-			forward_scaling = GetDvarFloat(#"4E3BC729");
-GetDvar(#"4E3BC729") != ""
-GetDvar(#"E2494021") != ""
-GetDvarInt(#"D5FD01C3")
+			if(GetDvarInt(#"D5FD01C3"))
+			{
+				if(GetDvar(#"E2494021") != "")
+				{
+					z_dist = z_dist * GetDvarFloat(#"E2494021");
+				}
+
+				if(GetDvar(#"4E3BC729") != "")
+				{
+					forward_scaling = GetDvarFloat(#"4E3BC729");
+				}
+			}
 #/
 		}
 		else if(z_dist >= 135)
@@ -184,11 +191,18 @@ GetDvarInt(#"D5FD01C3")
 			z_dist = z_dist * 2.7;
 			forward_scaling = 1.3;
 /#
-				z_dist = z_dist * GetDvarFloat(#"E2494021");
-				forward_scaling = GetDvarFloat(#"4E3BC729");
-GetDvar(#"4E3BC729") != ""
-GetDvar(#"E2494021") != ""
-GetDvarInt(#"D5FD01C3")
+			if(GetDvarInt(#"D5FD01C3"))
+			{
+				if(GetDvar(#"E2494021") != "")
+				{
+					z_dist = z_dist * GetDvarFloat(#"E2494021");
+				}
+
+				if(GetDvar(#"4E3BC729") != "")
+				{
+					forward_scaling = GetDvarFloat(#"4E3BC729");
+				}
+			}
 #/
 		}
 		else if(z_dist < 0)
@@ -196,14 +210,20 @@ GetDvarInt(#"D5FD01C3")
 			z_dist = z_dist * 2.4;
 			forward_scaling = 1;
 /#
+			if(GetDvarInt(#"D5FD01C3"))
+			{
+				if(GetDvar(#"E2494021") != "")
+				{
 					z_dist = z_dist * GetDvarFloat(#"E2494021");
-					forward_scaling = GetDvarFloat(#"4E3BC729");
-GetDvar(#"4E3BC729") != ""
-GetDvar(#"E2494021") != ""
-GetDvarInt(#"D5FD01C3")
-#/
-		}
+				}
 
+				if(GetDvar(#"4E3BC729") != "")
+				{
+					forward_scaling = GetDvarFloat(#"4E3BC729");
+				}
+			}
+		}
+#/
 		z_velocity = 2 * z_dist * world_gravity;
 		if(z_velocity < 0)
 		{

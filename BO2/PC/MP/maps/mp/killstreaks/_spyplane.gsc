@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 46
- * Decompile Time: 623 ms
- * Timestamp: 10/27/2023 3:01:01 AM
+ * Decompile Time: 26 ms
+ * Timestamp: 10/28/2023 12:10:47 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -399,7 +399,7 @@ removeactiveuav()
 	else if(IsDefined(self.owner))
 	{
 /#
-			assert(IsDefined(self.owner.entnum));
+		assert(IsDefined(self.owner.entnum));
 #/
 		if(!(IsDefined(self.owner.entnum)))
 		{
@@ -408,7 +408,7 @@ removeactiveuav()
 
 		level.activeuavs[self.owner.entnum]--;
 /#
-			assert(level.activeuavs[self.owner.entnum] >= 0);
+		assert(level.activeuavs[self.owner.entnum] >= 0);
 #/
 		if(level.activeuavs[self.owner.entnum] < 0)
 		{
@@ -449,7 +449,7 @@ removeactivecounteruav()
 	else if(IsDefined(self.owner))
 	{
 /#
-			assert(IsDefined(self.owner.entnum));
+		assert(IsDefined(self.owner.entnum));
 #/
 		if(!(IsDefined(self.owner.entnum)))
 		{
@@ -458,7 +458,7 @@ removeactivecounteruav()
 
 		level.activecounteruavs[self.owner.entnum]--;
 /#
-			assert(level.activecounteruavs[self.owner.entnum] >= 0);
+		assert(level.activecounteruavs[self.owner.entnum] >= 0);
 #/
 		if(level.activecounteruavs[self.owner.entnum] < 0)
 		{
@@ -499,7 +499,7 @@ removeactivesatellite()
 	else if(IsDefined(self.owner))
 	{
 /#
-			assert(IsDefined(self.owner.entnum));
+		assert(IsDefined(self.owner.entnum));
 #/
 		if(!(IsDefined(self.owner.entnum)))
 		{
@@ -508,7 +508,7 @@ removeactivesatellite()
 
 		level.activesatellites[self.owner.entnum]--;
 /#
-			assert(level.activesatellites[self.owner.entnum] >= 0);
+		assert(level.activesatellites[self.owner.entnum] >= 0);
 #/
 		if(level.activesatellites[self.owner.entnum] < 0)
 		{
@@ -688,14 +688,11 @@ updatevisibility()
 debugline(frompoint,topoint,color,durationframes)
 {
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < durationframes * 20;i++)
 	{
 		line(frompoint,topoint,color);
 		wait(0.05);
-		i++;
 	}
-i < durationframes * 20
 #/
 }
 
@@ -853,7 +850,6 @@ plane_health()
 
 /#
 		debug_print3d_simple("Health: " + self.maxhealth - self.damagetaken,self,VectorScale((0,0,1)),100);
-20
 #/
 		wait(1);
 	}

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 41
- * Decompile Time: 230 ms
- * Timestamp: 10/27/2023 3:04:25 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:13:36 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -61,17 +61,20 @@ init()
 	rankname = tablelookup("mp/ranktable.csv",0,rankid,1);
 /#
 	assert(IsDefined(rankname) && rankname != "");
+		for(;;)
+		{
 #/
-	while(IsDefined(rankname) && rankname != "")
-	{
-		level.ranktable[rankid][1] = tablelookup("mp/ranktable.csv",0,rankid,1);
-		level.ranktable[rankid][2] = tablelookup("mp/ranktable.csv",0,rankid,2);
-		level.ranktable[rankid][3] = tablelookup("mp/ranktable.csv",0,rankid,3);
-		level.ranktable[rankid][7] = tablelookup("mp/ranktable.csv",0,rankid,7);
-		level.ranktable[rankid][14] = tablelookup("mp/ranktable.csv",0,rankid,14);
-		precachestring(tablelookupistring("mp/ranktable.csv",0,rankid,16));
-		rankid++;
-		rankname = tablelookup("mp/ranktable.csv",0,rankid,1);
+		if(IsDefined(rankname) && rankname != "")
+		{
+			level.ranktable[rankid][1] = tablelookup("mp/ranktable.csv",0,rankid,1);
+			level.ranktable[rankid][2] = tablelookup("mp/ranktable.csv",0,rankid,2);
+			level.ranktable[rankid][3] = tablelookup("mp/ranktable.csv",0,rankid,3);
+			level.ranktable[rankid][7] = tablelookup("mp/ranktable.csv",0,rankid,7);
+			level.ranktable[rankid][14] = tablelookup("mp/ranktable.csv",0,rankid,14);
+			precachestring(tablelookupistring("mp/ranktable.csv",0,rankid,16));
+			rankid++;
+			rankname = tablelookup("mp/ranktable.csv",0,rankid,1);
+		}
 	}
 
 	level thread onplayerconnect();
@@ -862,22 +865,25 @@ getrankforxp(xpval)
 	rankname = level.ranktable[rankid][1];
 /#
 	assert(IsDefined(rankname));
+		for(;;)
+		{
 #/
-	while(IsDefined(rankname) && rankname != "")
-	{
-		if(xpval < getrankinfominxp(rankid) + getrankinfoxpamt(rankid))
+		if(IsDefined(rankname) && rankname != "")
 		{
-			return rankid;
-		}
+			if(xpval < getrankinfominxp(rankid) + getrankinfoxpamt(rankid))
+			{
+				return rankid;
+			}
 
-		rankid++;
-		if(IsDefined(level.ranktable[rankid]))
-		{
-			rankname = level.ranktable[rankid][1];
-			continue;
-		}
+			rankid++;
+			if(IsDefined(level.ranktable[rankid]))
+			{
+				rankname = level.ranktable[rankid][1];
+				continue;
+			}
 
-		rankname = undefined;
+			rankname = undefined;
+		}
 	}
 
 	rankid--;

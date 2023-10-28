@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 77
- * Decompile Time: 215 ms
- * Timestamp: 10/27/2023 2:59:49 AM
+ * Decompile Time: 39 ms
+ * Timestamp: 10/28/2023 12:10:25 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -496,7 +496,14 @@ bot_local_think()
 
 	bot_expected_friends = GetDvarInt(#"EB92E914");
 	bot_expected_enemies = GetDvarInt(#"94FFF5AF");
-	max_players = islocalgame() ? 10 : 18;
+	if(islocalgame())
+	{
+	}
+	else
+	{
+	}
+
+	max_players = 18;
 	for(;;)
 	{
 		for(;;)
@@ -649,18 +656,26 @@ bot_spawn()
 	self endon("disconnect");
 /#
 	weapon = undefined;
-	player = gethostplayer();
-	weapon = player getcurrentweapon();
-	weapon = GetDvar(#"605D81B6");
-	self maps/mp/gametypes/_weapons::detach_all_weapons();
-	self takeallweapons();
-	self giveweapon(weapon);
-	self switchtoweapon(weapon);
-	self setspawnweapon(weapon);
-	self maps/mp/teams/_teams::set_player_model(self.team,weapon);
-IsDefined(weapon)
-GetDvar(#"605D81B6") != ""
-GetDvarInt(#"98F33417") != 0
+	if(GetDvarInt(#"98F33417") != 0)
+	{
+		player = gethostplayer();
+		weapon = player getcurrentweapon();
+	}
+
+	if(GetDvar(#"605D81B6") != "")
+	{
+		weapon = GetDvar(#"605D81B6");
+	}
+
+	if(IsDefined(weapon))
+	{
+		self maps/mp/gametypes/_weapons::detach_all_weapons();
+		self takeallweapons();
+		self giveweapon(weapon);
+		self switchtoweapon(weapon);
+		self setspawnweapon(weapon);
+		self maps/mp/teams/_teams::set_player_model(self.team,weapon);
+	}
 #/
 	self bot_spawn_init();
 	if(IsDefined(self.bot_first_spawn))
@@ -1170,15 +1185,14 @@ bot_get_enemies(on_radar)
 
 	enemies = self getenemies(1);
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < enemies.size;i++)
 	{
-		arrayremoveindex(enemies,i);
-		i--;
-		i++;
+		if(enemies[i] isinmovemode("ufo","noclip"))
+		{
+			arrayremoveindex(enemies,i);
+			i--;
+		}
 	}
-enemies[i] isinmovemode("ufo","noclip")
-i < enemies.size
 #/
 	if(on_radar && !self bot_has_radar())
 	{
@@ -1205,15 +1219,14 @@ bot_get_friends()
 {
 	friends = self getfriendlies(1);
 /#
-	i = 0;
-	for(;;)
+	for(i = 0;i < friends.size;i++)
 	{
-		arrayremoveindex(friends,i);
-		i--;
-		i++;
+		if(friends[i] isinmovemode("ufo","noclip"))
+		{
+			arrayremoveindex(friends,i);
+			i--;
+		}
 	}
-friends[i] isinmovemode("ufo","noclip")
-i < friends.size
 #/
 	return friends;
 }
@@ -1976,7 +1989,10 @@ bot_update_killstreak()
 	}
 
 /#
-GetDvarInt(#"1D5FB2EC")
+	if(!(GetDvarInt(#"1D5FB2EC")))
+	{
+		return;
+	}
 #/
 	self.bot.update_killstreak = time + randomintrange(1000,3000);
 	weapons = self getweaponslist();
@@ -2101,18 +2117,23 @@ bot_rccar_think()
 			else
 			{
 /#
-player isinmovemode("ufo","noclip")
-#/
-				if(bot_get_difficulty() == "easy")
+				if(player isinmovemode("ufo","noclip"))
 				{
-					if(distancesquared(ent.origin,player.origin) < 262144)
+				}
+				else
+				{
+#/
+					if(bot_get_difficulty() == "easy")
+					{
+						if(distancesquared(ent.origin,player.origin) < 262144)
+						{
+							self pressattackbutton();
+						}
+					}
+					else if(distancesquared(ent.origin,player.origin) < 40000)
 					{
 						self pressattackbutton();
 					}
-				}
-				else if(distancesquared(ent.origin,player.origin) < 40000)
-				{
-					self pressattackbutton();
 				}
 			}
 		}
@@ -2385,12 +2406,18 @@ gametype_void()
 bot_debug_star(origin,seconds,color)
 {
 /#
-	seconds = 1;
-	color = (1,0,0);
+	if(!(IsDefined(seconds)))
+	{
+		seconds = 1;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,0,0);
+	}
+
 	frames = int(20 * seconds);
 	debugstar(origin,frames,color);
-IsDefined(color)
-IsDefined(seconds)
 #/
 }
 
@@ -2398,12 +2425,18 @@ IsDefined(seconds)
 bot_debug_circle(origin,radius,seconds,color)
 {
 /#
-	seconds = 1;
-	color = (1,0,0);
+	if(!(IsDefined(seconds)))
+	{
+		seconds = 1;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,0,0);
+	}
+
 	frames = int(20 * seconds);
 	circle(origin,radius,color,0,1,frames);
-IsDefined(color)
-IsDefined(seconds)
 #/
 }
 
@@ -2411,14 +2444,23 @@ IsDefined(seconds)
 bot_debug_box(origin,mins,maxs,yaw,seconds,color)
 {
 /#
-	yaw = 0;
-	seconds = 1;
-	color = (1,0,0);
+	if(!(IsDefined(yaw)))
+	{
+		yaw = 0;
+	}
+
+	if(!(IsDefined(seconds)))
+	{
+		seconds = 1;
+	}
+
+	if(!(IsDefined(color)))
+	{
+		color = (1,0,0);
+	}
+
 	frames = int(20 * seconds);
 	box(origin,mins,maxs,yaw,color,1,0,frames);
-IsDefined(color)
-IsDefined(seconds)
-IsDefined(yaw)
 #/
 }
 
@@ -2444,20 +2486,25 @@ bot_devgui_think()
 				self notify("crosshair_follow_off",GetDvarInt(#"487CD523") != 0);
 				setdvar("bot_AllowMovement","0");
 				break;
+	
 			case "laststand":
 				setdvar("scr_forcelaststand","1");
 				self setperk("specialty_pistoldeath");
 				self setperk("specialty_finalstand");
 				self dodamage(self.health,self.origin);
 				break;
+	
 			case "":
 			default:
 				reset = 0;
 				break;
 		}
-		setdvar("devgui_bot","");
+
+		if(reset)
+		{
+			setdvar("devgui_bot","");
+		}
 	}
-reset
 #/
 }
 
@@ -2478,11 +2525,13 @@ bot_system_devgui_think()
 				team = player.team;
 				devgui_bot_spawn(team);
 				break;
+	
 			case "spawn_enemy":
 				player = gethostplayer();
 				team = getenemyteamwithlowestplayercount(player.team);
 				devgui_bot_spawn(team);
 				break;
+	
 			case "loadout":
 			case "player_weapon":
 				players = get_players();
@@ -2501,21 +2550,28 @@ bot_system_devgui_think()
 					player maps/mp/teams/_teams::set_player_model(player.team,weapon);
 					_k2692 = NextArrayKey(_a2692);
 				}
+		
 				break;
 		_k2692
-		Stack-Empty ? IsDefined(_k2692) : player is_bot()
+		player is_bot()
+		IsDefined(_k2692)
 				break;
+	
 			case "routes":
 				devgui_debug_route();
 				break;
+	
 			case "":
 			default:
 				reset = 0;
 				break;
 		}
-		setdvar("devgui_bot","");
+
+		if(reset)
+		{
+			setdvar("devgui_bot","");
+		}
 	}
-reset
 #/
 }
 
@@ -2541,8 +2597,10 @@ bot_crosshair_follow()
 		direction_vec = (direction_vec[0] * scale,direction_vec[1] * scale,direction_vec[2] * scale);
 		trace = bullettrace(eye,eye + direction_vec,0,undefined);
 		origin = trace["position"] + (0,0,0);
+		if(distancesquared(self.origin,origin) > 16384)
+		{
+		}
 	}
-distancesquared(self.origin,origin) > 16384
 #/
 }
 
@@ -2556,14 +2614,20 @@ bot_debug_patrol(node1,node2)
 	{
 		self addgoal(node1,24,4,"debug_route");
 		self waittill("debug_route",result);
-		self cancelgoal("debug_route");
-		wait(5);
+		if(result == "failed")
+		{
+			self cancelgoal("debug_route");
+			wait(5);
+		}
+
 		self addgoal(node2,24,4,"debug_route");
-		self waittill(result == "failed","debug_route",result);
-		self cancelgoal("debug_route");
-		wait(5);
+		self waittill("debug_route",result);
+		if(result == "failed")
+		{
+			self cancelgoal("debug_route");
+			wait(5);
+		}
 	}
-result == "failed"
 #/
 }
 
@@ -2573,21 +2637,25 @@ devgui_debug_route()
 /#
 	iprintln("Choose nodes with \'A\' or press \'B\' to cancel");
 	nodes = maps/mp/gametypes/_dev::dev_get_node_pair();
-	iprintln("Route Debug Cancelled");
-	return;
+	if(!(IsDefined(nodes)))
+	{
+		iprintln("Route Debug Cancelled");
+		return;
+	}
+
 	iprintln("Sending bots to chosen nodes");
 	players = get_players();
-	_a2804 = players;
-	_k2804 = FirstArrayKey(_a2804);
-	for(;;)
+	foreach(player in players)
 	{
-		player = _a2804[_k2804];
-		player notify("debug_patrol",player is_bot(),IsDefined(_k2804),IsDefined(nodes));
-		player thread bot_debug_patrol(nodes[0],nodes[1]);
-		_k2804 = NextArrayKey(_a2804);
+		if(!(player is_bot()))
+		{
+		}
+		else
+		{
+			player notify("debug_patrol");
+			player thread bot_debug_patrol(nodes[0],nodes[1]);
+		}
 	}
-_k2804
-Stack-Empty ? Stack-Empty : Stack-Empty
 #/
 }
 
@@ -2605,13 +2673,16 @@ devgui_bot_spawn(team)
 	direction_vec = player.origin - trace["position"];
 	direction = VectorToAngles(direction_vec);
 	bot = addtestclient();
-	println("Could not add test client");
-	return;
+	if(!(IsDefined(bot)))
+	{
+		println("Could not add test client");
+		return;
+	}
+
 	bot.pers["isBot"] = 1;
 	bot thread bot_spawn_think(team);
 	yaw = direction[1];
 	bot thread devgui_bot_spawn_think(trace["position"],yaw);
-IsDefined(bot)
 #/
 }
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 24
- * Decompile Time: 107 ms
- * Timestamp: 10/27/2023 3:00:46 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:10:44 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -245,9 +245,8 @@ drone_target_search(hardpointtype)
 			self.goal.origin = (level.missile_drone_origin[0] + direction[0],level.missile_drone_origin[1] + direction[1],level.missile_drone_origin[2]);
 /#
 			debug_line(self.origin,self.goal.origin,(0,1,1),5000);
-#/
 		}
-
+#/
 		if(IsDefined(target))
 		{
 			self set_drone_target(hardpointtype,target);

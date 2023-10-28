@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 23
- * Decompile Time: 232 ms
- * Timestamp: 10/27/2023 3:01:25 AM
+ * Decompile Time: 7 ms
+ * Timestamp: 10/28/2023 12:10:57 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -380,55 +380,62 @@ getbesthackertooltarget()
 		else
 		{
 /#
-			targetsvalid[targetsvalid.size] = targetsall[idx];
-self iswithinhackertoolreticle(targetsall[idx])
-GetDvar(#"4C560F97") == "1"
-#/
-			if(level.teambased)
+			if(GetDvar(#"4C560F97") == "1")
 			{
-				if(isentityhackablecarepackage(target_ent))
+				if(self iswithinhackertoolreticle(targetsall[idx]))
 				{
-					if(self iswithinhackertoolreticle(target_ent))
+					targetsvalid[targetsvalid.size] = targetsall[idx];
+				}
+			}
+			else
+			{
+#/
+				if(level.teambased)
+				{
+					if(isentityhackablecarepackage(target_ent))
+					{
+						if(self iswithinhackertoolreticle(target_ent))
+						{
+							targetsvalid[targetsvalid.size] = target_ent;
+						}
+
+						continue;
+					}
+
+					if(IsDefined(target_ent.team))
+					{
+						if(target_ent.team != self.team)
+						{
+							if(self iswithinhackertoolreticle(target_ent))
+							{
+								targetsvalid[targetsvalid.size] = target_ent;
+							}
+						}
+
+						continue;
+					}
+
+					if(IsDefined(target_ent.owner.team))
+					{
+						if(target_ent.owner.team != self.team)
+						{
+							if(self iswithinhackertoolreticle(target_ent))
+							{
+								targetsvalid[targetsvalid.size] = target_ent;
+							}
+						}
+					}
+				}
+				else if(self iswithinhackertoolreticle(target_ent))
+				{
+					if(isentityhackablecarepackage(target_ent))
 					{
 						targetsvalid[targetsvalid.size] = target_ent;
 					}
-
-					continue;
-				}
-
-				if(IsDefined(target_ent.team))
-				{
-					if(target_ent.team != self.team)
+					else if(IsDefined(target_ent.owner) && self != target_ent.owner)
 					{
-						if(self iswithinhackertoolreticle(target_ent))
-						{
-							targetsvalid[targetsvalid.size] = target_ent;
-						}
+						targetsvalid[targetsvalid.size] = target_ent;
 					}
-
-					continue;
-				}
-
-				if(IsDefined(target_ent.owner.team))
-				{
-					if(target_ent.owner.team != self.team)
-					{
-						if(self iswithinhackertoolreticle(target_ent))
-						{
-							targetsvalid[targetsvalid.size] = target_ent;
-						}
-					}
-				}
-			}
-			else if(self iswithinhackertoolreticle(target_ent))
-			{
-				if(isentityhackablecarepackage(target_ent))
-				{
-					targetsvalid[targetsvalid.size] = target_ent;
-				}
-				else if(IsDefined(target_ent.owner) && self != target_ent.owner)
-				{
-					targetsvalid[targetsvalid.size] = target_ent;
 				}
 			}
 		}
@@ -817,7 +824,7 @@ gethacktime(target)
 tunables()
 {
 /#
-	for(;;)
+	while(1)
 	{
 		level.hackertoollostsightlimitms = weapons_get_dvar_int("scr_hackerToolLostSightLimitMs",1000);
 		level.hackertoollockonradius = weapons_get_dvar("scr_hackerToolLockOnRadius",20);
@@ -837,6 +844,5 @@ tunables()
 		level.chopper_gunner_time = weapons_get_dvar_int("scr_chopper_gunner_time",7);
 		wait(1);
 	}
-1
 #/
 }

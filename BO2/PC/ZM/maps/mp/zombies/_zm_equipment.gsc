@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 75
- * Decompile Time: 314 ms
- * Timestamp: 10/27/2023 3:03:07 AM
+ * Decompile Time: 27 ms
+ * Timestamp: 10/28/2023 12:11:45 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -601,13 +601,15 @@ equipment_onspawnretrievableweaponobject(watcher,player)
 
 	equipment = watcher.name + "_zm";
 /#
+	if(!IsDefined(player.current_equipment) || player.current_equipment != equipment)
+	{
 /#
-	assert(player has_deployed_equipment(equipment));
+		assert(player has_deployed_equipment(equipment));
 #/
 /#
-	assert(!IsDefined(player.current_equipment));
+		assert(!IsDefined(player.current_equipment));
+	}
 #/
-!IsDefined(player.current_equipment) || player.current_equipment != equipment
 #/
 	if(IsDefined(player.current_equipment) && player.current_equipment == equipment)
 	{
@@ -738,13 +740,15 @@ equipment_retrieve(player)
 equipment_drop_to_planted(equipment,player)
 {
 /#
+	if(!IsDefined(player.current_equipment) || player.current_equipment != equipment)
+	{
 /#
-	assert(player has_deployed_equipment(equipment));
+		assert(player has_deployed_equipment(equipment));
 #/
 /#
-	assert(!IsDefined(player.current_equipment));
+		assert(!IsDefined(player.current_equipment));
+	}
 #/
-!IsDefined(player.current_equipment) || player.current_equipment != equipment
 #/
 	if(IsDefined(player.current_equipment) && player.current_equipment == equipment)
 	{
@@ -865,7 +869,7 @@ equipment_drop(equipment)
 		}
 
 /#
-			println("ZM EQUIPMENT: " + self.name + " dropped " + equipment + "\n");
+		println("ZM EQUIPMENT: " + self.name + " dropped " + equipment + "\n");
 #/
 	}
 	else
@@ -1690,15 +1694,33 @@ get_item_health()
 {
 /#
 	damage = 0;
-	damagemax = level.zombie_vars["riotshield_hit_points"];
-	damage = self.owner.shielddamagetaken;
-	damage = self.shielddamagetaken;
-	damagemax = 1500;
-	damage = self.owner player_get_equipment_damage(self.equipname);
-	damagemax = 1500;
-	damage = self.damage;
+	if(IsDefined(self.isriotshield) && self.isriotshield)
+	{
+		damagemax = level.zombie_vars["riotshield_hit_points"];
+		if(IsDefined(self.owner))
+		{
+			damage = self.owner.shielddamagetaken;
+		}
+		else if(IsDefined(level.deployed_riotshield_damage_callback))
+		{
+			damage = self.shielddamagetaken;
+		}
+	}
+	else if(IsDefined(self.owner))
+	{
+		damagemax = 1500;
+		damage = self.owner player_get_equipment_damage(self.equipname);
+	}
+	else
+	{
+		damagemax = 1500;
+		if(IsDefined(self.damage))
+		{
+			damage = self.damage;
+		}
+	}
+
 	return damagemax - damage / damagemax;
-Stack-Empty ? Stack-Empty : (((IsDefined(self.isriotshield) && self.isriotshield) ? IsDefined(self.owner) : IsDefined(level.deployed_riotshield_damage_callback)) ? IsDefined(self.owner) : IsDefined(self.damage))
 #/
 }
 
@@ -1708,16 +1730,18 @@ debughealth()
 /#
 	self endon("death");
 	self endon("stop_attracting_zombies");
-	for(;;)
+	while(1)
 	{
-		health = self get_item_health();
-		color = (1 - health,health,0);
-		text = "" + health * 100 + "";
-		print3d(self.origin,text,color,1,0.5,1);
+		if(GetDvarInt(#"EB512CB7"))
+		{
+			health = self get_item_health();
+			color = (1 - health,health,0);
+			text = "" + health * 100 + "";
+			print3d(self.origin,text,color,1,0.5,1);
+		}
+
 		wait(0.05);
 	}
-GetDvarInt(#"EB512CB7")
-1
 #/
 }
 

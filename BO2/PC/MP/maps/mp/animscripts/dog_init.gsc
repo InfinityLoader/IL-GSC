@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 3
- * Decompile Time: 8 ms
- * Timestamp: 10/27/2023 2:59:47 AM
+ * Decompile Time: 0 ms
+ * Timestamp: 10/28/2023 12:10:23 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/dog_move;

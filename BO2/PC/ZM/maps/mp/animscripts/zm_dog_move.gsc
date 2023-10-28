@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 9
- * Decompile Time: 235 ms
- * Timestamp: 10/27/2023 3:02:12 AM
+ * Decompile Time: 6 ms
+ * Timestamp: 10/28/2023 12:11:29 AM
 *******************************************************************/
 
 #include maps/mp/animscripts/dog_stop;
@@ -45,8 +45,10 @@ main()
 	self setaimanimweights(0,0);
 	do_movement = 1;
 /#
-	do_movement = 0;
-debug_allow_movement()
+	if(!(debug_allow_movement()))
+	{
+		do_movement = 0;
+	}
 #/
 	if(IsDefined(level.hostmigrationtimer))
 	{
@@ -107,8 +109,10 @@ moveloop()
 	{
 		do_movement = 1;
 /#
-		do_movement = 0;
-debug_allow_movement()
+		if(!(debug_allow_movement()))
+		{
+			do_movement = 0;
+		}
 #/
 		if(IsDefined(level.hostmigrationtimer))
 		{

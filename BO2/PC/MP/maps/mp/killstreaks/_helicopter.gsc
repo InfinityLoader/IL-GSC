@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 86
- * Decompile Time: 1235 ms
- * Timestamp: 10/27/2023 3:00:40 AM
+ * Decompile Time: 62 ms
+ * Timestamp: 10/28/2023 12:10:42 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -676,7 +676,7 @@ heli_targeting(missilesenabled,hardpointtype)
 			}
 
 			self.primarytarget = targets[0];
-			self notify("primary acquired",_k670,_k656,Stack-Empty ? Stack-Empty : Stack-Empty);
+			self notify("primary acquired",_k670,_k656);
 			self.secondarytarget = undefined;
 			debug_print_target();
 		}
@@ -1689,21 +1689,26 @@ heli_crash(hardpointtype,player,playernotify)
 	}
 
 /#
-	switch(level.heli_debug_crash)
+	if(level.heli_debug_crash)
 	{
-		case "1":
-			crashtype = "explode";
-			break;
-		case "2":
-			crashtype = "crashOnPath";
-			break;
-		case "3":
-			crashtype = "spinOut";
-			break;
-		default:
-			break;
+		switch(level.heli_debug_crash)
+		{
+			case "1":
+				crashtype = "explode";
+				break;
+
+			case "2":
+				crashtype = "crashOnPath";
+				break;
+
+			case "3":
+				crashtype = "spinOut";
+				break;
+
+			default:
+				break;
+		}
 	}
-level.heli_debug_crash
 #/
 	switch(crashtype)
 	{

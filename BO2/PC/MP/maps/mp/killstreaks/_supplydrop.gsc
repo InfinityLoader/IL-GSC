@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 97
- * Decompile Time: 776 ms
- * Timestamp: 10/27/2023 3:01:05 AM
+ * Decompile Time: 75 ms
+ * Timestamp: 10/28/2023 12:10:48 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -346,8 +346,10 @@ getrandomcratetype(category,gambler_crate_name)
 	}
 
 /#
-	typekey = level.dev_gui_supply_drop;
-IsDefined(level.dev_gui_supply_drop) && level.dev_gui_supply_drop != "random"
+	if(IsDefined(level.dev_gui_supply_drop) && level.dev_gui_supply_drop != "random")
+	{
+		typekey = level.dev_gui_supply_drop;
+	}
 #/
 	return level.cratetypes[category][typekey];
 }
@@ -1408,7 +1410,10 @@ watchexplode(weaponname,owner,killstreak_id,package_contents_id)
 cratetimeoutthreader()
 {
 /#
-getdvarintdefault("scr_crate_notimeout",0)
+	if(getdvarintdefault("scr_crate_notimeout",0))
+	{
+		return;
+	}
 #/
 	self thread cratetimeout(90);
 }
@@ -2195,13 +2200,17 @@ gethelistart(drop_origin,drop_direction)
 	start_origin = drop_origin + AnglesToForward(direction) * dist;
 	start_origin = start_origin + (randomfloat(2) - 1 * pathrandomness,randomfloat(2) - 1 * pathrandomness,0);
 /#
-	index = randomintrange(0,level.noflyzones.size);
-	delta = drop_origin - level.noflyzones[index].origin;
-	delta = (delta[0] + randomint(10),delta[1] + randomint(10),0);
-	delta = vectornormalize(delta);
-	start_origin = drop_origin + delta * dist;
-level.noflyzones.size
-getdvarintdefault("scr_noflyzones_debug",0)
+	if(getdvarintdefault("scr_noflyzones_debug",0))
+	{
+		if(level.noflyzones.size)
+		{
+			index = randomintrange(0,level.noflyzones.size);
+			delta = drop_origin - level.noflyzones[index].origin;
+			delta = (delta[0] + randomint(10),delta[1] + randomint(10),0);
+			delta = vectornormalize(delta);
+			start_origin = drop_origin + delta * dist;
+		}
+	}
 #/
 	return start_origin;
 }
@@ -2649,7 +2658,7 @@ supply_drop_dev_gui()
 {
 /#
 	setdvar("scr_supply_drop_gui","");
-	for(;;)
+	while(1)
 	{
 		wait(0.5);
 		devgui_string = GetDvar(#"38F6C211");
@@ -2658,85 +2667,110 @@ supply_drop_dev_gui()
 			case "ammo":
 				level.dev_gui_supply_drop = "ammo";
 				break;
+
 			case "spyplane":
 				level.dev_gui_supply_drop = "radar_mp";
 				break;
+
 			case "counter_u2":
 				level.dev_gui_supply_drop = "counteruav_mp";
 				break;
+
 			case "airstrike":
 				level.dev_gui_supply_drop = "airstrike_mp";
 				break;
+
 			case "artillery":
 				level.dev_gui_supply_drop = "artillery_mp";
 				break;
+
 			case "autoturret":
 				level.dev_gui_supply_drop = "autoturret_mp";
 				break;
+
 			case "microwave_turret":
 				level.dev_gui_supply_drop = "microwaveturret_mp";
 				break;
+
 			case "tow_turret":
 				level.dev_gui_supply_drop = "auto_tow_mp";
 				break;
+
 			case "dogs":
 				level.dev_gui_supply_drop = "dogs_mp";
 				break;
+
 			case "rc_bomb":
 				level.dev_gui_supply_drop = "rcbomb_mp";
 				break;
+
 			case "plane_mortar":
 				level.dev_gui_supply_drop = "planemortar_mp";
 				break;
+
 			case "heli":
 				level.dev_gui_supply_drop = "helicopter_comlink_mp";
 				break;
+
 			case "heli_gunner":
 				level.dev_gui_supply_drop = "helicopter_player_gunner_mp";
 				break;
+
 			case "straferun":
 				level.dev_gui_supply_drop = "straferun_mp";
 				break;
+
 			case "missile_swarm":
 				level.dev_gui_supply_drop = "missile_swarm_mp";
 				break;
+
 			case "missile_drone":
 				level.dev_gui_supply_drop = "inventory_missile_drone_mp";
 				break;
+
 			case "satellite":
 				level.dev_gui_supply_drop = "radardirection_mp";
 				break;
+
 			case "remote_missile":
 				level.dev_gui_supply_drop = "remote_missile_mp";
 				break;
+
 			case "helicopter_guard":
 				level.dev_gui_supply_drop = "helicopter_guard_mp";
 				break;
+
 			case "emp":
 				level.dev_gui_supply_drop = "emp_mp";
 				break;
+
 			case "remote_mortar":
 				level.dev_gui_supply_drop = "remote_mortar_mp";
 				break;
+
 			case "qrdrone":
 				level.dev_gui_supply_drop = "qrdrone_mp";
 				break;
+
 			case "ai_tank":
 				level.dev_gui_supply_drop = "inventory_ai_tank_drop_mp";
 				break;
+
 			case "minigun":
 				level.dev_gui_supply_drop = "inventory_minigun_mp";
 				break;
+
 			case "m32":
 				level.dev_gui_supply_drop = "inventory_m32_mp";
 				break;
+
 			case "random":
 				level.dev_gui_supply_drop = "random";
 				break;
+
 			default:
 				break;
 		}
 	}
-1
 #/
 }

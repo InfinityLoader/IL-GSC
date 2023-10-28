@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 93
- * Decompile Time: 387 ms
- * Timestamp: 10/27/2023 3:03:25 AM
+ * Decompile Time: 65 ms
+ * Timestamp: 10/28/2023 12:11:55 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -482,7 +482,7 @@ zombie_think()
 	{
 /#
 /#
-				assert(IsDefined(find_flesh_struct_string));
+		assert(IsDefined(find_flesh_struct_string));
 #/
 #/
 		for(i = 0;i < level.exterior_goals.size;i++)
@@ -1695,7 +1695,8 @@ zombie_gib_on_damage()
 					refs[refs.size] = "left_leg";
 					refs[refs.size] = "no_legs";
 					break;
-	Stack-Empty ? self.damagelocation == "none" : type == "MOD_GRENADE" || type == "MOD_GRENADE_SPLASH" || type == "MOD_PROJECTILE" || type == "MOD_PROJECTILE_SPLASH"
+	type == "MOD_GRENADE" || type == "MOD_GRENADE_SPLASH" || type == "MOD_PROJECTILE" || type == "MOD_PROJECTILE_SPLASH"
+	self.damagelocation == "none"
 					break;
 			}
 
@@ -2877,8 +2878,10 @@ zombie_pathing_get_breadcrumb(origin,breadcrumbs,bad_crumbs,pick_random)
 	assert(isarray(breadcrumbs));
 #/
 /#
-	debug_print("Finding random breadcrumb");
-pick_random
+	if(pick_random)
+	{
+		debug_print("Finding random breadcrumb");
+	}
 #/
 	for(i = 0;i < breadcrumbs.size;i++)
 	{
@@ -3084,9 +3087,12 @@ zombie_eye_glow_stop()
 zombie_history(msg)
 {
 /#
-	self.zombie_history = [];
+	if(!IsDefined(self.zombie_history) || 32 <= self.zombie_history.size)
+	{
+		self.zombie_history = [];
+	}
+
 	self.zombie_history[self.zombie_history.size] = msg;
-!IsDefined(self.zombie_history) || 32 <= self.zombie_history.size
 #/
 }
 
@@ -3126,25 +3132,31 @@ do_zombie_spawn()
 	}
 
 /#
-	player = get_players()[0];
-	spots = [];
-	i = 0;
-	for(;;)
+	if(GetDvarInt(#"A8C231AA"))
 	{
-		player_vec = vectornormalize(AnglesToForward(player.angles));
-		player_spawn = vectornormalize(level.zombie_spawn_locations[i].origin - player.origin);
-		dot = vectordot(player_vec,player_spawn);
-		spots[spots.size] = level.zombie_spawn_locations[i];
-		debugstar(level.zombie_spawn_locations[i].origin,1000,(1,1,1));
-		i++;
+		if(IsDefined(level.zombie_spawn_locations))
+		{
+			player = get_players()[0];
+			spots = [];
+			for(i = 0;i < level.zombie_spawn_locations.size;i++)
+			{
+				player_vec = vectornormalize(AnglesToForward(player.angles));
+				player_spawn = vectornormalize(level.zombie_spawn_locations[i].origin - player.origin);
+				dot = vectordot(player_vec,player_spawn);
+				if(dot > 0.707)
+				{
+					spots[spots.size] = level.zombie_spawn_locations[i];
+					debugstar(level.zombie_spawn_locations[i].origin,1000,(1,1,1));
+				}
+			}
+
+			if(spots.size <= 0)
+			{
+				spots[spots.size] = level.zombie_spawn_locations[0];
+				iprintln("no spawner in view");
+			}
+		}
 	}
-	spots[spots.size] = level.zombie_spawn_locations[0];
-	iprintln("no spawner in view");
-spots.size <= 0
-dot > 0.707
-i < level.zombie_spawn_locations.size
-IsDefined(level.zombie_spawn_locations)
-GetDvarInt(#"A8C231AA")
 #/
 /#
 	assert(spots.size > 0,"No spawn locations found");
@@ -3152,11 +3164,13 @@ GetDvarInt(#"A8C231AA")
 	spot = random(spots);
 	self.spawn_point = spot;
 /#
-	debugstar(spot.origin,GetDvarInt(#"BB9101B2"),(0,1,0));
-	host_player = gethostplayer();
-	distance = distance(spot.origin,host_player.origin);
-	iprintln("Distance to player: " + distance / 12 + "feet");
-IsDefined(level.toggle_show_spawn_locations) && level.toggle_show_spawn_locations
+	if(IsDefined(level.toggle_show_spawn_locations) && level.toggle_show_spawn_locations)
+	{
+		debugstar(spot.origin,GetDvarInt(#"BB9101B2"),(0,1,0));
+		host_player = gethostplayer();
+		distance = distance(spot.origin,host_player.origin);
+		iprintln("Distance to player: " + distance / 12 + "feet");
+	}
 #/
 	if(IsDefined(spot.target))
 	{
@@ -3226,7 +3240,7 @@ IsDefined(level.toggle_show_spawn_locations) && level.toggle_show_spawn_location
 
 					self ghost();
 					self.anchor moveto(spot.origin,0.05);
-					self.anchor waittill(Stack-Empty ? Stack-Empty : Stack-Empty,"movedone");
+					self.anchor waittill("movedone");
 					target_org = get_desired_origin();
 					if(IsDefined(target_org))
 					{

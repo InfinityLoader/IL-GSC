@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 12
- * Decompile Time: 66 ms
- * Timestamp: 10/27/2023 3:04:12 AM
+ * Decompile Time: 9 ms
+ * Timestamp: 10/28/2023 12:13:31 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -32,9 +32,30 @@ bot_ctf_think()
 		{
 			nodes = getnodesinradius(flag_mine.curorigin,256,0,64,"any",8);
 			node = random(nodes);
-			self maps/mp/bots/_bot_combat::bot_combat_throw_proximity(cointoss() ? flag_mine.curorigin : node.origin);
-			self maps/mp/bots/_bot_combat::bot_combat_toss_frag(cointoss() ? flag_mine.curorigin : node.origin);
-			self maps/mp/bots/_bot_combat::bot_combat_toss_flash(cointoss() ? flag_mine.curorigin : node.origin);
+			if(cointoss())
+			{
+			}
+			else
+			{
+			}
+
+			self maps/mp/bots/_bot_combat::bot_combat_throw_proximity(node.origin);
+			if(cointoss())
+			{
+			}
+			else
+			{
+			}
+
+			self maps/mp/bots/_bot_combat::bot_combat_toss_frag(node.origin);
+			if(cointoss())
+			{
+			}
+			else
+			{
+			}
+
+			self maps/mp/bots/_bot_combat::bot_combat_toss_flash(node.origin);
 		}
 	}
 

@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: Console
  * Function Count: 86
- * Decompile Time: 220 ms
- * Timestamp: 10/27/2023 3:05:16 AM
+ * Decompile Time: 23 ms
+ * Timestamp: 10/28/2023 12:13:53 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -406,9 +406,8 @@ init_vehicle()
 		self.maxhealth = GetDvarInt(#"20E17551");
 /#
 		println("No health specified for vehicle type " + self.vehicletype + "! Using default...");
-#/
 	}
-
+#/
 	self.health = self.maxhealth;
 	self vehicle_record_initial_values();
 	self init_vehicle_threads();
@@ -631,14 +630,15 @@ cleanup_debug_print_t()
 	self endon("death");
 	self endon("delete");
 /#
-	for(;;)
+	while(1)
 	{
-		print3d(150 + VectorScale((0,0,1)),self.origin,self.debug_message,(0,1,0),1,1);
+		if(IsDefined(self.debug_message) && GetDvarInt(#"AAD1512A") != 0)
+		{
+			print3d(150 + VectorScale((0,0,1)),self.origin,self.debug_message,(0,1,0),1,1);
+		}
+
 		wait(0.01);
 	}
-1
-IsDefined(self.debug_message) && GetDvarInt(#"AAD1512A") != 0
-1
 #/
 }
 
@@ -649,9 +649,9 @@ cleanup_debug_print_clearmsg_t()
 	self endon("death");
 	self endon("delete");
 /#
-	for(;;)
+	while(1)
 	{
-		self waittill(1,"enter_vehicle");
+		self waittill("enter_vehicle");
 		self.debug_message = undefined;
 	}
 #/

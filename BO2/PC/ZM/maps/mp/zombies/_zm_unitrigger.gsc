@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 22
- * Decompile Time: 80 ms
- * Timestamp: 10/27/2023 3:03:29 AM
+ * Decompile Time: 9 ms
+ * Timestamp: 10/28/2023 12:11:57 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -288,45 +288,55 @@ reregister_unitrigger_as_dynamic(unitrigger_stub)
 debug_unitriggers()
 {
 /#
-	for(;;)
+	while(1)
 	{
-		i = 0;
-		for(;;)
+		if(GetDvarInt(#"D256F24B") > 0)
 		{
-			triggerstub = level._unitriggers.trigger_stubs[i];
-			color = VectorScale((1,0,0));
-			color = VectorScale((1,1,0));
-			color = (1,1,0);
-			color = (0,1,0);
-			print3d(triggerstub.origin,triggerstub.playertrigger.size,color,1,1,1);
-			origin = triggerstub unitrigger_origin();
-			switch(triggerstub.script_unitrigger_type)
+			for(i = 0;i < level._unitriggers.trigger_stubs.size;i++)
 			{
-				case "unitrigger_radius":
-				case "unitrigger_radius_use":
-					circle(origin,triggerstub.radius,color,0,0,1);
-					line(origin,origin + (0,0,triggerstub.script_height),color,0,1);
-					break;
-			triggerstub.script_height
-			triggerstub.radius
-					break;
-				case "unitrigger_box":
-				case "unitrigger_box_use":
-					vec = (triggerstub.script_width / 2,triggerstub.script_length / 2,triggerstub.script_height / 2);
-					box(origin,vec * -1,vec,triggerstub.angles[1],color,1,0,1);
-					break;
+				triggerstub = level._unitriggers.trigger_stubs[i];
+				color = VectorScale((1,0,0));
+				if(!(IsDefined(triggerstub.in_zone)))
+				{
+					color = VectorScale((1,1,0));
+				}
+				else if(level.zones[triggerstub.in_zone].is_active)
+				{
+					color = (1,1,0);
+				}
+
+				if(IsDefined(triggerstub.trigger) || IsDefined(triggerstub.playertrigger) && triggerstub.playertrigger.size > 0)
+				{
+					color = (0,1,0);
+					if(IsDefined(triggerstub.playertrigger) && triggerstub.playertrigger.size > 0)
+					{
+						print3d(triggerstub.origin,triggerstub.playertrigger.size,color,1,1,1);
+					}
+				}
+
+				origin = triggerstub unitrigger_origin();
+				switch(triggerstub.script_unitrigger_type)
+				{
+					case "unitrigger_radius":
+					case "unitrigger_radius_use":
+						circle(origin,triggerstub.radius,color,0,0,1);
+						line(origin,origin + (0,0,triggerstub.script_height),color,0,1);
+						break;
+	triggerstub.script_height
+	triggerstub.radius
+						break;
+
+					case "unitrigger_box":
+					case "unitrigger_box_use":
+						vec = (triggerstub.script_width / 2,triggerstub.script_length / 2,triggerstub.script_height / 2);
+						box(origin,vec * -1,vec,triggerstub.angles[1],color,1,0,1);
+						break;
+				}
 			}
-			i++;
 		}
+
 		wait(0.05);
 	}
-IsDefined(triggerstub.playertrigger) && triggerstub.playertrigger.size > 0
-IsDefined(triggerstub.trigger) || IsDefined(triggerstub.playertrigger) && triggerstub.playertrigger.size > 0
-(IsDefined(triggerstub.in_zone)) ? 0.65 : level.zones[triggerstub.in_zone].is_active
-0.75
-i < level._unitriggers.trigger_stubs.size
-GetDvarInt(#"D256F24B") > 0
-1
 #/
 }
 

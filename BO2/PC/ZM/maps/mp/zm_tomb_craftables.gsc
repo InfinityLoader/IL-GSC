@@ -4,8 +4,8 @@
  * Game: Call of Duty: Black Ops 2
  * Platform: PC
  * Function Count: 77
- * Decompile Time: 391 ms
- * Timestamp: 10/27/2023 3:03:50 AM
+ * Decompile Time: 38 ms
+ * Timestamp: 10/28/2023 12:12:06 AM
 *******************************************************************/
 
 #include common_scripts/utility;
@@ -85,48 +85,50 @@ init_craftables()
 add_craftable_cheat(craftable)
 {
 /#
-	level.cheat_craftables = [];
-	_a112 = craftable.a_piecestubs;
-	_k112 = FirstArrayKey(_a112);
-	for(;;)
+	if(!(IsDefined(level.cheat_craftables)))
 	{
-		s_piece = _a112[_k112];
+		level.cheat_craftables = [];
+	}
+
+	foreach(s_piece in craftable.a_piecestubs)
+	{
 		id_string = undefined;
 		client_field_val = undefined;
-		id_string = s_piece.client_field_id;
-		client_field_val = id_string;
-		id_string = "gem";
-		client_field_val = s_piece.client_field_state;
+		if(IsDefined(s_piece.client_field_id))
+		{
+			id_string = s_piece.client_field_id;
+			client_field_val = id_string;
+		}
+		else if(IsDefined(s_piece.client_field_state))
+		{
+			id_string = "gem";
+			client_field_val = s_piece.client_field_state;
+		}
+		else
+		{
+		}
+
 		tokens = strtok(id_string,"_");
 		display_string = "piece";
-		_a134 = tokens;
-		_k134 = FirstArrayKey(_a134);
-		for(;;)
+		foreach(token in tokens)
 		{
-			token = _a134[_k134];
-			display_string = display_string + "_" + token;
-			_k134 = NextArrayKey(_a134);
+			if(token != "piece" && token != "staff" && token != "zm")
+			{
+				display_string = display_string + "_" + token;
+			}
 		}
+
 		level.cheat_craftables["" + client_field_val] = s_piece;
 		adddebugcommand("devgui_cmd \"Zombies/Tomb:1/Craftables:1/" + craftable.name + "/" + display_string + "\" \"give_craftable " + client_field_val + "\"\n");
 		s_piece.waste = "waste";
-		_k112 = NextArrayKey(_a112);
 	}
+
 	flag_wait("start_zombie_round_logic");
-	_a149 = craftable.a_piecestubs;
-	_k149 = FirstArrayKey(_a149);
-	for(;;)
+	foreach(s_piece in craftable.a_piecestubs)
 	{
-		s_piece = _a149[_k149];
 		s_piece craftable_waittill_spawned();
 		s_piece.piecespawn.model thread puzzle_debug_position("C",VectorScale((0,1,0)),255,undefined);
-		_k149 = NextArrayKey(_a149);
 	}
-_k149
-"show_craftable_locations"
-IsDefined(_k149)
-_k112
-(IsDefined(level.cheat_craftables)) ? IsDefined(_k112) : ((IsDefined(s_piece.client_field_id)) ? IsDefined(s_piece.client_field_state) : (IsDefined(_k134) ? token != "piece" && token != "staff" && token != "zm" : _k134))
 #/
 }
 
@@ -136,10 +138,13 @@ autocraft_staffs()
 	setdvar("autocraft_staffs","off");
 /#
 	adddebugcommand("devgui_cmd \"Zombies/Tomb:1/Craftables:1/Give All Staff Pieces:0\" \"autocraft_staffs on\"\n");
+		for(;;)
+		{
 #/
-	while(GetDvar(#"373B6254") != "on")
-	{
-		wait_network_frame();
+		if(GetDvar(#"373B6254") != "on")
+		{
+			wait_network_frame();
+		}
 	}
 
 	flag_wait("start_zombie_round_logic");
@@ -181,18 +186,23 @@ run_craftables_devgui()
 /#
 	level thread autocraft_staffs();
 	setdvar("give_craftable","");
-	for(;;)
+	while(1)
 	{
 		craftable_id = GetDvar(#"817E2753");
-		piece_spawn = level.cheat_craftables[craftable_id].piecespawn;
-		players = getplayers();
-		players[0] maps/mp/zombies/_zm_craftables::player_take_piece(piece_spawn);
-		setdvar("give_craftable","");
+		if(craftable_id != "")
+		{
+			piece_spawn = level.cheat_craftables[craftable_id].piecespawn;
+			if(IsDefined(piece_spawn))
+			{
+				players = getplayers();
+				players[0] maps/mp/zombies/_zm_craftables::player_take_piece(piece_spawn);
+			}
+
+			setdvar("give_craftable","");
+		}
+
 		wait(0.05);
 	}
-IsDefined(piece_spawn)
-craftable_id != ""
-1
 #/
 }
 
@@ -414,7 +424,7 @@ craftable_add_glow_fx()
 			else
 			{
 /#
-							iprintlnbold("ERROR: Unknown staff element type in craftable_add_glow_fx: " + s_craftable.name);
+				iprintlnbold("ERROR: Unknown staff element type in craftable_add_glow_fx: " + s_craftable.name);
 #/
 				return;
 			}
@@ -682,15 +692,10 @@ onpickup_common(player)
 	self.piece_owner = player;
 	self thread piece_pickup_conversation(player);
 /#
-	_a833 = self.spawns;
-	_k833 = FirstArrayKey(_a833);
-	for(;;)
+	foreach(spawn in self.spawns)
 	{
-		spawn = _a833[_k833];
-		spawn notify("stop_debug_position",IsDefined(_k833));
-		_k833 = NextArrayKey(_a833);
+		spawn notify("stop_debug_position");
 	}
-_k833
 #/
 }
 
@@ -1062,9 +1067,8 @@ quadrotor_fly_back_to_table()
 		self delete();
 /#
 		iprintln("Maxis deleted");
-#/
 	}
-
+#/
 	level notify("drone_available");
 }
 
@@ -1086,9 +1090,8 @@ quadrotor_fly_back_to_table_timeout()
 		self delete();
 /#
 		iprintln("Maxis deleted");
-#/
 	}
-
+#/
 	self notify("return_timeout");
 }
 
