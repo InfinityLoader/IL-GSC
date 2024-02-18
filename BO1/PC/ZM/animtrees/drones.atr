@@ -1,0 +1,23 @@
+
+death_run_forward_crumple
+death_run_onfront
+death_run_onleft
+death_explosion_up10
+death_explosion_back13
+death_explosion_forward13
+death_explosion_left11
+death_explosion_right13
+drone_run_forward_1
+death_stand_dropinplace
+death_run_stumble
+stand2crouch_attack
+walk_run : loopsync
+{
+pistol_crouchrun_loop_forward_1
+crouchrun_loop_forward_2
+combatrun
+precombatrun1
+}
+facial
+{
+}

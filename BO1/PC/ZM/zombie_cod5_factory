@@ -1,0 +1,5 @@
+^1ERROR: Couldn't open techniqueSet 'pimp/techsets/l_sm_b0c0_b1c1n1s1.techset'
+^1Cannot create techset 'l_sm_b0c0_b1c1n1s1'. The offending 2-layer combination is:
+wc/zombie_factory_notes
+wc/glo_dec_blood_smear02_blend
+^1	failed loading material '*111_187n' for asset 'sp/frag_grenade_zm' found in source file '../ps3/main_shared/aitype/zombie_dog.csv'

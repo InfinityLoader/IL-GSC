@@ -1,0 +1,2 @@
+^1ERROR: Could not open 'devgui_zombie_theater.cfg'
+^1	failed loading 'devgui_zombie_theater.cfg' of type 'rawfile' found in source file '../share/zone_source/zombie_theater.csv'

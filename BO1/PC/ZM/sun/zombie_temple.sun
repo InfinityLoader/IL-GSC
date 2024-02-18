@@ -1,0 +1,25 @@
+r_sunsprite_shader "sun_wmd"
+r_sunflare_shader "sun_wmd"
+r_sunsprite_size "16"
+r_sun_fx_position "-40 -173 0"
+
+r_sunflare_min_size "300"
+r_sunflare_max_size "450"
+r_sunflare_min_angle "38"
+r_sunflare_max_angle "15"
+r_sunflare_max_alpha "0.75"
+r_sunflare_fadein "0.15"
+r_sunflare_fadeout "0.15"
+
+r_sunblind_min_angle "30"
+r_sunblind_max_angle "5"
+r_sunblind_max_darken "0"
+r_sunblind_fadein "0.25"
+r_sunblind_fadeout "0.25"
+
+r_sunglare_min_angle "38"
+r_sunglare_max_angle "39"
+r_sunglare_max_lighten ".0"
+r_sunglare_fadein "0.5"
+r_sunglare_fadeout "0.5"
+

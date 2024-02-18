@@ -1,0 +1,23 @@
+
+// You can specify particular movies to play for particular maps
+// by using a line like this per map:
+// getmapname <name_of_map> strcmp ! if <name_of_movie_to_play> play then
+//
+// every expression is in postfix notation
+
+							// frontend special cases
+							//
+getmapname frontend strcmp !	// push whether this is frontend
+if							
+	ui_skipMainLockout getdvar 1 == 
+	if
+		so_narrative1_frontend_load play
+	then 
+	com_introPlayed getdvar 0 == 
+	if 
+		treyarch play			
+	then
+		spinner play
+then						// Default case
+	getmapname _load strcat	play					
+

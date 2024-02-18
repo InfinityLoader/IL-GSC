@@ -1,0 +1,82 @@
+
+r_filmEnable                  "1"
+
+r_reviveFX_enable   "0"
+r_reviveFX_contrastEdge   "1"
+r_reviveFX_brightnessEdge  "1"
+r_reviveFX_desaturationEdge  "1"
+r_reviveFX_darkTintEdge   "1 1 1"
+r_reviveFX_lightTintEdge  "1 1 1"
+r_reviveFX_blurRadiusEdge  "1"
+r_reviveFX_motionblurWeight  "1"
+r_reviveFX_contrastCenter  "1"
+r_reviveFX_brightnessCenter  "1"
+r_reviveFX_desaturationCenter "1"
+r_reviveFX_darkTintCenter  "1 1 1"
+r_reviveFX_lightTintCenter  "1 1 1"
+
+ 
+
+r_sCurveEnable                "1" 
+
+
+r_filmMidStart                      "0.182469" 
+r_filmMidEnd                        "0.463125" 
+r_filmDarkFeather                   "0.600000" 
+r_filmLightFeather                  "0.600000" 
+r_filmColorTemp                     "6401.7251 6484.1797 5992.3706" 
+r_filmSaturation                    "0.6737 0.7509 0.6105" 
+r_filmDarkTint                      "0.8843 0.9473 1.0106" 
+r_filmMidTint                       "1.0101 1.0101 1.0314" 
+r_filmLightTint                     "0.9996 0.9996 1.0101" 
+r_filmBleach                        "0.0000 0.0000 0.0000" 
+r_filmContrast                      "1.0176 1.0176 1.0176" 
+
+r_sCurveShoulderStrength            "0.157875" 
+r_sCurveLinearStrength              "0.500000" 
+r_sCurveLinearAngle                 "0.125000" 
+r_sCurveToeStrength                 "0.109985" 
+r_sCurveToeNumerator                "0.010000" 
+r_sCurveToeDenominator              "0.574988" 
+
+r_bloomTintWeights                  "0.2500 0.2500 0.2500 0.0000" 
+r_bloomColorScale                   "0.5190 0.5190 0.5190 0.0000" 
+r_bloomTintScale                    "0.0000 0.0000 0.0000 1.0000" 
+r_bloomCurveBreakpoint              "0.4947 0.4947 0.4947 1.0000" 
+r_bloomCurveLoGamma                 "0.5500 0.6205 0.7942 1.0000" 
+r_bloomCurveHiGamma                 "1.0022 1.0000 1.0000 1.0000" 
+r_bloomExpansionControl             "0.1000 0.4316 0.5011 0.5863" 
+r_bloomExpansionWeights             "0.1000 0.1000 0.1000 0.1000" 
+r_bloomExpansionSource              "0.100000" 
+r_bloomBlurRadius                   "1.750000" 
+r_bloomPersistence                  "0.000000" 
+
+r_primaryLightUseTweaks             "1.000000" 
+r_primaryLightTweakDiffuseStrength  "2.070313" 
+r_primaryLightTweakSpecularStrength "1.438750" 
+
+
+r_bloomCurveLoBlack                 "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveLoWhite                 "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveLoRemapBlack            "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveLoRemapWhite            "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveHiBlack                 "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveHiWhite                 "1.0000 1.0000 1.0000 1.0000" 
+r_bloomCurveHiRemapBlack            "0.1000 0.1000 0.1000 0.1000" 
+r_bloomCurveHiRemapWhite            "1.0000 1.0000 1.0000 1.0000" 
+r_filmHue                           "0.0000 0.0000 0.0000" 
+
+r_bloomStreakXLevels0               "0.0842 0.0842 0.0842 1.0000" 
+r_bloomStreakXLevels1               "0.0000 1.0000 0.0000 1.0000" 
+r_bloomStreakXInnerTint             "1.0000 1.0000 1.0000" 
+r_bloomStreakXOuterTint             "1.0000 1.0000 1.0000" 
+r_bloomStreakXTintControl           "0.8491 0.8491 0.8491 1.0000" 
+r_bloomStreakXTint                  "0.0211 0.0000 0.0000" 
+
+r_bloomStreakYLevels0               "0.0561 0.0561 0.0561 1.0371" 
+r_bloomStreakYLevels1               "0.0000 1.0000 0.0000 1.0000" 
+r_bloomStreakYInnerTint             "1.0000 1.0000 1.0000" 
+r_bloomStreakYOuterTint             "1.0000 1.0000 1.0000" 
+r_bloomStreakYTintControl           "0.9965 0.9965 0.9965 1.0000" 
+r_bloomStreakYTint                  "0.0281 0.0491 0.0491" 
+

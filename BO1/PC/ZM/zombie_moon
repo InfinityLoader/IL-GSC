@@ -1,0 +1,3 @@
+^1ERROR: Couldn't find material 'sun_flare_icbm'
+^1	failed loading material 'sun_flare_icbm' for asset 'sp/frag_grenade_zm' found in source file '../ps3/main_shared/aitype/zombie_moon_zombie_astronaut.csv'
+^1ERROR: zmb_gersh_device has missing occlusion in soundaliases/zones/snapshot/zmb_moon.snapshot.csv

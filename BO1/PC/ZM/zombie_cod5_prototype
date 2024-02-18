@@ -1,0 +1,3 @@
+^1ERROR: No collmap for bone [door_l_jnt_d] but it has a physPreset [veh_car_door_physpreset_mp] in destructible file [dest_opel_blitz] model [dest_opel_blitz_full] piece [1] stage [1]
+^1ERROR: No collmap for bone [door_r_jnt_d] but it has a physPreset [veh_car_door_physpreset_mp] in destructible file [dest_opel_blitz] model [dest_opel_blitz_full] piece [2] stage [1]
+^1ERROR: No collmap for bone [hood_jnt_d] but it has a physPreset [veh_car_door_physpreset_mp] in destructible file [dest_opel_blitz] model [dest_opel_blitz_full] piece [3] stage [1]

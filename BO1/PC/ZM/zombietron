@@ -1,0 +1,12 @@
+^1Can not create merged weapon weapon_zombie_auto_turret.  Too few attachments, must have at least two.
+^1	failed loading 'sp/weapon_zombie_auto_turret' of type 'weapon' found in source file '../share/zone_source/zombietron.csv'
+^1ERROR: Could not open '../ps3/main_shared/character/zombie_ape.csv'
+^1	failed loading 'zombie_ape' of type 'character' found in source file '../share/zone_source/zombietron.csv'
+^1ERROR: Could not open '../ps3/main_shared/character/zombie_sergei.csv'
+^1	failed loading 'zombie_sergei' of type 'character' found in source file '../share/zone_source/zombietron.csv'
+^1ERROR: Could not open '../ps3/main_shared/character/zombie_quad.csv'
+^1	failed loading 'zombie_quad' of type 'character' found in source file '../share/zone_source/zombietron.csv'
+^1ERROR: Could not open '../ps3/main_shared/character/zombie_dog.csv'
+^1	failed loading 'zombie_dog' of type 'character' found in source file '../share/zone_source/zombietron.csv'
+^1ERROR: Could not open '../ps3/main_shared/character/zombie_engineer.csv'
+^1	failed loading 'zombie_engineer' of type 'character' found in source file '../share/zone_source/zombietron.csv'
