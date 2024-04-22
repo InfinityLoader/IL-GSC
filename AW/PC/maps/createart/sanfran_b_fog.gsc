@@ -1,0 +1,131 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: createart\sanfran_b_fog.gsc
+ * Game: Call of Duty: Advanced Warfare
+ * Platform: PC
+ * Function Count: 1
+ * Decompile Time: 29 ms
+ * Timestamp: 4/22/2024 2:07:20 AM
+*******************************************************************/
+
+//Function Number: 1
+main()
+{
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_interior");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_end");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_interior_dark");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_hanger");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_hanger_top");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_info_center");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_bridge");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_exterior_dark");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_exterior_dark_fog");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_info_top");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sanfran_b_guns");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+	var_00 = maps\_utility::create_vision_set_fog("sfb_neutral");
+	var_00.startdist = 17346.26;
+	var_00.halfwaydist = 32487.6;
+	var_00.red = 0.583682;
+	var_00.green = 0.52939;
+	var_00.blue = 0.302793;
+	var_00.maxopacity = 1;
+	var_00.transitiontime = 0;
+	var_00.sunfogenabled = 0;
+}
