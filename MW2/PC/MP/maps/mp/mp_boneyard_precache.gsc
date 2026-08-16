@@ -1,0 +1,19 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: maps\mp\mp_boneyard_precache.gsc
+ * Game: Call of Duty: Modern Warfare 2
+ * Platform: PC
+*******************************************************************/
+
+main()
+{
+	common_scripts\_destructible_types_anim_airconditioner::main();
+	common_scripts\_destructible_types_anim_generator::main();
+	common_scripts\_destructible_types_anim_light_fluo_single::main();
+	maps\animated_models\foliage_cod5_tree_jungle_01::main();
+	maps\animated_models\foliage_cod5_tree_jungle_02::main();
+	maps\animated_models\foliage_cod5_tree_jungle_03::main();
+	maps\animated_models\foliage_desertbrush_1::main();
+	maps\animated_models\foliage_pacific_bushtree02::main();
+	maps\animated_models\foliage_tree_oak_1::main();
+}

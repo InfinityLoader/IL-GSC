@@ -1,0 +1,22 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: maps\mp\mp_complex_precache.gsc
+ * Game: Call of Duty: Modern Warfare 2
+ * Platform: Xbox
+*******************************************************************/
+
+main()
+{
+	common_scripts\_destructible_types_anim_light_fluo_on::main();
+	common_scripts\_destructible_types_anim_light_fluo_single::main();
+	common_scripts\_destructible_types_anim_me_fanceil1_spin::main();
+	common_scripts\_destructible_types_anim_security_camera::main();
+	maps\animated_models\foliage_pacific_fern01::main();
+	maps\animated_models\foliage_pacific_fern02::main();
+	maps\animated_models\foliage_pacific_palms06::main();
+	maps\animated_models\foliage_pacific_palms08::main();
+	maps\animated_models\foliage_pacific_tropic_shrub01::main();
+	maps\animated_models\foliage_tree_green_pine_lg_a::main();
+	maps\animated_models\foliage_tree_green_pine_lg_b::main();
+	maps\animated_models\parachute_roof_hanging::main();
+}

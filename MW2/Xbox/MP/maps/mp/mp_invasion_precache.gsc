@@ -1,0 +1,16 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: maps\mp\mp_invasion_precache.gsc
+ * Game: Call of Duty: Modern Warfare 2
+ * Platform: Xbox
+*******************************************************************/
+
+main()
+{
+	common_scripts\_destructible_types_anim_airconditioner::main();
+	common_scripts\_destructible_types_anim_light_fluo_single::main();
+	common_scripts\_destructible_types_anim_me_fanceil1_spin::main();
+	common_scripts\_destructible_types_anim_wallfan::main();
+	maps\animated_models\foliage_tree_palm_bushy_1::main();
+	maps\animated_models\foliage_tree_palm_tall_1::main();
+}

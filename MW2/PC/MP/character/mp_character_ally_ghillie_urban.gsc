@@ -1,0 +1,22 @@
+/*******************************************************************
+ * Decompiled By: Bog
+ * Decompiled File: character\mp_character_ally_ghillie_urban.gsc
+ * Game: Call of Duty: Modern Warfare 2
+ * Platform: PC
+*******************************************************************/
+
+main()
+{
+	self setmodel("mp_body_ally_sniper_ghillie_urban");
+	self attach("head_allies_sniper_ghillie_urban", "", 1);
+	self.headmodel = "head_allies_sniper_ghillie_urban";
+	self setviewmodel("viewhands_ghillie_urban");
+	self.voice = "seal";
+}
+
+precache()
+{
+	precachemodel("mp_body_ally_sniper_ghillie_urban");
+	precachemodel("head_allies_sniper_ghillie_urban");
+	precachemodel("viewhands_ghillie_urban");
+}
